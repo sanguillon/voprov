@@ -13,3 +13,8 @@ Contributors
 * Satrajit Ghosh (:py:mod:`prov.serializers.provrdf` module)
 * Lion Krischer (:py:mod:`prov.serializers.provxml` module and Python 3 support)
 * Sam Millar
+
+VO Contributors                                               # 161207 (MS)
+---------------
+
+* Michele Sanguillon <Michele.Sanguillon@umontpellier.fr>

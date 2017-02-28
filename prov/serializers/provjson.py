@@ -306,6 +306,12 @@ def decode_json_container(jc, bundle):
                         bundle.membership(
                             collection, valid_qualified_name(bundle, member)
                         )
+                if membership_extra_members:				# 161212 (MS)
+                    flow = attributes[PROV_ATTR_FLOW]
+                    for member in membership_extra_members:
+                        bundle.membership(
+                            flow, valid_qualified_name(bundle, member)
+                        )
 
 
 def encode_json_representation(value):

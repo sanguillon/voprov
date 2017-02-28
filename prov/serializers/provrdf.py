@@ -410,6 +410,7 @@ class ProvRDFSerializer(Serializer):
                            URIRef(PROV['wasEndedBy'].uri): 'end',
                            URIRef(PROV['wasStartedBy'].uri): 'start',
                            URIRef(PROV['hadMember'].uri): 'membership',
+                           URIRef(PROV['hadStep'].uri): 'stepship',             # 161115 (MS)
                            URIRef(PROV['used'].uri): 'usage',
                            }
         predicate_mapper = {RDFS.label: pm.PROV['label'],

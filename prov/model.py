@@ -11,6 +11,8 @@ from __future__ import (absolute_import, division, print_function,
 
 __author__ = 'Trung Dong Huynh'
 __email__ = 'trungdong@donggiang.com'
+__author2__ = 'Michele Sanguillon'                 # 161115 (MS)
+__email2__ = 'Michele.Sanguillon@umontpellier.fr'  # 161115 (MS)
 
 import logging
 import itertools
@@ -340,6 +342,13 @@ class ProvRecord(object):
                 is_collection = True
             else:
                 is_collection = False
+            # Check if one of the attributes specifies that the current type
+            # is a flow. In that case multiple attributes of the same
+            # type are allowed.
+            if PROV_ATTR_FLOW in [_i[0] for _i in attributes]:     # 161115 (MS)
+                is_flow = True                                     # 161115 (MS)
+            else:                                                  # 161115 (MS)
+                is_flow = False                                    # 161115 (MS)
 
             for attr_name, original_value in attributes:
                 if original_value is None:
@@ -369,7 +378,8 @@ class ProvRecord(object):
                         (attr, original_value)
                     )
 
-                if not is_collection and attr in PROV_ATTRIBUTES and \
+                #if not is_collection and attr in PROV_ATTRIBUTES and \  # 161115 (MS)
+                if not is_collection and not is_flow and attr in PROV_ATTRIBUTES and \
                         self._attributes[attr]:
                     existing_value = first(self._attributes[attr])
                     is_not_same_value = True
@@ -529,6 +539,10 @@ class ProvEntity(ProvElement):
     def hadMember(self, entity):
         self._bundle.membership(self, entity)
         return self
+
+    def hadStep(self, activity):                # 161115 (MS)
+        self._bundle.stepship(self, activity)   # 161115 (MS)
+        return self                             # 161115 (MS)
 
 
 class ProvActivity(ProvElement):
@@ -710,6 +724,12 @@ class ProvMembership(ProvRelation):
     def get_type(self):
         return PROV_MEMBERSHIP
 
+class ProvStepship(ProvRelation):                                # 161115 (MS)
+    FORMAL_ATTRIBUTES = (PROV_ATTR_FLOW, PROV_ATTR_ACTIVITY)     # 161115 (MS)
+
+    def get_type(self):                                          # 161115 (MS)
+        return PROV_STEPSHIP                                     # 161115 (MS)
+
 
 #  Class mappings from PROV record type
 PROV_REC_CLS = {
@@ -731,6 +751,7 @@ PROV_REC_CLS = {
     PROV_ALTERNATE:      ProvAlternate,
     PROV_MENTION:        ProvMention,
     PROV_MEMBERSHIP:     ProvMembership,
+    PROV_STEPSHIP:       ProvStepship,                            # 161115 (MS)
 }
 
 
@@ -1415,6 +1436,21 @@ class ProvBundle(object):
             }
         )
 
+    def flow(self, identifier, other_attributes=None):         # 161115 (MS)
+        record = self.new_record(                              # 161115 (MS)
+            PROV_ACTIVITY, identifier, None, other_attributes  # 161115 (MS)
+        )                                                      # 161115 (MS)
+        record.add_asserted_type(PROV['Flow'])                 # 161115 (MS)
+        return record                                          # 161115 (MS)
+
+    def stepship(self, flow, activity):                        # 161115 (MS)
+        return self.new_record(                                # 161115 (MS)
+            PROV_STEPSHIP, None, {                             # 161115 (MS)
+                PROV_ATTR_FLOW: flow,                          # 161115 (MS)
+                PROV_ATTR_ACTIVITY: activity                   # 161115 (MS)
+            }                                                  # 161115 (MS)
+        )                                                      # 161115 (MS)
+
     def plot(self, filename=None, show_nary=True, use_labels=False,
              show_element_attributes=True, show_relation_attributes=True):
         """
@@ -1502,6 +1538,7 @@ class ProvBundle(object):
     specializationOf = specialization
     mentionOf = mention
     hadMember = membership
+    hadStep = stepship            # 161115 (MS)
 
 
 class ProvDocument(ProvBundle):

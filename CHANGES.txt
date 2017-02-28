@@ -1,3 +1,8 @@
+v1.5.0, 07/12/2016 -- Virtual Observatory first version # 161207 (MS)
+- based on prov-1.5.0
+- With FlowActivity (Activity with Flow type)
+- With hadStep relation
+
 v0.5.3, 13/12/2013 -- Bug fixes
 - Changed: Allowed namespaces at bundle level
 - Fixed: Only check equality of ProvBundles on asserted records
