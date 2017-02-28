@@ -42,6 +42,7 @@ PROV_SPECIALIZATION = PROV['Specialization']
 PROV_MENTION = PROV['Mention']
 #  C6. Collections
 PROV_MEMBERSHIP = PROV['Membership']
+PROV_STEPSHIP = PROV['Stepship']               # 161115 (MS)
 
 PROV_N_MAP = {
     PROV_ENTITY:               u'entity',
@@ -62,6 +63,7 @@ PROV_N_MAP = {
     PROV_SPECIALIZATION:       u'specializationOf',
     PROV_MENTION:              u'mentionOf',
     PROV_MEMBERSHIP:           u'hadMember',
+    PROV_STEPSHIP:             u'hadStep',             # 161115 (MS)
     PROV_BUNDLE:               u'bundle',
 }
 
@@ -77,6 +79,7 @@ ADDITIONAL_N_MAP = {
     PROV['Plan']:              u'plan',
     PROV['Collection']:        u'collection',
     PROV['EmptyCollection']:   u'emptyCollection',
+    PROV['Flow']:              u'flow'             # 161115 (MS)
 }
 
 # Maps qualified names from the PROV namespace to their base class. If it
@@ -109,7 +112,9 @@ PROV_BASE_CLS = {
     PROV_MENTION:              PROV_MENTION,
     PROV['Collection']:        PROV_ENTITY,
     PROV['EmptyCollection']:   PROV_ENTITY,
+    PROV['Flow']:              PROV_ACTIVITY,           # 161115 (MS)
     PROV_MEMBERSHIP:           PROV_MEMBERSHIP,
+    PROV_STEPSHIP:             PROV_STEPSHIP,           # 161115 (MS)
     PROV_BUNDLE:               PROV_ENTITY
 }
 
@@ -137,6 +142,7 @@ PROV_ATTR_BUNDLE = PROV['bundle']
 PROV_ATTR_INFLUENCEE = PROV['influencee']
 PROV_ATTR_INFLUENCER = PROV['influencer']
 PROV_ATTR_COLLECTION = PROV['collection']
+PROV_ATTR_FLOW = PROV['flow']                   # 161115 (MS)
 
 #  Literal properties
 PROV_ATTR_TIME = PROV['time']
@@ -167,7 +173,8 @@ PROV_ATTRIBUTE_QNAMES = {
     PROV_ATTR_BUNDLE,
     PROV_ATTR_INFLUENCEE,
     PROV_ATTR_INFLUENCER,
-    PROV_ATTR_COLLECTION
+    PROV_ATTR_COLLECTION,
+    PROV_ATTR_FLOW                             # 161115 (MS)
 }
 PROV_ATTRIBUTE_LITERALS = {
     PROV_ATTR_TIME, PROV_ATTR_STARTTIME, PROV_ATTR_ENDTIME
