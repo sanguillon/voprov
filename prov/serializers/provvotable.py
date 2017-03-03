@@ -4,8 +4,6 @@ from __future__ import (absolute_import, division, print_function,
 __author__ = 'Michele Sanguillon'
 __email__ = 'Michele.Sanguillon@umontpellier.fr'
 
-import datetime
-import io
 import pdb
 
 import logging
@@ -65,15 +63,16 @@ class ProvVOTableSerializer(Serializer):
 
             # level 3 : TABLE
             self.records = {}
+            self.voprov_attr_ex = {}
             self.record_analysis()
             for i in range(len(self.records)):
                 classKey = self.records.keys()[i]
                 doc.open_TABLE(classKey)
-                doc.append_FIELDS(classKey)
+                doc.append_FIELDS(classKey, self.voprov_attr_ex[classKey])
                 doc.open_DATA()
                 for tr in self.records[classKey].keys():
                     if tr != 'None':
-		        doc.append_TR(classKey,tr,self.records[classKey][tr])
+		        doc.append_TR(classKey,tr,self.records[classKey][tr], self.voprov_attr_ex[classKey])
                 doc.close('TABLEDATA','DATA')
                 doc.close('DATA','TABLE')
                 doc.close('TABLE','RESOURCE')
@@ -115,13 +114,17 @@ class ProvVOTableSerializer(Serializer):
                 # if a new key, create a sub dictionary which will contains all records of that type
                 if record_key not in self.records:
                     self.records[record_key]={}
+                    self.voprov_attr_ex[record_key]={}
                 # get the sub_key = identifier of the item
                 record_sub_key = str(self.document.get_records()[rec].identifier)
                # get the attributes
                 self.records[record_key][record_sub_key]={}
+                self.records[record_key][record_sub_key][str('id')]=record_sub_key
+                self.voprov_attr_ex[record_key][str('id')]='YES'
                 for att in range(len(self.document.records[rec].attributes)):
                     sub_sub_key = str(self.document.get_records()[rec].attributes[att][0])
                     self.records[record_key][record_sub_key][sub_sub_key] = str(self.document.get_records()[rec].attributes[att][1]) 
+                    self.voprov_attr_ex[record_key][sub_sub_key]='YES'
         except:
             pass
 #------------------------------------------------------------------------------
@@ -136,7 +139,7 @@ class VOTableDoc:
         self.doc = Document()
         self.document=provdoc
         # Parameters for the header
-        self.dHeader = {
+        self.VOTable_Header = {
             'VOTABLE': {
                 'version':'1.2',
                 'xmlns:xsi':'http://www.w3.org/2001/XMLSchema-instance',
@@ -144,7 +147,7 @@ class VOTableDoc:
                 'xsi:schemaLocation':'http://www.ivoa.net/xml/VOTable/v1.1 http://www.ivoa.net/xml/VOTable/VOTable-1.1.xsd' },
             'DESCRIPTION': 'Provenance VOTable'
         }
-        self.VOTableParam = {
+        self.VOTable_Table = {
             'Activity': {'utype':'prov:activity'},
             'Entity': {'utype':'prov:entity'},
             'Agent': {'utype':'prov:agent'},
@@ -166,9 +169,9 @@ class VOTableDoc:
             'Membership':{'utype':'prov:hadMember'},
             'Stepship':{'utype':'voprov:hadStep'}
         }
-        self.VOFieldParam_items = {
+        self.VOTable_OrderedFields = {
             'Activity': ['id', 'prov:startTime', 'prov:endTime', 'voprov:status', 'voprov:annotation', 'voprov:description'],
-            'Entity': ['id', 'prov:label', 'prov:type', 'voprov:annotation', 'voprov:description'],
+            'Entity': ['id', 'prov:label', 'prov:type', 'prov:description', 'voprov:access'],
             'Agent': ['id', 'voprov:name', 'prov:type'],
             'Usage': [],
             'Generation': [],
@@ -188,21 +191,22 @@ class VOTableDoc:
             'Membership':[],
             'Stepship':[]
         } 
-        self.VOFieldParam = {
+        self.VOTable_Field = {
             'Activity': {
                 'id' :{ 'name' : 'id', 'utype':'prov:activity.id', 'datatype':'char', 'arraysize':'*' },
                 'prov:startTime':{ 'name' : 'start', 'utype':'prov:startTime', 'datatype':'char', 'arraysize':'*' },
                 'prov:endTime':{ 'name' : 'stop', 'utype':'prov:endTime', 'datatype':'char', 'arraysize':'*' },
                 'voprov:status':{ 'name' : 'status', 'utype':'voprov:status', 'datatype':'char', 'arraysize':'*' },
-                'voprov:annotation':{ 'name' : 'annotation', 'utype':'voprov:annotation', 'datatype':'char', 'arraysize':'*' },
-                'voprov:description':{ 'name' : 'description', 'utype':'voprov:description', 'datatype':'char', 'arraysize':'*' }
+                #'voprov:annotation':{ 'name' : 'annotation', 'utype':'voprov:annotation', 'datatype':'char', 'arraysize':'*' }, INCOHERENCE DRAFT ENTRE FIGURE ET TEXTE
+                'prov:description':{ 'name' : 'description', 'utype':'voprov:description', 'datatype':'char', 'arraysize':'*' },
              },
             'Entity': {
                 'id' :{ 'name' : 'id', 'utype':'prov:entity.id', 'datatype':'char', 'arraysize':'*' },
                 'prov:label':{ 'name' : 'label', 'utype':'prov:label', 'datatype':'char', 'arraysize':'*' },
                 'prov:type':{ 'name' : 'type', 'utype':'prov:type', 'datatype':'char', 'arraysize':'*' },
-                'voprov:annotation':{ 'name' : 'annotation', 'utype':'voprov:annotation', 'datatype':'char', 'arraysize':'*' },
-                'voprov:description':{ 'name' : 'description', 'utype':'voprov:description', 'datatype':'char', 'arraysize':'*' }
+                #'voprov:annotation':{ 'name' : 'annotation', 'utype':'voprov:annotation', 'datatype':'char', 'arraysize':'*' }, INCOHERENCE DRAFT ENTRE FIGURE ET TEXTE
+                'prov:description':{ 'name' : 'description', 'utype':'voprov:description', 'datatype':'char', 'arraysize':'*' },
+                'voprov:access':{ 'name' : 'access', 'utype':'voprov:access', 'datatype':'char', 'arraysize':'*' }
              },
             'Agent': {
                 'id' :{ 'name' : 'id', 'utype':'prov:agent.id', 'datatype':'char', 'arraysize':'*' },
@@ -249,9 +253,9 @@ class VOTableDoc:
     def open_VOTABLE(self):
         # Level 1 : VOTABLE
         for i in range(len(self.document.get_registered_namespaces())):
-            self.dHeader['VOTABLE']['xmlns:'+self.document.get_registered_namespaces()[i].prefix]=self.document.get_registered_namespaces()[i].uri
+            self.VOTable_Header['VOTABLE']['xmlns:'+self.document.get_registered_namespaces()[i].prefix]=self.document.get_registered_namespaces()[i].uri
         self.votable = self.doc.createElement( 'VOTABLE' )
-        for k,v in self.dHeader['VOTABLE'].items():
+        for k,v in self.VOTable_Header['VOTABLE'].items():
             self.votable.setAttribute( k, v )
 
     #---------------------------------------------------------------------------
@@ -265,7 +269,7 @@ class VOTableDoc:
 
         # Level 3 : DESCRIPTION
         description = self.doc.createElement( 'DESCRIPTION' )
-        text = self.doc.createTextNode( self.dHeader['DESCRIPTION'] )
+        text = self.doc.createTextNode( self.VOTable_Header['DESCRIPTION'] )
         description.appendChild(text)
         self.resource.appendChild(description)
 
@@ -285,21 +289,22 @@ class VOTableDoc:
         self.table = self.doc.createElement( 'TABLE' )
         if name:
             self.table.setAttribute( 'name',  '%s' % str( name ) )
-            if (name in self.VOTableParam.keys()) and ('utype' in self.VOTableParam[name].keys()):
-                self.table.setAttribute( 'utype', str(self.VOTableParam[name]['utype']))
+            if (name in self.VOTable_Table.keys()) and ('utype' in self.VOTable_Table[name].keys()):
+                self.table.setAttribute( 'utype', str(self.VOTable_Table[name]['utype']))
 
     #---------------------------------------------------------------------------
-    def append_FIELDS(self, table):
+    def append_FIELDS(self, table, attributes):
         # Level 4 : FIELD 
         try:
-            if table in self.VOFieldParam.keys():
+            if table in self.VOTable_Field.keys():
                 # For each field of the table
-                if len(self.VOFieldParam_items[table])!=0:
-                    for fieldLine in self.VOFieldParam_items[table]:
-                        self.field = self.doc.createElement( 'FIELD')
-                        for k in self.VOFieldParam[table][fieldLine].keys():
-                            self.field.setAttribute(k, str(self.VOFieldParam[table][fieldLine][k]))
-                        self.close('FIELD','TABLE')
+                if len(self.VOTable_OrderedFields[table])!=0:
+                    for fieldLine in self.VOTable_OrderedFields[table]:
+                        if fieldLine in attributes:
+                            self.field = self.doc.createElement( 'FIELD')
+                            for k in self.VOTable_Field[table][fieldLine].keys():
+                                self.field.setAttribute(k, str(self.VOTable_Field[table][fieldLine][k]))
+                            self.close('FIELD','TABLE')
 
         except:
             print("Exception append_FIELDS")
@@ -310,15 +315,15 @@ class VOTableDoc:
         self.tabledata = self.doc.createElement( 'TABLEDATA' )
 
     #---------------------------------------------------------------------------
-    def append_TR(self, classKey, name, dict_param):
+    def append_TR(self, classKey, name, dict_param, attributes):
         # Level 5 : TR
         try:
             self.tr = self.doc.createElement( 'TR' )
             td = self.doc.createElement( 'TD' )
-            td.appendChild(self.doc.createTextNode(name))
-            self.tr.appendChild(td)
-            for param in self.VOFieldParam_items[classKey]:
-                if param != 'id':
+            #td.appendChild(self.doc.createTextNode(name))
+            #self.tr.appendChild(td)
+            for param in self.VOTable_OrderedFields[classKey]:
+                if param in attributes:
                     td = self.doc.createElement( 'TD' )
                     if param in dict_param.keys():
                         td.appendChild(self.doc.createTextNode(dict_param[param]) )
