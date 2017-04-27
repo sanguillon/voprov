@@ -18,14 +18,21 @@ from prov.model import (Literal, Identifier, QualifiedName,
 from xml.dom.minidom import Document, getDOMImplementation, parse, parseString
 
 
+################################################################################
 class ProvVOTableException(Error):
+################################################################################
     pass
 
+################################################################################
 class ProvVOTableSerializer(Serializer):
+################################################################################
     """
        PROV-VOTABLE serializer for :class:`~prov.model.ProvDocument`
     """
+
+    #===========================================================================
     def serialize(self, stream, **kwargs):
+    #===========================================================================
         """
         Serializes a :class:`~prov.model.ProvDocument` instance to
         `PROV-VOTABLE <http://www.ivoa.net/documents/VOTable/>`_.
@@ -33,16 +40,21 @@ class ProvVOTableSerializer(Serializer):
         :param stream: Where to save the output.
         """
 
-        # get arguments
+        #-----------------------------------------------------------------------
+        # get arguments (provdoc.serialize(arguments))
+        #-----------------------------------------------------------------------
         try:
+            # type of the VOTable RESOURCE
             if 'type' in kwargs.keys():
                 resType=kwargs['type']
             else:
                 resType='provenance'
+            # name of the VOTable RESOURCE
             if 'name' in kwargs.keys():
                 resName=kwargs['name']
             else:
                 resName=None
+            # nb of spaces fot indentation
             if 'indent' in kwargs.keys():
                 resIndent=int(kwargs['indent'])
             else:
@@ -50,6 +62,9 @@ class ProvVOTableSerializer(Serializer):
         except:
             print("Exception getting arguments")
 
+        #-----------------------------------------------------------------------
+        # create VOTABLE
+        #-----------------------------------------------------------------------
         try:
             # create VOTable document
             doc = VOTableDoc(self.document)
@@ -61,18 +76,28 @@ class ProvVOTableSerializer(Serializer):
             # Level 3 : INFO
             doc.open_INFO('OK')
 
+            #-------------------------------------------------------------------
             # level 3 : TABLE
             self.records = {}
             self.voprov_attr_ex = {}
+            # stores the provenance information in a dictionary
+            # self.record[ProvDM class][instance][attribute]=value
             self.record_analysis()
+            # for each ProvDM class (Activity, Entity, ralation, ...
             for i in range(len(self.records)):
                 classKey = self.records.keys()[i]
+                # create an TABLE
                 doc.open_TABLE(classKey)
+                # add the attributes definition in each FIELD
                 doc.append_FIELDS(classKey, self.voprov_attr_ex[classKey])
+                # create a DATA block
                 doc.open_DATA()
+                # for each instance, create a TR block with the values
+                # (each in a TD block)
                 for tr in self.records[classKey].keys():
                     if tr != 'None':
 		        doc.append_TR(classKey,tr,self.records[classKey][tr], self.voprov_attr_ex[classKey])
+                # close tags
                 doc.close('TABLEDATA','DATA')
                 doc.close('DATA','TABLE')
                 doc.close('TABLE','RESOURCE')
@@ -80,12 +105,15 @@ class ProvVOTableSerializer(Serializer):
             doc.close('RESOURCE','VOTABLE')
             doc.close('VOTABLE','DOC')
   
+            # write stream
             votable_content = unicode(doc.getDoc(resIndent))
             stream.write(votable_content)
         except:
             print("Exception creating VOTable document")
 
+    #===========================================================================
     def deserialize(self, stream, **kwargs):
+    #===========================================================================
         """
         Deserialize from `PROV-VOTABLE <http://www.ivoa.net/documents/VOTable/>`_
         representation to a :class:`~prov.model.ProvDocument` instance.
@@ -94,10 +122,13 @@ class ProvVOTableSerializer(Serializer):
         """
         raise NotImplementedError
 
+    #===========================================================================
     def record_analysis(self):
+    #===========================================================================
         """
         Record analysis :
-          fill the dictionary self.records
+          analyze the prov document and create a dictionary (self.records)
+          containing the different records
               with key = Activity, Entity, wasGeneratedBy, ...
               with value = dictionary 
                   with key = identifier of the item
@@ -108,37 +139,51 @@ class ProvVOTableSerializer(Serializer):
         try:
             # For each record
             for rec in range(len(self.document.get_records())):
-                # get the record_type_key (Activity, Entity, wasGeneratedBy, ...)
+                #---------------------------------------------------------------
+                # get the record_key (Activity, Entity, wasGeneratedBy, ...)
                 record_type = str(self.document.get_records()[rec].get_type())
                 record_key = str(record_type.split(':')[1])
-                # if a new key, create a sub dictionary which will contains all records of that type
+                #---------------------------------------------------------------
+                # if it is a new key, 
+                # - add this key in the dictionary with the value = a dictionary
+                # - create the dictionary voprov_attr_ex which memorizes 
+                #   if an attribute exists or not
                 if record_key not in self.records:
                     self.records[record_key]={}
                     self.voprov_attr_ex[record_key]={}
+                #---------------------------------------------------------------
                 # get the sub_key = identifier of the item
+                # item = an instance of an entity, activity, relation, ...
+                # and create a dictionary for this instance
                 record_sub_key = str(self.document.get_records()[rec].identifier)
-               # get the attributes
                 self.records[record_key][record_sub_key]={}
-                self.records[record_key][record_sub_key][str('id')]=record_sub_key
-                self.voprov_attr_ex[record_key][str('id')]='YES'
+                #---------------------------------------------------------------
+                # get the attributes for this instance and their value
+                # the id is the name of the instance
+                self.records[record_key][record_sub_key]['prov:id']=record_sub_key
+                self.voprov_attr_ex[record_key]['prov:id']='YES'
                 for att in range(len(self.document.records[rec].attributes)):
                     sub_sub_key = str(self.document.get_records()[rec].attributes[att][0])
                     self.records[record_key][record_sub_key][sub_sub_key] = str(self.document.get_records()[rec].attributes[att][1]) 
                     self.voprov_attr_ex[record_key][sub_sub_key]='YES'
         except:
             pass
-#------------------------------------------------------------------------------
-# VOTable class
-#------------------------------------------------------------------------------
+
+###############################################################################
+# VOTableDoc class
+###############################################################################
 class VOTableDoc:
 
-    #---------------------------------------------------------------------------
+    #==========================================================================
     def __init__(self, provdoc):
+    #==========================================================================
 
         # 
         self.doc = Document()
         self.document=provdoc
-        # Parameters for the header
+        #-----------------------------------------------------------------------
+        # Parameters for the header of the VOTable
+        #-----------------------------------------------------------------------
         self.VOTable_Header = {
             'VOTABLE': {
                 'version':'1.2',
@@ -147,6 +192,9 @@ class VOTableDoc:
                 'xsi:schemaLocation':'http://www.ivoa.net/xml/VOTable/v1.1 http://www.ivoa.net/xml/VOTable/VOTable-1.1.xsd' },
             'DESCRIPTION': 'Provenance VOTable'
         }
+        #-----------------------------------------------------------------------
+        # utype of each class
+        #-----------------------------------------------------------------------
         self.VOTable_Table = {
             'Activity': {'utype':'prov:activity'},
             'Entity': {'utype':'prov:entity'},
@@ -169,11 +217,21 @@ class VOTableDoc:
             'Membership':{'utype':'prov:hadMember'},
             'Stepship':{'utype':'voprov:hadStep'}
         }
+        #-----------------------------------------------------------------------
+        # ordered fields (due to usage of dictionaries)
+        #-----------------------------------------------------------------------
         self.VOTable_OrderedFields = {
-            'Activity': ['id', 'prov:startTime', 'prov:endTime', 'voprov:status', 'voprov:annotation', 'voprov:description'],
-            'Entity': ['id', 'prov:label', 'prov:type', 'prov:description', 'voprov:access'],
-            'Agent': ['id', 'voprov:name', 'prov:type'],
-            'Usage': [],
+            'Activity': ['prov:id', 'prov:startTime', 'prov:endTime', \
+                        'voprov:annotation', 'prov:description', \
+                        'voprov:desc_id', 'voprov:desc_label', 'voprov:desc_type', \
+                        'voprov:desc_subtype', 'prov:desc_description', 'prov:desc_docuLink'],
+            'Entity' : ['prov:id', 'prov:label', 'prov:type', 'prov:description', \
+                        'voprov:access', 'voprov:desc_id', 'voprov:desc_label',\
+                        'voprov:desc_description', 'voprov:desc_docuLink', \
+                        'voprov:desc_dataproduct_type', 'voprov:desc_dataproduct_subtype', \
+                        'voprov:desc_level'],
+            'Agent': ['prov:id', 'voprov:name', 'prov:type'],
+            'Usage': ['prov:id', 'prov:activity', 'prov:entity', 'prov:time', 'prov:attributes'],
             'Generation': [],
             'Communication':[],
             'Start':[],
@@ -191,29 +249,48 @@ class VOTableDoc:
             'Membership':[],
             'Stepship':[]
         } 
+        #-----------------------------------------------------------------------
+        # description of each attribute
+        #-----------------------------------------------------------------------
         self.VOTable_Field = {
             'Activity': {
-                'id' :{ 'name' : 'id', 'utype':'prov:activity.id', 'datatype':'char', 'arraysize':'*' },
-                'prov:startTime':{ 'name' : 'start', 'utype':'prov:startTime', 'datatype':'char', 'arraysize':'*' },
-                'prov:endTime':{ 'name' : 'stop', 'utype':'prov:endTime', 'datatype':'char', 'arraysize':'*' },
-                'voprov:status':{ 'name' : 'status', 'utype':'voprov:status', 'datatype':'char', 'arraysize':'*' },
-                #'voprov:annotation':{ 'name' : 'annotation', 'utype':'voprov:annotation', 'datatype':'char', 'arraysize':'*' }, INCOHERENCE DRAFT ENTRE FIGURE ET TEXTE
-                'prov:description':{ 'name' : 'description', 'utype':'voprov:description', 'datatype':'char', 'arraysize':'*' },
+                'prov:id' :{ 'name' : 'prov:id', 'utype':'prov:Activity.id', 'datatype':'char', 'arraysize':'*' },
+                'prov:startTime':{ 'name' : 'start', 'utype':'prov:Activity.startTime', 'datatype':'char', 'arraysize':'*' },
+                'prov:endTime':{ 'name' : 'stop', 'utype':'prov:Activity.endTime', 'datatype':'char', 'arraysize':'*' },
+                'voprov:annotation':{ 'name' : 'annotation', 'utype':'voprov:Activity.annotation', 'datatype':'char', 'arraysize':'*' },
+                'prov:description':{ 'name' : 'description', 'utype':'voprov:Activity.description', 'datatype':'char', 'arraysize':'*' },
+                'voprov:desc_id':{ 'name' : 'desc_id', 'utype':'voprov:ActivityDescription.id', 'datatype':'char', 'arraysize':'*' },
+                'voprov:desc_label':{ 'name' : 'desc_label', 'utype':'voprov:ActivityDescription.label', 'datatype':'char', 'arraysize':'*' },
+                'voprov:desc_type':{ 'name' : 'desc_type', 'utype':'voprov:ActivityDescription.type', 'datatype':'char', 'arraysize':'*' },
+                'voprov:desc_subtype':{ 'name' : 'desc_subtype', 'utype':'voprov:ActivityDescription.subtype', 'datatype':'char', 'arraysize':'*' },
+                'prov:desc_description':{ 'name' : 'desc_description', 'utype':'voprov:ActivityDescription.description', 'datatype':'char', 'arraysize':'*' },
+                'prov:desc_docuLink':{ 'name' : 'desc_docuLink', 'utype':'voprov:ActivityDescription.docuLink', 'datatype':'char', 'arraysize':'*' }
              },
             'Entity': {
-                'id' :{ 'name' : 'id', 'utype':'prov:entity.id', 'datatype':'char', 'arraysize':'*' },
-                'prov:label':{ 'name' : 'label', 'utype':'prov:label', 'datatype':'char', 'arraysize':'*' },
-                'prov:type':{ 'name' : 'type', 'utype':'prov:type', 'datatype':'char', 'arraysize':'*' },
-                #'voprov:annotation':{ 'name' : 'annotation', 'utype':'voprov:annotation', 'datatype':'char', 'arraysize':'*' }, INCOHERENCE DRAFT ENTRE FIGURE ET TEXTE
-                'prov:description':{ 'name' : 'description', 'utype':'voprov:description', 'datatype':'char', 'arraysize':'*' },
-                'voprov:access':{ 'name' : 'access', 'utype':'voprov:access', 'datatype':'char', 'arraysize':'*' }
+                'prov:id' :{ 'name' : 'prov:id', 'utype':'prov:Entity.id', 'datatype':'char', 'arraysize':'*' },
+                'prov:label':{ 'name' : 'label', 'utype':'prov:Entity.label', 'datatype':'char', 'arraysize':'*' },
+                'prov:type':{ 'name' : 'type', 'utype':'prov:Entity.type', 'datatype':'char', 'arraysize':'*' },
+                'prov:description':{ 'name' : 'description', 'utype':'voprov:Entity.description', 'datatype':'char', 'arraysize':'*' },
+                'voprov:access':{ 'name' : 'access', 'utype':'voprov:Entity.access', 'datatype':'char', 'arraysize':'*' },
+                'voprov:desc_id':{ 'name' : 'desc_id', 'utype':'voprov:EntityDescription_id', 'datatype':'char', 'arraysize':'*' },
+                'voprov:desc_label':{ 'name' : 'desc_label', 'utype':'voprov:EntityDescription_label', 'datatype':'char', 'arraysize':'*' },
+                'voprov:desc_description':{ 'name' : 'desc_description', 'utype':'voprov:EntityDescription_description', 'datatype':'char', 'arraysize':'*' },
+                'voprov:desc_docuLink':{ 'name' : 'desc_docuLink', 'utype':'voprov:EntityDescription_docuLink', 'datatype':'char', 'arraysize':'*' },
+                'voprov:desc_dataproduct_type':{ 'name' : 'desc_dataproduct_type', 'utype':'voprov:EntityDescription_dataproduct_type', 'datatype':'char', 'arraysize':'*' },
+                'voprov:desc_dataproduct_subtype':{ 'name' : 'desc_dataproduct_subtype', 'utype':'voprov:EntityDescription_dataproduct_subtype', 'datatype':'char', 'arraysize':'*' },
+                'voprov:desc_level':{ 'name' : 'desc_level', 'utype':'voprov:EntityDescription_level', 'datatype':'char', 'arraysize':'*' }
              },
             'Agent': {
-                'id' :{ 'name' : 'id', 'utype':'prov:agent.id', 'datatype':'char', 'arraysize':'*' },
-                'voprov:name' :{ 'name' : 'name', 'utype':'voprov:agent.name', 'datatype':'char', 'arraysize':'*' },
-                'prov:type':{ 'name' : 'type', 'utype':'prov:type', 'datatype':'char', 'arraysize':'*' }
+                'prov:id' :{ 'name' : 'prov:id', 'utype':'prov:Agent.id', 'datatype':'char', 'arraysize':'*' },
+                'voprov:name' :{ 'name' : 'name', 'utype':'voprov:Agent.name', 'datatype':'char', 'arraysize':'*' },
+                'prov:type':{ 'name' : 'type', 'utype':'prov:Agent.type', 'datatype':'char', 'arraysize':'*' }
             },
             'Usage': {
+                'prov:id' :{ 'name' : 'prov:id', 'utype':'prov:Usage.id', 'datatype':'char', 'arraysize':'*' },
+                'prov:activity' :{ 'name' : 'activity', 'utype':'prov:Usage.activity', 'datatype':'char', 'arraysize':'*' },
+                'prov:entity' :{ 'name' : 'entity', 'utype':'prov:Usage.entity', 'datatype':'char', 'arraysize':'*' },
+                'prov:time' :{ 'name' : 'time', 'utype':'prov:Usage.time', 'datatype':'char', 'arraysize':'*' },
+                'prov:attributes' :{ 'name' : 'attributes', 'utype':'prov:Usage.attributes', 'datatype':'char', 'arraysize':'*' },
             },
             'Generation': {
             },
@@ -252,54 +329,67 @@ class VOTableDoc:
     #---------------------------------------------------------------------------
     def open_VOTABLE(self):
         # Level 1 : VOTABLE
-        for i in range(len(self.document.get_registered_namespaces())):
-            self.VOTable_Header['VOTABLE']['xmlns:'+self.document.get_registered_namespaces()[i].prefix]=self.document.get_registered_namespaces()[i].uri
-        self.votable = self.doc.createElement( 'VOTABLE' )
-        for k,v in self.VOTable_Header['VOTABLE'].items():
-            self.votable.setAttribute( k, v )
+        try:
+            for i in range(len(self.document.get_registered_namespaces())):
+                self.VOTable_Header['VOTABLE']['xmlns:'+self.document.get_registered_namespaces()[i].prefix]=self.document.get_registered_namespaces()[i].uri
+            self.votable = self.doc.createElement( 'VOTABLE' )
+            for k,v in self.VOTable_Header['VOTABLE'].items():
+                self.votable.setAttribute( k, v )
+        except:
+            print("Exception open_VOTABLE")
 
     #---------------------------------------------------------------------------
     def open_RESOURCE(self, res_type=None, res_name=None):
         # Level 2 : RESOURCE
-        self.resource = self.doc.createElement( 'RESOURCE' )
-        if res_type:
-            self.resource.setAttribute( 'type', res_type )
-        if res_name:
-            self.resource.setAttribute( 'name', res_name )
+        try:
+            self.resource = self.doc.createElement( 'RESOURCE' )
+            if res_type:
+                self.resource.setAttribute( 'type', res_type )
+            if res_name:
+                self.resource.setAttribute( 'name', res_name )
 
-        # Level 3 : DESCRIPTION
-        description = self.doc.createElement( 'DESCRIPTION' )
-        text = self.doc.createTextNode( self.VOTable_Header['DESCRIPTION'] )
-        description.appendChild(text)
-        self.resource.appendChild(description)
+            # Level 3 : DESCRIPTION
+            description = self.doc.createElement( 'DESCRIPTION' )
+            text = self.doc.createTextNode( self.VOTable_Header['DESCRIPTION'] )
+            description.appendChild(text)
+            self.resource.appendChild(description)
+        except:
+            print("Exception open_RESOURCE")
 
     #---------------------------------------------------------------------------
     def open_INFO(self, value, msg=''):
         # Level 3 : INFO
-        self.info = self.doc.createElement( 'INFO' )
-        self.info.setAttribute( 'name', 'QUERY_STATUS')
-        self.info.setAttribute( 'value', value)
-        if value == 'ERROR':
-            text = self.doc.createTextNode(msg)
-            self.info.appendChild(text)
+        try:
+            self.info = self.doc.createElement( 'INFO' )
+            self.info.setAttribute( 'name', 'QUERY_STATUS')
+            self.info.setAttribute( 'value', value)
+            if value == 'ERROR':
+                text = self.doc.createTextNode(msg)
+                self.info.appendChild(text)
+        except:
+            print("Exception open_INFO")
 
     #---------------------------------------------------------------------------
     def open_TABLE(self, name=None):
         # Level 3 : TABLE
-        self.table = self.doc.createElement( 'TABLE' )
-        if name:
-            self.table.setAttribute( 'name',  '%s' % str( name ) )
-            if (name in self.VOTable_Table.keys()) and ('utype' in self.VOTable_Table[name].keys()):
-                self.table.setAttribute( 'utype', str(self.VOTable_Table[name]['utype']))
+        try:
+            self.table = self.doc.createElement( 'TABLE' )
+            if name:
+                self.table.setAttribute( 'name',  '%s' % str( name ) )
+                if (name in self.VOTable_Table.keys()) and ('utype' in self.VOTable_Table[name].keys()):
+                    self.table.setAttribute( 'utype', str(self.VOTable_Table[name]['utype']))
+        except:
+            print("Exception open_TABLE")
 
     #---------------------------------------------------------------------------
     def append_FIELDS(self, table, attributes):
         # Level 4 : FIELD 
         try:
             if table in self.VOTable_Field.keys():
-                # For each field of the table
                 if len(self.VOTable_OrderedFields[table])!=0:
+                    # For each attribute of a class (in a certain order)
                     for fieldLine in self.VOTable_OrderedFields[table]:
+                        # test if this attribute has to be displayed
                         if fieldLine in attributes:
                             self.field = self.doc.createElement( 'FIELD')
                             for k in self.VOTable_Field[table][fieldLine].keys():
@@ -311,8 +401,11 @@ class VOTableDoc:
     #---------------------------------------------------------------------------
     def open_DATA(self):
         # Level 4 & 5: DATA & TABLEDATA
-        self.data = self.doc.createElement( 'DATA' )
-        self.tabledata = self.doc.createElement( 'TABLEDATA' )
+        try:
+            self.data = self.doc.createElement( 'DATA' )
+            self.tabledata = self.doc.createElement( 'TABLEDATA' )
+        except:
+            print("Exception open_DATA")
 
     #---------------------------------------------------------------------------
     def append_TR(self, classKey, name, dict_param, attributes):
