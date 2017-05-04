@@ -144,6 +144,9 @@ class ProvVOTableSerializer(Serializer):
                 record_type = str(self.document.get_records()[rec].get_type())
                 record_key = str(record_type.split(':')[1])
                 #---------------------------------------------------------------
+                # memorize the number of the subtype if no id (case of Usage, ...)
+                record_type_number = 0
+                #---------------------------------------------------------------
                 # if it is a new key, 
                 # - add this key in the dictionary with the value = a dictionary
                 # - create the dictionary voprov_attr_ex which memorizes 
@@ -156,12 +159,16 @@ class ProvVOTableSerializer(Serializer):
                 # item = an instance of an entity, activity, relation, ...
                 # and create a dictionary for this instance
                 record_sub_key = str(self.document.get_records()[rec].identifier)
+                if record_sub_key == 'None':
+                    record_type_number += 1 
+                    record_sub_key = 'None_' + record_key[0] + str(record_type_number)
                 self.records[record_key][record_sub_key]={}
                 #---------------------------------------------------------------
                 # get the attributes for this instance and their value
                 # the id is the name of the instance
-                self.records[record_key][record_sub_key]['voprov:id']=record_sub_key
-                self.voprov_attr_ex[record_key]['voprov:id']='YES'
+                self.records[record_key][record_sub_key]['prov:id']=record_sub_key
+                if record_sub_key[0:4] != 'None':
+                    self.voprov_attr_ex[record_key]['prov:id']='YES'
                 for att in range(len(self.document.records[rec].attributes)):
                     sub_sub_key = str(self.document.get_records()[rec].attributes[att][0])
                     self.records[record_key][record_sub_key][sub_sub_key] = str(self.document.get_records()[rec].attributes[att][1]) 
@@ -221,16 +228,16 @@ class VOTableDoc:
         # ordered fields (due to usage of dictionaries)
         #-----------------------------------------------------------------------
         self.VOTable_OrderedFields = {
-            'Activity': ['voprov:id', 'voprov:name', 'voprov:startTime', \
-                         'voprov:endTime', 'voprov:annotation', \
+            'Activity': ['prov:id', 'voprov:name', 'prov:startTime', \
+                         'prov:endTime', 'voprov:annotation', \
                         'voprov:desc_id', 'voprov:desc_name', 'voprov:desc_type', \
                         'voprov:desc_subtype', 'voprov:desc_annotation', 'voprov:desc_doculink'],
-            'Entity' : ['voprov:id', 'voprov:name', 'voprov:type', 'voprov:annotation', \
+            'Entity' : ['prov:id', 'voprov:name', 'voprov:type', 'voprov:annotation', \
                         'voprov:rights', 'voprov:desc_id', 'voprov:desc_name',\
                         'voprov:desc_annotation', 'voprov:desc_doculink'],
-            'Agent': ['voprov:id', 'voprov:name', 'voprov:type'],
-            'Usage': ['voprov:id', 'voprov:activity', 'voprov:entity', 'voprov:time', 'voprov:attributes'],
-            'Generation': ['voprov:id', 'voprov:entity', 'voprov:activity'],
+            'Agent': ['prov:id', 'voprov:name', 'voprov:type'],
+            'Usage': ['prov:id', 'prov:activity', 'prov:entity', 'voprov:time', 'voprov:attributes'],
+            'Generation': ['prov:id', 'prov:entity', 'prov:activity'],
             'Communication':[],
             'Start':[],
             'End':[],
@@ -252,10 +259,10 @@ class VOTableDoc:
         #-----------------------------------------------------------------------
         self.VOTable_Field = {
             'Activity': {
-                'voprov:id' :{ 'name' : 'voprov:id', 'utype':'voprov:Activity.id', 'datatype':'char', 'arraysize':'*' , 'ucd':'meta.id'},
-                'voprov:name':{ 'name' : 'voprov:name', 'utype':'voprov:Activity.name', 'datatype':'char', 'arraysize':'*', 'ucd':'meta.title' },
-                'voprov:startTime':{ 'name' : 'start', 'utype':'voprov:Activity.startTime', 'datatype':'char', 'arraysize':'*', 'ucd':'' },
-                'voprov:endTime':{ 'name' : 'stop', 'utype':'voprov:Activity.endTime', 'datatype':'char', 'arraysize':'*' , 'ucd':''},
+                'prov:id' :{ 'name' : 'id', 'utype':'voprov:Activity.id', 'datatype':'char', 'arraysize':'*' , 'ucd':'meta.id'},
+                'voprov:name':{ 'name' : 'name', 'utype':'voprov:Activity.name', 'datatype':'char', 'arraysize':'*', 'ucd':'meta.title' },
+                'prov:startTime':{ 'name' : 'start', 'utype':'voprov:Activity.startTime', 'datatype':'char', 'arraysize':'*', 'ucd':'' },
+                'prov:endTime':{ 'name' : 'stop', 'utype':'voprov:Activity.endTime', 'datatype':'char', 'arraysize':'*' , 'ucd':''},
                 'voprov:annotation':{ 'name' : 'annotation', 'utype':'voprov:Activity.annotation', 'datatype':'char', 'arraysize':'*', 'ucd':'meta.description' },
                 'voprov:desc_id':{ 'name' : 'desc_id', 'utype':'voprov:ActivityDescription.id', 'datatype':'char', 'arraysize':'*', 'ucd':'' },
                 'voprov:desc_name':{ 'name' : 'desc_name', 'utype':'voprov:ActivityDescription.name', 'datatype':'char', 'arraysize':'*', 'ucd':'' },
@@ -265,7 +272,7 @@ class VOTableDoc:
                 'voprov:desc_doculink':{ 'name' : 'desc_doculink', 'utype':'voprov:ActivityDescription.doculink', 'datatype':'char', 'arraysize':'*', 'ucd':'meta.ref.url' }
              },
             'Entity': {
-                'voprov:id' :{ 'name' : 'voprov:id', 'utype':'voprov:Entity.id', 'datatype':'char', 'arraysize':'*', 'ucd':'meta.id' },
+                'prov:id' :{ 'name' : 'id', 'utype':'voprov:Entity.id', 'datatype':'char', 'arraysize':'*', 'ucd':'meta.id' },
                 'voprov:name':{ 'name' : 'name', 'utype':'voprov:Entity.name', 'datatype':'char', 'arraysize':'*', 'ucd':'meta.title' },
                 'voprov:type':{ 'name' : 'type', 'utype':'voprov:Entity.type', 'datatype':'char', 'arraysize':'*', 'ucd':'meta.code.class' },
                 'voprov:annotation':{ 'name' : 'annotation', 'utype':'voprov:Entity.annotation', 'datatype':'char', 'arraysize':'*', 'ucd':'meta.description' },
@@ -276,21 +283,21 @@ class VOTableDoc:
                 'voprov:desc_doculink':{ 'name' : 'desc_doculink', 'utype':'voprov:EntityDescription.doculink', 'datatype':'char', 'arraysize':'*', 'ucd':'imeta.ref.url' }
              },
             'Agent': {
-                'voprov:id' :{ 'name' : 'voprov:id', 'utype':'voprov:Agent.id', 'datatype':'char', 'arraysize':'*', 'ucd':'meta.id' },
+                'prov:id' :{ 'name' : 'id', 'utype':'voprov:Agent.id', 'datatype':'char', 'arraysize':'*', 'ucd':'meta.id' },
                 'voprov:name' :{ 'name' : 'name', 'utype':'voprov:Agent.name', 'datatype':'char', 'arraysize':'*', 'ucd':'meta.title' },
                 'voprov:type':{ 'name' : 'type', 'utype':'voprov:Agent.type', 'datatype':'char', 'arraysize':'*', 'ucd':'meta.code.class' }
             },
             'Usage': {
-                'voprov:id' :{ 'name' : 'voprov:id', 'utype':'voprov:Usage.id', 'datatype':'char', 'arraysize':'*', 'ucd':'meta.id' },
-                'voprov:activity' :{ 'name' : 'activity', 'utype':'voprov:Usage.activity', 'datatype':'char', 'arraysize':'*', 'ucd':'meta.title' },
-                'voprov:entity' :{ 'name' : 'entity', 'utype':'voprov:Usage.entity', 'datatype':'char', 'arraysize':'*', 'ucd':'meta.title' },
+                'prov:id' :{ 'name' : 'id', 'utype':'voprov:Usage.id', 'datatype':'char', 'arraysize':'*', 'ucd':'meta.id' },
+                'prov:activity' :{ 'name' : 'activity', 'utype':'voprov:Usage.activity', 'datatype':'char', 'arraysize':'*', 'ucd':'meta.id' },
+                'prov:entity' :{ 'name' : 'entity', 'utype':'voprov:Usage.entity', 'datatype':'char', 'arraysize':'*', 'ucd':'meta.id' },
                 'voprov:time' :{ 'name' : 'time', 'utype':'voprov:Usage.time', 'datatype':'char', 'arraysize':'*', 'ucd':'' },
                 'voprov:attributes' :{ 'name' : 'attributes', 'utype':'voprov:Usage.attributes', 'datatype':'char', 'arraysize':'*', 'ucd':'' },
             },
             'Generation': {
-                'voprov:id' :{ 'name' : 'voprov:id', 'utype':'voprov:Generation.id', 'datatype':'char', 'arraysize':'*', 'ucd':'meta.id' },
-                'voprov:entity' :{ 'name' : 'entity', 'utype':'voprov:Generation.entity', 'datatype':'char', 'arraysize':'*', 'ucd':'meta.title' },
-                'voprov:activity' :{ 'name' : 'activity', 'utype':'voprov:Generation.activity', 'datatype':'char', 'arraysize':'*', 'ucd':'meta.title' },
+                'prov:id' :{ 'name' : 'id', 'utype':'voprov:Generation.id', 'datatype':'char', 'arraysize':'*', 'ucd':'meta.id' },
+                'prov:entity' :{ 'name' : 'entity', 'utype':'voprov:Generation.entity', 'datatype':'char', 'arraysize':'*', 'ucd':'meta.id' },
+                'prov:activity' :{ 'name' : 'activity', 'utype':'voprov:Generation.activity', 'datatype':'char', 'arraysize':'*', 'ucd':'meta.id' },
             },
             'Communication':{
             },
