@@ -160,8 +160,8 @@ class ProvVOTableSerializer(Serializer):
                 #---------------------------------------------------------------
                 # get the attributes for this instance and their value
                 # the id is the name of the instance
-                self.records[record_key][record_sub_key]['prov:id']=record_sub_key
-                self.voprov_attr_ex[record_key]['prov:id']='YES'
+                self.records[record_key][record_sub_key]['voprov:id']=record_sub_key
+                self.voprov_attr_ex[record_key]['voprov:id']='YES'
                 for att in range(len(self.document.records[rec].attributes)):
                     sub_sub_key = str(self.document.get_records()[rec].attributes[att][0])
                     self.records[record_key][record_sub_key][sub_sub_key] = str(self.document.get_records()[rec].attributes[att][1]) 
@@ -188,51 +188,49 @@ class VOTableDoc:
             'VOTABLE': {
                 'version':'1.2',
                 'xmlns:xsi':'http://www.w3.org/2001/XMLSchema-instance',
-                'xmlns':'http://www.ivoa.net/xml/VOTable/v1.1',
-                'xsi:schemaLocation':'http://www.ivoa.net/xml/VOTable/v1.1 http://www.ivoa.net/xml/VOTable/VOTable-1.1.xsd' },
+                'xmlns':'http://www.ivoa.net/xml/VOTable/v1.2',
+                'xsi:schemaLocation':'http://www.ivoa.net/xml/VOTable/v1.2 http://www.ivoa.net/xml/VOTable/VOTable-1.2.xsd' },
             'DESCRIPTION': 'Provenance VOTable'
         }
         #-----------------------------------------------------------------------
         # utype of each class
         #-----------------------------------------------------------------------
         self.VOTable_Table = {
-            'Activity': {'utype':'prov:activity'},
-            'Entity': {'utype':'prov:entity'},
-            'Agent': {'utype':'prov:agent'},
-            'Usage': {'utype':'prov:used'},
-            'Generation': {'utype':'prov:wasGeneratedBy'},
-            'Communication':{'utype':'prov:wasInformedBy'},
-            'Start':{'utype':'prov:wasStartedBy'},
-            'End':{'utype':'prov:wasEndedBy'},
-            'Invalidation':{'utype':'prov:wasInvalidatedBy'},
-            'Derivation':{'utype':'prov:wasDerivedFrom'},
-            'Attribution':{'utype':'prov:wasAttributedTo'},
-            'Association':{'utype':'prov:wasAssociatedWith'},
-            'Delegation':{'utype':'prov:actedOnBehalfOf'},
-            'Influence':{'utype':'prov:wasInfluencedBy'},
-            'Bundle':{'utype':'prov:bundle'},
-            'Alternate':{'utype':'prov:alternateOf'},
-            'Specialization':{'utype':'prov:specializationOf'},
-            'Mention':{'utype':'prov:mentionOf'},
-            'Membership':{'utype':'prov:hadMember'},
+            'Activity': {'utype':'voprov:Activity'},
+            'Entity': {'utype':'voprov:Entity'},
+            'Agent': {'utype':'voprov:Agent'},
+            'Usage': {'utype':'voprov:used'},
+            'Generation': {'utype':'voprov:wasGeneratedBy'},
+            'Communication':{'utype':'voprov:wasInformedBy'},
+            'Start':{'utype':'voprov:wasStartedBy'},
+            'End':{'utype':'voprov:wasEndedBy'},
+            'Invalidation':{'utype':'voprov:wasInvalidatedBy'},
+            'Derivation':{'utype':'voprov:wasDerivedFrom'},
+            'Attribution':{'utype':'voprov:wasAttributedTo'},
+            'Association':{'utype':'voprov:wasAssociatedWith'},
+            'Delegation':{'utype':'voprov:actedOnBehalfOf'},
+            'Influence':{'utype':'voprov:wasInfluencedBy'},
+            'Bundle':{'utype':'voprov:bundle'},
+            'Alternate':{'utype':'voprov:alternateOf'},
+            'Specialization':{'utype':'voprov:specializationOf'},
+            'Mention':{'utype':'voprov:mentionOf'},
+            'Membership':{'utype':'voprov:hadMember'},
             'Stepship':{'utype':'voprov:hadStep'}
         }
         #-----------------------------------------------------------------------
         # ordered fields (due to usage of dictionaries)
         #-----------------------------------------------------------------------
         self.VOTable_OrderedFields = {
-            'Activity': ['prov:id', 'prov:startTime', 'prov:endTime', \
-                        'voprov:annotation', 'prov:description', \
-                        'voprov:desc_id', 'voprov:desc_label', 'voprov:desc_type', \
-                        'voprov:desc_subtype', 'prov:desc_description', 'prov:desc_docuLink'],
-            'Entity' : ['prov:id', 'prov:label', 'prov:type', 'prov:description', \
-                        'voprov:access', 'voprov:desc_id', 'voprov:desc_label',\
-                        'voprov:desc_description', 'voprov:desc_docuLink', \
-                        'voprov:desc_dataproduct_type', 'voprov:desc_dataproduct_subtype', \
-                        'voprov:desc_level'],
-            'Agent': ['prov:id', 'voprov:name', 'prov:type'],
-            'Usage': ['prov:id', 'prov:activity', 'prov:entity', 'prov:time', 'prov:attributes'],
-            'Generation': [],
+            'Activity': ['voprov:id', 'voprov:name', 'voprov:startTime', \
+                         'voprov:endTime', 'voprov:annotation', \
+                        'voprov:desc_id', 'voprov:desc_name', 'voprov:desc_type', \
+                        'voprov:desc_subtype', 'voprov:desc_annotation', 'voprov:desc_doculink'],
+            'Entity' : ['voprov:id', 'voprov:name', 'voprov:type', 'voprov:annotation', \
+                        'voprov:rights', 'voprov:desc_id', 'voprov:desc_name',\
+                        'voprov:desc_annotation', 'voprov:desc_doculink'],
+            'Agent': ['voprov:id', 'voprov:name', 'voprov:type'],
+            'Usage': ['voprov:id', 'voprov:activity', 'voprov:entity', 'voprov:time', 'voprov:attributes'],
+            'Generation': ['voprov:id', 'voprov:entity', 'voprov:activity'],
             'Communication':[],
             'Start':[],
             'End':[],
@@ -254,45 +252,45 @@ class VOTableDoc:
         #-----------------------------------------------------------------------
         self.VOTable_Field = {
             'Activity': {
-                'prov:id' :{ 'name' : 'prov:id', 'utype':'prov:Activity.id', 'datatype':'char', 'arraysize':'*' },
-                'prov:startTime':{ 'name' : 'start', 'utype':'prov:Activity.startTime', 'datatype':'char', 'arraysize':'*' },
-                'prov:endTime':{ 'name' : 'stop', 'utype':'prov:Activity.endTime', 'datatype':'char', 'arraysize':'*' },
-                'voprov:annotation':{ 'name' : 'annotation', 'utype':'voprov:Activity.annotation', 'datatype':'char', 'arraysize':'*' },
-                'prov:description':{ 'name' : 'description', 'utype':'voprov:Activity.description', 'datatype':'char', 'arraysize':'*' },
-                'voprov:desc_id':{ 'name' : 'desc_id', 'utype':'voprov:ActivityDescription.id', 'datatype':'char', 'arraysize':'*' },
-                'voprov:desc_label':{ 'name' : 'desc_label', 'utype':'voprov:ActivityDescription.label', 'datatype':'char', 'arraysize':'*' },
-                'voprov:desc_type':{ 'name' : 'desc_type', 'utype':'voprov:ActivityDescription.type', 'datatype':'char', 'arraysize':'*' },
-                'voprov:desc_subtype':{ 'name' : 'desc_subtype', 'utype':'voprov:ActivityDescription.subtype', 'datatype':'char', 'arraysize':'*' },
-                'prov:desc_description':{ 'name' : 'desc_description', 'utype':'voprov:ActivityDescription.description', 'datatype':'char', 'arraysize':'*' },
-                'prov:desc_docuLink':{ 'name' : 'desc_docuLink', 'utype':'voprov:ActivityDescription.docuLink', 'datatype':'char', 'arraysize':'*' }
+                'voprov:id' :{ 'name' : 'voprov:id', 'utype':'voprov:Activity.id', 'datatype':'char', 'arraysize':'*' , 'ucd':'meta.id'},
+                'voprov:name':{ 'name' : 'voprov:name', 'utype':'voprov:Activity.name', 'datatype':'char', 'arraysize':'*', 'ucd':'meta.title' },
+                'voprov:startTime':{ 'name' : 'start', 'utype':'voprov:Activity.startTime', 'datatype':'char', 'arraysize':'*', 'ucd':'' },
+                'voprov:endTime':{ 'name' : 'stop', 'utype':'voprov:Activity.endTime', 'datatype':'char', 'arraysize':'*' , 'ucd':''},
+                'voprov:annotation':{ 'name' : 'annotation', 'utype':'voprov:Activity.annotation', 'datatype':'char', 'arraysize':'*', 'ucd':'meta.description' },
+                'voprov:desc_id':{ 'name' : 'desc_id', 'utype':'voprov:ActivityDescription.id', 'datatype':'char', 'arraysize':'*', 'ucd':'' },
+                'voprov:desc_name':{ 'name' : 'desc_name', 'utype':'voprov:ActivityDescription.name', 'datatype':'char', 'arraysize':'*', 'ucd':'' },
+                'voprov:desc_type':{ 'name' : 'desc_type', 'utype':'voprov:ActivityDescription.type', 'datatype':'char', 'arraysize':'*', 'ucd':'meta.code.class' },
+                'voprov:desc_subtype':{ 'name' : 'desc_subtype', 'utype':'voprov:ActivityDescription.subtype', 'datatype':'char', 'arraysize':'*', 'ucd':'meta.code.class' },
+                'voprov:desc_annotation':{ 'name' : 'desc_annotation', 'utype':'voprov:ActivityDescription.annotation', 'datatype':'char', 'arraysize':'*', 'ucd':'meta.description' },
+                'voprov:desc_doculink':{ 'name' : 'desc_doculink', 'utype':'voprov:ActivityDescription.doculink', 'datatype':'char', 'arraysize':'*', 'ucd':'meta.ref.url' }
              },
             'Entity': {
-                'prov:id' :{ 'name' : 'prov:id', 'utype':'prov:Entity.id', 'datatype':'char', 'arraysize':'*' },
-                'prov:label':{ 'name' : 'label', 'utype':'prov:Entity.label', 'datatype':'char', 'arraysize':'*' },
-                'prov:type':{ 'name' : 'type', 'utype':'prov:Entity.type', 'datatype':'char', 'arraysize':'*' },
-                'prov:description':{ 'name' : 'description', 'utype':'voprov:Entity.description', 'datatype':'char', 'arraysize':'*' },
-                'voprov:access':{ 'name' : 'access', 'utype':'voprov:Entity.access', 'datatype':'char', 'arraysize':'*' },
-                'voprov:desc_id':{ 'name' : 'desc_id', 'utype':'voprov:EntityDescription_id', 'datatype':'char', 'arraysize':'*' },
-                'voprov:desc_label':{ 'name' : 'desc_label', 'utype':'voprov:EntityDescription_label', 'datatype':'char', 'arraysize':'*' },
-                'voprov:desc_description':{ 'name' : 'desc_description', 'utype':'voprov:EntityDescription_description', 'datatype':'char', 'arraysize':'*' },
-                'voprov:desc_docuLink':{ 'name' : 'desc_docuLink', 'utype':'voprov:EntityDescription_docuLink', 'datatype':'char', 'arraysize':'*' },
-                'voprov:desc_dataproduct_type':{ 'name' : 'desc_dataproduct_type', 'utype':'voprov:EntityDescription_dataproduct_type', 'datatype':'char', 'arraysize':'*' },
-                'voprov:desc_dataproduct_subtype':{ 'name' : 'desc_dataproduct_subtype', 'utype':'voprov:EntityDescription_dataproduct_subtype', 'datatype':'char', 'arraysize':'*' },
-                'voprov:desc_level':{ 'name' : 'desc_level', 'utype':'voprov:EntityDescription_level', 'datatype':'char', 'arraysize':'*' }
+                'voprov:id' :{ 'name' : 'voprov:id', 'utype':'voprov:Entity.id', 'datatype':'char', 'arraysize':'*', 'ucd':'meta.id' },
+                'voprov:name':{ 'name' : 'name', 'utype':'voprov:Entity.name', 'datatype':'char', 'arraysize':'*', 'ucd':'meta.title' },
+                'voprov:type':{ 'name' : 'type', 'utype':'voprov:Entity.type', 'datatype':'char', 'arraysize':'*', 'ucd':'meta.code.class' },
+                'voprov:annotation':{ 'name' : 'annotation', 'utype':'voprov:Entity.annotation', 'datatype':'char', 'arraysize':'*', 'ucd':'meta.description' },
+                'voprov:rights':{ 'name' : 'rights', 'utype':'voprov:Entity.rights', 'datatype':'char', 'arraysize':'*', 'ucd':'' },
+                'voprov:desc_id':{ 'name' : 'desc_id', 'utype':'voprov:EntityDescription.id', 'datatype':'char', 'arraysize':'*', 'ucd':'meta.id' },
+                'voprov:desc_name':{ 'name' : 'desc_name', 'utype':'voprov:EntityDescription.name', 'datatype':'char', 'arraysize':'*', 'ucd':'meta.title' },
+                'voprov:desc_annotation':{ 'name' : 'desc_annotation', 'utype':'voprov:EntityDescription.annotation', 'datatype':'char', 'arraysize':'*', 'ucd':'meta.description' },
+                'voprov:desc_doculink':{ 'name' : 'desc_doculink', 'utype':'voprov:EntityDescription.doculink', 'datatype':'char', 'arraysize':'*', 'ucd':'imeta.ref.url' }
              },
             'Agent': {
-                'prov:id' :{ 'name' : 'prov:id', 'utype':'prov:Agent.id', 'datatype':'char', 'arraysize':'*' },
-                'voprov:name' :{ 'name' : 'name', 'utype':'voprov:Agent.name', 'datatype':'char', 'arraysize':'*' },
-                'prov:type':{ 'name' : 'type', 'utype':'prov:Agent.type', 'datatype':'char', 'arraysize':'*' }
+                'voprov:id' :{ 'name' : 'voprov:id', 'utype':'voprov:Agent.id', 'datatype':'char', 'arraysize':'*', 'ucd':'meta.id' },
+                'voprov:name' :{ 'name' : 'name', 'utype':'voprov:Agent.name', 'datatype':'char', 'arraysize':'*', 'ucd':'meta.title' },
+                'voprov:type':{ 'name' : 'type', 'utype':'voprov:Agent.type', 'datatype':'char', 'arraysize':'*', 'ucd':'meta.code.class' }
             },
             'Usage': {
-                'prov:id' :{ 'name' : 'prov:id', 'utype':'prov:Usage.id', 'datatype':'char', 'arraysize':'*' },
-                'prov:activity' :{ 'name' : 'activity', 'utype':'prov:Usage.activity', 'datatype':'char', 'arraysize':'*' },
-                'prov:entity' :{ 'name' : 'entity', 'utype':'prov:Usage.entity', 'datatype':'char', 'arraysize':'*' },
-                'prov:time' :{ 'name' : 'time', 'utype':'prov:Usage.time', 'datatype':'char', 'arraysize':'*' },
-                'prov:attributes' :{ 'name' : 'attributes', 'utype':'prov:Usage.attributes', 'datatype':'char', 'arraysize':'*' },
+                'voprov:id' :{ 'name' : 'voprov:id', 'utype':'voprov:Usage.id', 'datatype':'char', 'arraysize':'*', 'ucd':'meta.id' },
+                'voprov:activity' :{ 'name' : 'activity', 'utype':'voprov:Usage.activity', 'datatype':'char', 'arraysize':'*', 'ucd':'meta.title' },
+                'voprov:entity' :{ 'name' : 'entity', 'utype':'voprov:Usage.entity', 'datatype':'char', 'arraysize':'*', 'ucd':'meta.title' },
+                'voprov:time' :{ 'name' : 'time', 'utype':'voprov:Usage.time', 'datatype':'char', 'arraysize':'*', 'ucd':'' },
+                'voprov:attributes' :{ 'name' : 'attributes', 'utype':'voprov:Usage.attributes', 'datatype':'char', 'arraysize':'*', 'ucd':'' },
             },
             'Generation': {
+                'voprov:id' :{ 'name' : 'voprov:id', 'utype':'voprov:Generation.id', 'datatype':'char', 'arraysize':'*', 'ucd':'meta.id' },
+                'voprov:entity' :{ 'name' : 'entity', 'utype':'voprov:Generation.entity', 'datatype':'char', 'arraysize':'*', 'ucd':'meta.title' },
+                'voprov:activity' :{ 'name' : 'activity', 'utype':'voprov:Generation.activity', 'datatype':'char', 'arraysize':'*', 'ucd':'meta.title' },
             },
             'Communication':{
             },
