@@ -14,7 +14,7 @@ Contributors
 * Lion Krischer (:py:mod:`prov.serializers.provxml` module and Python 3 support)
 * Sam Millar
 
-VO Contributors                                               # 161207 (MS)
----------------
+IVOA Contributors                                               # 161207 (MS)
+-----------------
 
 * Michele Sanguillon <Michele.Sanguillon@umontpellier.fr>

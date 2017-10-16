@@ -13,7 +13,7 @@ Types of Contributions
 Report Bugs
 ~~~~~~~~~~~
 
-Report bugs at https://github.com/trungdong/prov/issues.
+Report bugs at https://github.com/sanguillon/voprov/issues.
 
 If you are reporting a bug, please include:
 
@@ -24,26 +24,26 @@ If you are reporting a bug, please include:
 Fix Bugs
 ~~~~~~~~
 
-Look through the GitHub `issues <https://github.com/trungdong/prov/issues>`_ for bugs.
+Look through the GitHub `issues <https://github.com/sanguillon/voprov/issues>`_ for bugs.
 Anything tagged with "bug" is open to whoever wants to implement it.
 
 Implement Features
 ~~~~~~~~~~~~~~~~~~
 
-Look through the GitHub `issues <https://github.com/trungdong/prov/issues>`_
+Look through the GitHub `issues <https://github.com/sanguillon/voprov/issues>`_
 for features. Anything tagged with "feature" is open to whoever wants to implement it.
 
 Write Documentation
 ~~~~~~~~~~~~~~~~~~~
 
 We could always use more documentation, whether as part of the
-official prov docs, in docstrings, or even on the web in blog posts,
+official voprov docs, in docstrings, or even on the web in blog posts,
 articles, and such.
 
 Submit Feedback
 ~~~~~~~~~~~~~~~
 
-The best way to send feedback is to file an issue at https://github.com/trungdong/prov/issues.
+The best way to send feedback is to file an issue at https://github.com/sanguillon/voprov/issues.
 
 If you are proposing a feature:
 
@@ -55,17 +55,17 @@ If you are proposing a feature:
 Get Started!
 ------------
 
-Ready to contribute? Here's how to set up `prov` for local development.
+Ready to contribute? Here's how to set up `voprov` for local development.
 
-1. Fork the `prov` repo on GitHub.
+1. Fork the `voprov` repo on GitHub.
 2. Clone your fork locally::
 
-    $ git clone git@github.com:your_name_here/prov.git
+    $ git clone git@github.com:your_name_here/voprov.git
 
 3. Install your local copy into a virtualenv. Assuming you have virtualenvwrapper installed, this is how you set up your fork for local development::
 
-    $ mkvirtualenv prov
-    $ cd prov/
+    $ mkvirtualenv voprov
+    $ cd voprov/
     $ pip install -r requirements-dev.txt
 
 4. Create a branch for local development::
@@ -76,7 +76,7 @@ Ready to contribute? Here's how to set up `prov` for local development.
 
 5. When you're done making changes, check that your changes pass flake8 and the tests, including testing other Python versions with tox::
 
-    $ flake8 prov tests
+    $ flake8 voprov tests
     $ python setup.py test
     $ tox
 
@@ -98,7 +98,7 @@ Before you submit a pull request, check that it meets these guidelines:
    your new functionality into a function with a docstring, and add the
    feature to the list in README.rst.
 3. The pull request should work for Python 2.7, 3.3, 3.4, 3.5, and for PyPy.
-   Check https://travis-ci.org/trungdong/prov/pull_requests
+   Check https://travis-ci.org/sanguillon/voprov/pull_requests
    and make sure that the tests pass for all supported Python versions.
    (See `pyenv <https://github.com/yyuu/pyenv>`_ for help on setting up
    multiple versions of Python locally for testing.)
@@ -108,4 +108,4 @@ Tips
 
 To run a subset of tests::
 
-	$ python -m unittest prov.tests.test_json
+	$ python -m unittest voprov.tests.test_json

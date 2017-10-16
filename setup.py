@@ -23,19 +23,19 @@ test_requirements = [
 ]
 
 setup(
-    name='prov',
+    name='voprov',
     version='1.5.0',
-    description='A library for W3C Provenance Data Model supporting PROV-JSON, '
+    description='A library for IVOA Provenance Data Model supporting PROV-JSON, '
                 'PROV-XML and PROV-O (RDF)',
     long_description=readme + '\n\n' + history,
-    author='Trung Dong Huynh',
-    author_email='trungdong@donggiang.com',
-    url='https://github.com/trungdong/prov',
+    author='Michele Sanguillon',
+    author_email='michele.sanguillon@umontpellier.fr',
+    url='https://github.com/sanguillon/voprov',
     packages=find_packages(),
     package_dir={
-        'prov': 'prov'
+        'voprov': 'voprov'
     },
-    scripts=['scripts/prov-convert', 'scripts/prov-compare'],
+    scripts=['scripts/voprov-convert', 'scripts/voprov-compare'],
     include_package_data=True,
     install_requires=requirements,
     extras_require={
@@ -48,7 +48,7 @@ setup(
         'PROV-XML', 'PROV-N', 'PROV-O', 'RDF'
     ],
     classifiers=[
-        'Development Status :: 4 - Beta',
+        'Development Status :: 1 - Beta',
         'Intended Audience :: Developers',
         'Intended Audience :: Information Technology',
         'License :: OSI Approved :: MIT License',
@@ -66,6 +66,6 @@ setup(
         'Topic :: Security',
         'Topic :: System :: Logging',
     ],
-    test_suite='prov.tests',
+    test_suite='voprov.tests',
     tests_require=test_requirements
 )
