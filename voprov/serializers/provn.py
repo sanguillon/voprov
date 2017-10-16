@@ -8,7 +8,7 @@ import io
 import logging
 logger = logging.getLogger(__name__)
 
-from prov.serializers import Serializer
+from voprov.serializers import Serializer
 
 
 class ProvNSerializer(Serializer):
@@ -17,7 +17,7 @@ class ProvNSerializer(Serializer):
     """
     def serialize(self, stream, **kwargs):
         """
-        Serializes a :class:`prov.model.ProvDocument` instance to a
+        Serializes a :class:`voprov.model.ProvDocument` instance to a
         `PROV-N <http://www.w3.org/TR/prov-n/>`_.
 
         :param stream: Where to save the output.

@@ -1,7 +1,7 @@
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 
-from prov.model import *
+from voprov.model import *
 
 
 EX_NS = Namespace('ex', 'http://example.org/')
@@ -52,7 +52,7 @@ class TestAttributesBase(object):
     def run_entity_with_one_type_attribute(self, n):
         document = self.new_document()
         document.entity(
-            EX_NS['et%d' % n], {'prov:type': self.attribute_values[n]}
+            EX_NS['et%d' % n], {'voprov:type': self.attribute_values[n]}
         )
         self.do_tests(document)
 
@@ -152,7 +152,7 @@ class TestAttributesBase(object):
     def test_entity_with_multiple_value_attribute(self):
         document = self.new_document()
         attributes = [
-            ('prov:value', value)
+            ('voprov:value', value)
             for i, value in enumerate(self.attribute_values)
         ]
         document.entity(EX_NS['emv'], attributes)

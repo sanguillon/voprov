@@ -24,7 +24,7 @@ import dateutil.parser
 from collections import defaultdict
 from copy import deepcopy
 import io
-from prov import Error, serializers
+from voprov import Error, serializers
 
 import os
 import shutil
@@ -32,8 +32,8 @@ import tempfile
 
 from six.moves.urllib.parse import urlparse
 
-from prov.identifier import Identifier, QualifiedName
-from prov.constants import *
+from voprov.identifier import Identifier, QualifiedName
+from voprov.constants import *
 
 
 # Data Types
@@ -121,7 +121,7 @@ class Literal(object):
         if langtag:
             if datatype is None:
                 logger.debug(
-                    'Assuming prov:InternationalizedString as the type of '
+                    'Assuming voprov:InternationalizedString as the type of '
                     '"%s"@%s' % (value, langtag)
                 )
                 datatype = PROV["InternationalizedString"]
@@ -131,7 +131,7 @@ class Literal(object):
             elif datatype != PROV["InternationalizedString"]:
                 logger.warn(
                     'Invalid data type (%s) for "%s"@%s, overridden as '
-                    'prov:InternationalizedString.' %
+                    'voprov:InternationalizedString.' %
                     (datatype, value, langtag)
                 )
                 datatype = PROV["InternationalizedString"]
@@ -755,7 +755,9 @@ PROV_REC_CLS = {
 }
 
 
-DEFAULT_NAMESPACES = {'prov': PROV, 'xsd': XSD, 'xsi': XSI}
+# TESTMS
+DEFAULT_NAMESPACES = {'voprov': PROV, 'xsd': XSD, 'xsi': XSI}
+#DEFAULT_NAMESPACES = {'voprov': PROV, 'prov': PROV, 'xsd': XSD, 'xsi': XSI}
 
 
 #  Bundle
@@ -835,7 +837,7 @@ class NamespaceManager(dict):
         """Add multiple namespaces into this manager
 
         :param namespaces: a collection of namespace(s) to add.
-        :type namespaces: list of :py:class:`~prov.identifier.Namespace` or
+        :type namespaces: list of :py:class:`~voprov.identifier.Namespace` or
         dict of {prefix: uri}
         :returns: None
         """
@@ -1454,7 +1456,7 @@ class ProvBundle(object):
     def plot(self, filename=None, show_nary=True, use_labels=False,
              show_element_attributes=True, show_relation_attributes=True):
         """
-        Convenience function to plot a prov document.
+        Convenience function to plot a voprov document.
 
         :type filename: string, optional
         :param filename: The filename to save to. If not given, it will open
@@ -1462,7 +1464,7 @@ class ProvBundle(object):
             the filename ending.
         :param show_nary: shows all elements in n-ary relations.
         :type show_nary: bool
-        :param use_labels: uses the prov:label property of an element as its
+        :param use_labels: uses the voprov:label property of an element as its
         name (instead of its identifier).
         :type use_labels: bool
         :param show_element_attributes: shows attributes of elements.
@@ -1472,7 +1474,7 @@ class ProvBundle(object):
         """
         # Lazy imports to have soft dependencies on pydot and matplotlib
         # (imported even later).
-        from prov import dot
+        from voprov import dot
 
         if filename:
             format = os.path.splitext(filename)[-1].lower().strip(
@@ -1756,7 +1758,7 @@ def sorted_attributes(element, attributes):
     """
     Helper function sorting attributes into the order required by PROV-XML.
 
-    :param element: The prov element used to derive the type and the
+    :param element: The voprov element used to derive the type and the
         attribute order for the type.
     :param attributes: The attributes to sort.
     """

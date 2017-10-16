@@ -1,8 +1,8 @@
 from yajl import YajlGen
-from prov.constants import *
-from prov.model import Literal, Identifier, QualifiedName, ProvDocument, first
-from prov.serializers import Serializer
-from prov.serializers.provjsonld import PROV_JSONLD_CONTEXT, encode_multiple_jsonld_values, qn_to_string
+from voprov.constants import *
+from voprov.model import Literal, Identifier, QualifiedName, ProvDocument, first
+from voprov.serializers import Serializer
+from voprov.serializers.provjsonld import PROV_JSONLD_CONTEXT, encode_multiple_jsonld_values, qn_to_string
 
 
 class StreamSerializer(Serializer):
@@ -131,7 +131,7 @@ class ProvJSONLDRecordWriter(PROVRecordWriter):
             for (attr, values) in record._attributes.items():
                 if not values:
                     continue
-                if attr == PROV_TYPE:  # Special case for prov:type
+                if attr == PROV_TYPE:  # Special case for voprov:type
                     prov_type_values = []
                     for value in values:
                         if isinstance(value, Identifier):

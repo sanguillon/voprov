@@ -13,9 +13,9 @@ from collections import defaultdict, OrderedDict
 import datetime
 import io
 
-from prov.serializers import Serializer, Error
-from prov.constants import *
-from prov.model import (Literal, Identifier, QualifiedName,
+from voprov.serializers import Serializer, Error
+from voprov.constants import *
+from voprov.model import (Literal, Identifier, QualifiedName,
                         Namespace, ProvDocument, ProvBundle, first,
                         parse_xsd_datetime, ProvRecord)
 
@@ -24,9 +24,9 @@ from six import text_type
 import base64
 import datetime
 import dateutil.parser
-import prov.model as pm
+import voprov.model as pm
 
-attr2rdf = lambda attr: URIRef(PROV[PROV_ID_ATTRIBUTES_MAP[attr].split('prov:')[1]].uri)
+attr2rdf = lambda attr: URIRef(PROV[PROV_ID_ATTRIBUTES_MAP[attr].split('voprov:')[1]].uri)
 
 from rdflib.term import URIRef, BNode
 from rdflib.term import Literal as RDFLiteral
@@ -49,7 +49,7 @@ class AnonymousIDGenerator():
         return self._cache[obj]
 
 
-# Reverse map for prov.model.XSD_DATATYPE_PARSERS
+# Reverse map for voprov.model.XSD_DATATYPE_PARSERS
 LITERAL_XSDTYPE_MAP = {
     float: XSD['double'],
     int: XSD['int'],
@@ -72,12 +72,12 @@ def valid_qualified_name(bundle, value, xsd_qname=False):
 
 class ProvRDFSerializer(Serializer):
     """
-    PROV-O serializer for :class:`~prov.model.ProvDocument`
+    PROV-O serializer for :class:`~voprov.model.ProvDocument`
     """
 
     def serialize(self, stream=None, rdf_format='trig', **kwargs):
         """
-        Serializes a :class:`~prov.model.ProvDocument` instance to
+        Serializes a :class:`~voprov.model.ProvDocument` instance to
         `Prov-O <https://www.w3.org/TR/prov-o/>`_.
 
         :param stream: Where to save the output.
@@ -200,7 +200,7 @@ class ProvRDFSerializer(Serializer):
         if container is None:
             container = ConjunctiveGraph(identifier=identifier)
             nm = container.namespace_manager
-            nm.bind('prov', PROV.uri)
+            nm.bind('voprov', PROV.uri)
 
         for namespace in bundle.namespaces:
             container.bind(namespace.prefix, namespace.uri)
@@ -577,7 +577,7 @@ def walk(children, level=0, path=None, usename=True):
 def literal_rdf_representation(literal):
     value = text_type(literal.value) if literal.value else literal
     if literal.langtag:
-        #  a language tag can only go with prov:InternationalizedString
+        #  a language tag can only go with voprov:InternationalizedString
         return RDFLiteral(value, lang=str(literal.langtag))
     else:
         datatype = literal.datatype

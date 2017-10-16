@@ -6,7 +6,7 @@ __email__ = 'trungdong@donggiang.com'
 
 import networkx as nx
 
-from prov.model import *
+from voprov.model import *
 
 INFERRED_ELEMENT_CLASS = {
     PROV_ATTR_ENTITY: ProvEntity,
@@ -28,14 +28,14 @@ INFERRED_ELEMENT_CLASS = {
 
 
 def prov_to_graph(prov_document):
-    """ Convert a :class:`~prov.model.ProvDocument` to a `MultiDiGraph
+    """ Convert a :class:`~voprov.model.ProvDocument` to a `MultiDiGraph
     <http://networkx.github.io/documentation/latest/reference/classes.multidigraph.html>`_
     instance of the `NetworkX <https://networkx.github.io/>`_ library.
 
-    :param prov_document: The :class:`~prov.model.ProvDocument` instance to convert.
+    :param voprov_document: The :class:`~voprov.model.ProvDocument` instance to convert.
     """
     g = nx.MultiDiGraph()
-    unified = prov_document.unified()
+    unified = voprov_document.unified()
     node_map = dict()
     for element in unified.get_records(ProvElement):
         g.add_node(element)
@@ -63,20 +63,20 @@ def prov_to_graph(prov_document):
 
 def graph_to_prov(g):
     """ Convert a `MultiDiGraph <http://networkx.github.io/documentation/latest/reference/classes.multidigraph.html>`_
-        back to a :class:`~prov.model.ProvDocument`.
+        back to a :class:`~voprov.model.ProvDocument`.
 
         :param g: The graph instance to convert.
     """
-    prov_doc = ProvDocument()
+    voprov_doc = ProvDocument()
     for n in g.nodes_iter():
         if isinstance(n, ProvRecord) and n.bundle is not None:
-            prov_doc.add_record(n)
+            voprov_doc.add_record(n)
     for _, _, edge_data in g.edges_iter(data=True):
         try:
             relation = edge_data['relation']
             if isinstance(relation, ProvRecord):
-                prov_doc.add_record(relation)
+                voprov_doc.add_record(relation)
         except KeyError:
             pass
 
-    return prov_doc
+    return voprov_doc

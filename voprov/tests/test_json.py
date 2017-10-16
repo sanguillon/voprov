@@ -2,9 +2,9 @@ from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 
 import unittest
-from prov.model import ProvDocument
-from prov.tests.utility import RoundTripTestCase
-from prov.tests.test_model import AllTestsBase
+from voprov.model import ProvDocument
+from voprov.tests.utility import RoundTripTestCase
+from voprov.tests.test_model import AllTestsBase
 
 import logging
 logger = logging.getLogger(__name__)
@@ -19,7 +19,7 @@ class TestJSONSerializer(unittest.TestCase):
     },
     "entity": {
         "ex:unicode_char": {
-            "prov:label": "%s"
+            "voprov:label": "%s"
         }
     }
 }''' % unicode_char
@@ -28,7 +28,7 @@ class TestJSONSerializer(unittest.TestCase):
             content=json_content, format='json'
         )
         e1 = prov_doc.get_record('ex:unicode_char')[0]
-        self.assertIn(unicode_char, e1.get_attribute('prov:label'))
+        self.assertIn(unicode_char, e1.get_attribute('voprov:label'))
 
 
 class RoundTripJSONTests(RoundTripTestCase, AllTestsBase):

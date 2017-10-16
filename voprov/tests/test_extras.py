@@ -4,10 +4,10 @@ from __future__ import (absolute_import, division, print_function,
 import io
 import unittest
 
-from prov.model import *
-from prov.dot import prov_to_dot
-from prov.serializers import Registry
-from prov.tests.examples import primer_example, primer_example_alternate
+from voprov.model import *
+from voprov.dot import prov_to_dot
+from voprov.serializers import Registry
+from voprov.tests.examples import primer_example, primer_example_alternate
 
 
 EX_NS = Namespace('ex', 'http://example.org/')
@@ -17,47 +17,47 @@ EX_OTHER_NS = Namespace('other', 'http://exceptions.example.org/')
 
 def add_label(record):
     record.add_attributes(
-        [('prov:label', Literal("hello"))]
+        [('voprov:label', Literal("hello"))]
     )
 
 
 def add_labels(record):
     record.add_attributes([
-        ('prov:label', Literal("hello")),
-        ('prov:label', Literal("bye", langtag="en")),
-        ('prov:label', Literal("bonjour", langtag="fr"))
+        ('voprov:label', Literal("hello")),
+        ('voprov:label', Literal("bye", langtag="en")),
+        ('voprov:label', Literal("bonjour", langtag="fr"))
     ])
 
 
 def add_types(record):
     record.add_attributes([
-        ('prov:type', 'a'),
-        ('prov:type', 1),
-        ('prov:type', 1.0),
-        ('prov:type', True),
-        ('prov:type', EX_NS['abc']),
-        ('prov:type', datetime.datetime.now()),
-        ('prov:type', Literal('http://boiled-egg.example.com',
+        ('voprov:type', 'a'),
+        ('voprov:type', 1),
+        ('voprov:type', 1.0),
+        ('voprov:type', True),
+        ('voprov:type', EX_NS['abc']),
+        ('voprov:type', datetime.datetime.now()),
+        ('voprov:type', Literal('http://boiled-egg.example.com',
                               datatype=XSD_ANYURI)),
     ])
 
 
 def add_locations(record):
     record.add_attributes([
-        ('prov:Location', "Southampton"),
-        ('prov:Location', 1),
-        ('prov:Location', 1.0),
-        ('prov:Location', True),
-        ('prov:Location', EX_NS['london']),
-        ('prov:Location', datetime.datetime.now()),
-        ('prov:Location', EX_NS.uri + "london"),
-        ('prov:Location', Literal(2002, datatype=XSD['gYear'])),
+        ('voprov:Location', "Southampton"),
+        ('voprov:Location', 1),
+        ('voprov:Location', 1.0),
+        ('voprov:Location', True),
+        ('voprov:Location', EX_NS['london']),
+        ('voprov:Location', datetime.datetime.now()),
+        ('voprov:Location', EX_NS.uri + "london"),
+        ('voprov:Location', Literal(2002, datatype=XSD['gYear'])),
     ])
 
 
 def add_value(record):
     record.add_attributes([
-        ('prov:value', EX_NS['avalue'])
+        ('voprov:value', EX_NS['avalue'])
     ])
 
 

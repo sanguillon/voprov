@@ -1,6 +1,6 @@
-"""Graphical visualisation support for prov.model.
+"""Graphical visualisation support for voprov.model.
 
-This module produces graphical visualisation for provenanve graphs.
+This module produces graphical visualisation for provenance graphs.
 Requires pydotplus module and Graphviz.
 
 References:
@@ -25,7 +25,7 @@ from datetime import datetime
 import pydotplus as pydot
 import six
 
-from prov.model import (
+from voprov.model import (
     PROV_ACTIVITY, PROV_AGENT, PROV_ALTERNATE, PROV_ASSOCIATION,
     PROV_ATTRIBUTION, PROV_BUNDLE, PROV_COMMUNICATION, PROV_DERIVATION,
     PROV_DELEGATION, PROV_ENTITY, PROV_GENERATION, PROV_INFLUENCE,
@@ -152,7 +152,7 @@ def prov_to_dot(bundle, show_nary=True, use_labels=False,
     :type name: :class:`ProvBundle`
     :param show_nary: shows all elements in n-ary relations.
     :type show_nary: bool
-    :param use_labels: uses the prov:label property of an element as its name (instead of its identifier).
+    :param use_labels: uses the voprov:label property of an element as its name (instead of its identifier).
     :type use_labels: bool
     :param direction: specifies the direction of the graph. Valid values are "BT" (default), "TB", "LR", "RL".
     :param show_element_attributes: shows attributes of elements.

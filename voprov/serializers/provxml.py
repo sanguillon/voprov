@@ -13,10 +13,10 @@ import six
 
 logger = logging.getLogger(__name__)
 
-import prov
-import prov.identifier
-from prov.model import DEFAULT_NAMESPACES, sorted_attributes
-from prov.constants import *  # NOQA
+import voprov
+import voprov.identifier
+from voprov.model import DEFAULT_NAMESPACES, sorted_attributes
+from voprov.constants import *  # NOQA
 
 
 # Create a dictionary containing all top-level PROV XML elements for an easy
@@ -30,16 +30,16 @@ FULL_PROV_RECORD_IDS_MAP = dict((FULL_NAMES_MAP[rec_type_id], rec_type_id) for
 XML_XSD_URI = 'http://www.w3.org/2001/XMLSchema'
 
 
-class ProvXMLException(prov.Error):
+class ProvXMLException(voprov.Error):
     pass
 
 
-class ProvXMLSerializer(prov.serializers.Serializer):
-    """PROV-XML serializer for :class:`~prov.model.ProvDocument`
+class ProvXMLSerializer(voprov.serializers.Serializer):
+    """PROV-XML serializer for :class:`~voprov.model.ProvDocument`
     """
     def serialize(self, stream, force_types=False, **kwargs):
         """
-        Serializes a :class:`~prov.model.ProvDocument` instance to `PROV-XML
+        Serializes a :class:`~voprov.model.ProvDocument` instance to `PROV-XML
         <http://www.w3.org/TR/prov-xml/>`_.
 
         :param stream: Where to save the output.
@@ -47,7 +47,7 @@ class ProvXMLSerializer(prov.serializers.Serializer):
         :param force_types: Will force xsd:types to be written for most
             attributes mainly PROV-"attributes", e.g. tags not in the
             PROV namespace. Off by default meaning xsd:type attributes will
-            only be set for prov:type, prov:location, and prov:value as is
+            only be set for voprov:type, voprov:location, and voprov:value as is
             done in the official PROV-XML specification. Furthermore the
             types will always be set if the Python type requires it. False
             is a good default and it should rarely require changing.
@@ -78,7 +78,7 @@ class ProvXMLSerializer(prov.serializers.Serializer):
         :param force_types: Will force xsd:types to be written for most
             attributes mainly PROV-"attributes", e.g. tags not in the
             PROV namespace. Off by default meaning xsd:type attributes will
-            only be set for prov:type, prov:location, and prov:value as is
+            only be set for voprov:type, voprov:location, and voprov:value as is
             done in the official PROV-XML specification. Furthermore the
             types will always be set if the Python type requires it. False
             is a good default and it should rarely require changing.
@@ -132,7 +132,7 @@ class ProvXMLSerializer(prov.serializers.Serializer):
             for attr, value in sorted_attributes(rec_type, attributes):
                 subelem = etree.SubElement(
                     elem, _ns(attr.namespace.uri, attr.localpart))
-                if isinstance(value, prov.model.Literal):
+                if isinstance(value, voprov.model.Literal):
                     if value.datatype not in \
                             [None, PROV["InternationalizedString"]]:
                         subelem.attrib[_ns_xsi("type")] = "%s:%s" % (
@@ -141,7 +141,7 @@ class ProvXMLSerializer(prov.serializers.Serializer):
                     if value.langtag is not None:
                         subelem.attrib[_ns_xml("lang")] = value.langtag
                     v = value.value
-                elif isinstance(value, prov.model.QualifiedName):
+                elif isinstance(value, voprov.model.QualifiedName):
                     if attr not in PROV_ATTRIBUTE_QNAMES:
                         subelem.attrib[_ns_xsi("type")] = "xsd:QName"
                     v = six.text_type(value)
@@ -157,14 +157,14 @@ class ProvXMLSerializer(prov.serializers.Serializer):
                 #
                 # If it is a type element and does not yet have an
                 # associated xsi type, try to infer it from the value.
-                # The not startswith("prov:") check is a little bit hacky to
-                # avoid type interference when the type is a standard prov
+                # The not startswith("voprov:") check is a little bit hacky to
+                # avoid type interference when the type is a standard voprov
                 # type.
                 #
                 # To enable a mapping of Python types to XML and back,
                 # the XSD type must be written for these types.
                 ALWAYS_CHECK = [bool, datetime.datetime, float,
-                                prov.identifier.Identifier]
+                                voprov.identifier.Identifier]
                 # Add long and int on Python 2, only int on Python 3.
                 ALWAYS_CHECK.extend(six.integer_types)
                 ALWAYS_CHECK = tuple(ALWAYS_CHECK)
@@ -172,7 +172,7 @@ class ProvXMLSerializer(prov.serializers.Serializer):
                         type(value) in ALWAYS_CHECK or
                         attr in [PROV_TYPE, PROV_LOCATION, PROV_VALUE]) and \
                         _ns_xsi("type") not in subelem.attrib and \
-                        not six.text_type(value).startswith("prov:") and \
+                        not six.text_type(value).startswith("voprov:") and \
                         not (attr in PROV_ATTRIBUTE_QNAMES and v) and \
                         attr not in [PROV_ATTR_TIME, PROV_LABEL]:
                     xsd_type = None
@@ -191,10 +191,10 @@ class ProvXMLSerializer(prov.serializers.Serializer):
                         # attributes in the PROV namespaces as the type is
                         # already declared in the XSD and PROV XML also does
                         # not specify it in the docs.
-                        if attr.namespace.prefix != "prov" \
+                        if attr.namespace.prefix != "voprov" \
                                 or "time" not in attr.localpart.lower():
                             xsd_type = XSD_DATETIME
-                    elif isinstance(value, prov.identifier.Identifier):
+                    elif isinstance(value, voprov.identifier.Identifier):
                         xsd_type = XSD_ANYURI
 
                     if xsd_type is not None:
@@ -210,7 +210,7 @@ class ProvXMLSerializer(prov.serializers.Serializer):
     def deserialize(self, stream, **kwargs):
         """
         Deserialize from `PROV-XML <http://www.w3.org/TR/prov-xml/>`_
-        representation to a :class:`~prov.model.ProvDocument` instance.
+        representation to a :class:`~voprov.model.ProvDocument` instance.
 
         :param stream: Input data.
         """
@@ -227,7 +227,7 @@ class ProvXMLSerializer(prov.serializers.Serializer):
             p = c.getparent()
             p.remove(c)
 
-        document = prov.model.ProvDocument()
+        document = voprov.model.ProvDocument()
         self.deserialize_subtree(xml_doc, document)
         return document
 
@@ -242,14 +242,14 @@ class ProvXMLSerializer(prov.serializers.Serializer):
 
         for element in xml_doc:
             qname = etree.QName(element)
-            if qname.namespace != DEFAULT_NAMESPACES["prov"].uri:
+            if qname.namespace != DEFAULT_NAMESPACES["voprov"].uri:
                 raise ProvXMLException("Non PROV element discovered in "
                                        "document or bundle.")
-            # Ignore the <prov:other> element storing non-PROV information.
+            # Ignore the <voprov:other> element storing non-PROV information.
             if qname.localname == "other":
                 warnings.warn(
                     "Document contains non-PROV information in "
-                    "<prov:other>. It will be ignored in this package.",
+                    "<voprov:other>. It will be ignored in this package.",
                     UserWarning)
                 continue
 
@@ -300,7 +300,7 @@ class ProvXMLSerializer(prov.serializers.Serializer):
         for key, value in list(attributes):
             if key != PROV_TYPE:
                 continue
-            if isinstance(value, prov.model.Literal):
+            if isinstance(value, voprov.model.Literal):
                 value = value.value
             if value in PROV_BASE_CLS and PROV_BASE_CLS[value] != value:
                 attributes.remove((key, value))
@@ -328,15 +328,15 @@ def _extract_attributes(element):
                 if datatype == XSD_QNAME:
                     _v = xml_qname_to_QualifiedName(subel, subel.text)
                 else:
-                    _v = prov.model.Literal(subel.text, datatype)
+                    _v = voprov.model.Literal(subel.text, datatype)
             elif key == _ns_prov("ref"):
                 _v = xml_qname_to_QualifiedName(subel, value)
             elif key == _ns_xml("lang"):
-                _v = prov.model.Literal(subel.text, langtag=value)
+                _v = voprov.model.Literal(subel.text, langtag=value)
             else:
                 warnings.warn(
                     "The element '%s' contains an attribute %s='%s' "
-                    "which is not representable in the prov module's "
+                    "which is not representable in the voprov module's "
                     "internal data model and will thus be ignored." %
                     (_t, six.text_type(key), six.text_type(value)),
                     UserWarning)
@@ -377,7 +377,7 @@ def _ns(ns, tag):
 
 
 def _ns_prov(tag):
-    return _ns(DEFAULT_NAMESPACES['prov'].uri, tag)
+    return _ns(DEFAULT_NAMESPACES['voprov'].uri, tag)
 
 
 def _ns_xsi(tag):

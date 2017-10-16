@@ -10,12 +10,12 @@ import unittest
 import logging
 import os
 
-from prov.model import ProvDocument, ProvBundle, ProvException, first, Literal
-from prov.tests import examples
-from prov.tests.attributes import TestAttributesBase
-from prov.tests.qnames import TestQualifiedNamesBase
-from prov.tests.statements import TestStatementsBase
-from prov.tests.utility import RoundTripTestCase
+from voprov.model import ProvDocument, ProvBundle, ProvException, first, Literal
+from voprov.tests import examples
+from voprov.tests.attributes import TestAttributesBase
+from voprov.tests.qnames import TestQualifiedNamesBase
+from voprov.tests.statements import TestStatementsBase
+from voprov.tests.utility import RoundTripTestCase
 
 logger = logging.getLogger(__name__)
 
@@ -26,7 +26,7 @@ EX2_URI = 'http://www.example2.org/'
 
 class TestExamplesBase(object):
     """This is the base class for testing support for all the examples provided
-    in prov.tests.examples.
+    in voprov.tests.examples.
     It is not runnable and needs to be included in a subclass of
     RoundTripTestCase.
     """
@@ -235,7 +235,7 @@ class AllTestsBase(TestExamplesBase, TestStatementsBase,
 
 class RoundTripModelTest(RoundTripTestCase, AllTestsBase):
     def assertRoundTripEquivalence(self, prov_doc, msg=None):
-        """Exercises prov.model without the actual serialization and PROV-N
+        """Exercises voprov.model without the actual serialization and PROV-N
         generation.
         """
         provn_content = prov_doc.get_provn()

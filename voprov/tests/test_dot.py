@@ -12,9 +12,9 @@ import unittest
 from pkgutil import find_loader
 if find_loader("pydotplus") is not None:
 
-    from prov.dot import prov_to_dot
-    from prov.tests.test_model import AllTestsBase
-    from prov.tests.utility import DocumentBaseTestCase
+    from voprov.dot import prov_to_dot
+    from voprov.tests.test_model import AllTestsBase
+    from voprov.tests.utility import DocumentBaseTestCase
 
 
     class SVGDotOutputTest(DocumentBaseTestCase, AllTestsBase):

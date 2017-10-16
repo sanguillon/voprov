@@ -1,18 +1,17 @@
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 
-__author__ = 'Trung Dong Huynh'
-__email__ = 'trungdong@donggiang.com'
+__author__ = 'Trung Dong Huynh, Michele Sanguillon'
+__email__ = 'trungdong@donggiang.com, michele.sanguillon@umontpellier.fr'
 
 import six
 
 #  # PROV record constants - PROV-DM
-
 # Built-in namespaces
-from prov.identifier import Namespace
+from voprov.identifier import Namespace
 
 XSD = Namespace('xsd', 'http://www.w3.org/2001/XMLSchema#')
-PROV = Namespace('prov', 'http://www.w3.org/ns/prov#')
+PROV = Namespace('voprov', 'http://ivoa.net/ns/voprov#')
 XSI = Namespace('xsi', 'http://www.w3.org/2001/XMLSchema-instance')
 
 #  C1. Entities/Activities

@@ -1,7 +1,7 @@
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 
-from prov.model import *
+from voprov.model import *
 
 EX_NS = Namespace('ex', 'http://example.org/')
 EX2_NS = Namespace('ex2', 'http://example2.org/')
@@ -18,43 +18,43 @@ class TestStatementsBase(object):
 
     def add_label(self, record):
         record.add_attributes(
-            [('prov:label', Literal("hello"))]
+            [('voprov:label', Literal("hello"))]
         )
 
     def add_labels(self, record):
         record.add_attributes([
-            ('prov:label', Literal("hello")),
-            ('prov:label', Literal("bye", langtag="en")),
-            ('prov:label', Literal("bonjour", langtag="fr"))
+            ('voprov:label', Literal("hello")),
+            ('voprov:label', Literal("bye", langtag="en")),
+            ('voprov:label', Literal("bonjour", langtag="fr"))
         ])
 
     def add_types(self, record):
         record.add_attributes([
-            ('prov:type', 'a'),
-            ('prov:type', 1),
-            ('prov:type', 1.0),
-            ('prov:type', True),
-            ('prov:type', EX_NS['abc']),
-            ('prov:type', datetime.datetime.now()),
-            ('prov:type', Literal('http://boiled-egg.example.com',
+            ('voprov:type', 'a'),
+            ('voprov:type', 1),
+            ('voprov:type', 1.0),
+            ('voprov:type', True),
+            ('voprov:type', EX_NS['abc']),
+            ('voprov:type', datetime.datetime.now()),
+            ('voprov:type', Literal('http://boiled-egg.example.com',
                                   datatype=XSD_ANYURI)),
         ])
 
     def add_locations(self, record):
         record.add_attributes([
-            ('prov:Location', "Southampton"),
-            ('prov:Location', 1),
-            ('prov:Location', 1.0),
-            ('prov:Location', True),
-            ('prov:Location', EX_NS['london']),
-            ('prov:Location', datetime.datetime.now()),
-            ('prov:Location', EX_NS.uri + "london"),
-            ('prov:Location', Literal(2002, datatype=XSD['gYear'])),
+            ('voprov:Location', "Southampton"),
+            ('voprov:Location', 1),
+            ('voprov:Location', 1.0),
+            ('voprov:Location', True),
+            ('voprov:Location', EX_NS['london']),
+            ('voprov:Location', datetime.datetime.now()),
+            ('voprov:Location', EX_NS.uri + "london"),
+            ('voprov:Location', Literal(2002, datatype=XSD['gYear'])),
         ])
 
     def add_value(self, record):
         record.add_attributes([
-            ('prov:value', EX_NS['avalue'])
+            ('voprov:value', EX_NS['avalue'])
         ])
 
     def add_further_attributes(self, record):
@@ -97,7 +97,7 @@ class TestStatementsBase(object):
         a = document.entity(EX_NS['e0'])
         a.add_attributes([
             (EX_NS['tag2'], Literal("guten tag", langtag="de")),
-            ('prov:Location', "un llieu"),
+            ('voprov:Location', "un llieu"),
             (PROV['Location'], 1),
             (PROV['Location'], 2.0),
             (PROV['Location'], EX_NS.uri + "london"),

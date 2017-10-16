@@ -2,8 +2,8 @@ from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 
 import unittest
-from prov.tests.examples import tests
-from prov.graph import prov_to_graph, graph_to_prov
+from voprov.tests.examples import tests
+from voprov.graph import prov_to_graph, graph_to_prov
 
 
 class ProvGraphTestCase(unittest.TestCase):

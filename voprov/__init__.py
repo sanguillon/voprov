@@ -27,9 +27,9 @@ def read(source, format=None):
     format parameter to get the actual traceback.
     """
     # Lazy imports to not globber the namespace.
-    from prov.model import ProvDocument
+    from voprov.model import ProvDocument
 
-    from prov.serializers import Registry
+    from voprov.serializers import Registry
     Registry.load_serializers()
     serializers = Registry.serializers.keys()
 

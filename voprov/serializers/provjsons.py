@@ -12,9 +12,9 @@ import datetime
 import io
 import json
 
-from prov.serializers import Serializer, Error
-from prov.constants import *
-from prov.model import (Literal, Identifier, QualifiedName,
+from voprov.serializers import Serializer, Error
+from voprov.constants import *
+from voprov.model import (Literal, Identifier, QualifiedName,
                         Namespace, ProvDocument, ProvBundle, first,
                         parse_xsd_datetime)
 
@@ -37,7 +37,7 @@ class AnonymousIDGenerator:
         return self._cache[obj]
 
 
-# Reverse map for prov.model.XSD_DATATYPE_PARSERS
+# Reverse map for voprov.model.XSD_DATATYPE_PARSERS
 LITERAL_XSDTYPE_MAP = {
     float: 'xsd:double',
     int: 'xsd:int'
@@ -64,7 +64,7 @@ class ProvJSONSSerializer(Serializer):
     """
     def serialize(self, stream, **kwargs):
         """
-        Serializes a :class:`~prov.model.ProvDocument` instance to
+        Serializes a :class:`~voprov.model.ProvDocument` instance to
         `PROV-JSON <https://provenance.ecs.soton.ac.uk/prov-json/>`_.
 
         :param stream: Where to save the output.
@@ -104,7 +104,7 @@ class ProvJSONSSerializer(Serializer):
         """
         Deserialize from the `PROV JSON
         <https://provenance.ecs.soton.ac.uk/prov-json/>`_ representation to a
-        :class:`~prov.model.ProvDocument` instance.
+        :class:`~voprov.model.ProvDocument` instance.
 
         :param stream: Input data.
         """
@@ -293,7 +293,7 @@ def decode_json_record(json_record, document):
                         # Create the first membership relation as normal for the first entity
                         value = values[0]
                     else:
-                        error_msg = 'The prov package does not support PROV attributes having multiple values.'
+                        error_msg = 'The voprov package does not support PROV attributes having multiple values.'
                         logger.error(error_msg)
                         raise ProvJSONSException(error_msg)
                 else:

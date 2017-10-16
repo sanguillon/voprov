@@ -8,7 +8,7 @@ __all__ = [
     'get'
 ]
 
-from prov import Error
+from voprov import Error
 
 
 class Serializer(object):
@@ -35,15 +35,17 @@ class Registry:
 
     @staticmethod
     def load_serializers():
-        from prov.serializers.provjson import ProvJSONSerializer
-        from prov.serializers.provn import ProvNSerializer
-        from prov.serializers.provxml import ProvXMLSerializer
-        from prov.serializers.provrdf import ProvRDFSerializer
+        from voprov.serializers.provjson import ProvJSONSerializer
+        from voprov.serializers.provn import ProvNSerializer
+        from voprov.serializers.provxml import ProvXMLSerializer
+        from voprov.serializers.provrdf import ProvRDFSerializer
+        from voprov.serializers.provvotable import ProvVOTableSerializer
 
         Registry.serializers = {
             'json': ProvJSONSerializer,
             'rdf': ProvRDFSerializer,
             'provn': ProvNSerializer,
+            'votable': ProvVOTableSerializer,
             'xml': ProvXMLSerializer
         }
 

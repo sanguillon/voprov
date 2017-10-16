@@ -5,7 +5,7 @@ import io
 import logging
 import unittest
 
-from prov.model import ProvDocument
+from voprov.model import ProvDocument
 
 
 logger = logging.getLogger(__name__)

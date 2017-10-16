@@ -2,7 +2,7 @@
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 
-from prov.model import ProvDocument, Namespace, Literal, PROV, Identifier
+from voprov.model import ProvDocument, Namespace, Literal, PROV, Identifier
 import datetime
 
 
@@ -53,9 +53,9 @@ def primer_example():
     g.activity('ex:illustrate')
 
     #    used(ex:compose, ex:dataSet1, -,   [ prov:role = "ex:dataToCompose"])
-    g.used('ex:compose', 'ex:dataSet1', other_attributes={'prov:role': "ex:dataToCompose"})
+    g.used('ex:compose', 'ex:dataSet1', other_attributes={'voprov:role': "ex:dataToCompose"})
     #    used(ex:compose, ex:regionList, -, [ prov:role = "ex:regionsToAggregateBy"])
-    g.used('ex:compose', 'ex:regionList', other_attributes={'prov:role': "ex:regionsToAggregateBy"})
+    g.used('ex:compose', 'ex:regionList', other_attributes={'voprov:role': "ex:regionsToAggregateBy"})
     #    wasGeneratedBy(ex:composition, ex:compose, -)
     g.wasGeneratedBy('ex:composition', 'ex:compose')
 
@@ -72,7 +72,7 @@ def primer_example():
     #    agent(ex:derek, [ prov:type="prov:Person", foaf:givenName = "Derek",
     #           foaf:mbox= "<mailto:derek@example.org>"])
     g.agent('ex:derek', {
-        'prov:type': PROV["Person"], 'foaf:givenName': "Derek", 'foaf:mbox': "<mailto:derek@example.org>"
+        'voprov:type': PROV["Person"], 'foaf:givenName': "Derek", 'foaf:mbox': "<mailto:derek@example.org>"
     })
     #    wasAssociatedWith(ex:compose, ex:derek, -)
     g.wasAssociatedWith('ex:compose', 'ex:derek')
@@ -81,7 +81,7 @@ def primer_example():
     #
     #    agent(ex:chartgen, [ prov:type="prov:Organization",
     #           foaf:name = "Chart Generators Inc"])
-    g.agent('ex:chartgen', {'prov:type': PROV["Organization"], 'foaf:name': "Chart Generators Inc"})
+    g.agent('ex:chartgen', {'voprov:type': PROV["Organization"], 'foaf:name': "Chart Generators Inc"})
     #    actedOnBehalfOf(ex:derek, ex:chartgen, ex:compose)
     g.actedOnBehalfOf('ex:derek', 'ex:chartgen', 'ex:compose')
     #    wasAttributedTo(ex:chart1, ex:derek)
@@ -92,12 +92,12 @@ def primer_example():
     #    used(ex:correct, ex:dataSet1, -)
     g.used('ex:correct', 'ex:dataSet1')
     #    wasDerivedFrom(ex:dataSet2, ex:dataSet1, [prov:type='prov:Revision'])
-    g.wasDerivedFrom('ex:dataSet2', 'ex:dataSet1', other_attributes={'prov:type': PROV['Revision']})
+    g.wasDerivedFrom('ex:dataSet2', 'ex:dataSet1', other_attributes={'voprov:type': PROV['Revision']})
     #    wasDerivedFrom(ex:chart2, ex:dataSet2)
     g.wasDerivedFrom('ex:chart2', 'ex:dataSet2')
 
     #    wasDerivedFrom(ex:blogEntry, ex:article, [prov:type='prov:Quotation'])
-    g.wasDerivedFrom('ex:blogEntry', 'ex:article', other_attributes={'prov:type': PROV['Quotation']})
+    g.wasDerivedFrom('ex:blogEntry', 'ex:article', other_attributes={'voprov:type': PROV['Quotation']})
     #    specializationOf(ex:articleV1, ex:article)
     g.specializationOf('ex:articleV1', 'ex:article')
     #    wasDerivedFrom(ex:articleV1, ex:dataSet1)
@@ -139,8 +139,8 @@ def primer_example_alternate():
     correct = g.activity('ex:correct', '2012-03-31T09:21:00', '2012-04-01T15:21:00')
     illustrate = g.activity('ex:illustrate')
 
-    compose.used(dataSet1, attributes={'prov:role': "ex:dataToCompose"})
-    compose.used(regionList, attributes={'prov:role': "ex:regionsToAggregateBy"})
+    compose.used(dataSet1, attributes={'voprov:role': "ex:dataToCompose"})
+    compose.used(regionList, attributes={'voprov:role': "ex:regionsToAggregateBy"})
     composition.wasGeneratedBy(compose)
 
     illustrate.used(composition)
@@ -149,23 +149,23 @@ def primer_example_alternate():
     chart1.wasGeneratedBy(compile, '2012-03-02T10:30:00')
 
     derek = g.agent('ex:derek', {
-        'prov:type': PROV['Person'], 'foaf:givenName': "Derek", 'foaf:mbox': "<mailto:derek@example.org>"
+        'voprov:type': PROV['Person'], 'foaf:givenName': "Derek", 'foaf:mbox': "<mailto:derek@example.org>"
     })
     compose.wasAssociatedWith(derek)
     illustrate.wasAssociatedWith(derek)
 
     chartgen = g.agent('ex:chartgen', {
-        'prov:type': PROV["Organization"], 'foaf:name': "Chart Generators Inc"
+        'voprov:type': PROV["Organization"], 'foaf:name': "Chart Generators Inc"
     })
     derek.actedOnBehalfOf(chartgen, compose)
     chart1.wasAttributedTo(derek)
 
     dataSet2.wasGeneratedBy(correct)
     correct.used(dataSet1)
-    dataSet2.wasDerivedFrom(dataSet1, attributes={'prov:type': PROV['Revision']})
+    dataSet2.wasDerivedFrom(dataSet1, attributes={'voprov:type': PROV['Revision']})
     chart2.wasDerivedFrom(dataSet2)
 
-    blogEntry.wasDerivedFrom(article, attributes={'prov:type': PROV['Quotation']})
+    blogEntry.wasDerivedFrom(article, attributes={'voprov:type': PROV['Quotation']})
     articleV1.specializationOf(article)
     articleV1.wasDerivedFrom(dataSet1)
 
@@ -234,18 +234,18 @@ def w3c_publication_1():
     g.add_namespace('trans', 'http://www.w3.org/2005/08/01-transitions.html#')
     g.add_namespace('rec54', 'http://www.w3.org/2001/02pd/rec54#')
 
-    g.entity('tr:WD-prov-dm-20111018', {'prov:type': 'rec54:WD'})
-    g.entity('tr:WD-prov-dm-20111215', {'prov:type': 'rec54:WD'})
-    g.entity('process:rec-advance', {'prov:type': 'prov:Plan'})
+    g.entity('tr:WD-prov-dm-20111018', {'voprov:type': 'rec54:WD'})
+    g.entity('tr:WD-prov-dm-20111215', {'voprov:type': 'rec54:WD'})
+    g.entity('process:rec-advance', {'voprov:type': 'voprov:Plan'})
 
-    g.entity('chairs:2011OctDec/0004', {'prov:type': 'trans:transreq'})
-    g.entity('email:2011Oct/0141', {'prov:type': 'trans:pubreq'})
-    g.entity('email:2011Dec/0111', {'prov:type': 'trans:pubreq'})
+    g.entity('chairs:2011OctDec/0004', {'voprov:type': 'trans:transreq'})
+    g.entity('email:2011Oct/0141', {'voprov:type': 'trans:pubreq'})
+    g.entity('email:2011Dec/0111', {'voprov:type': 'trans:pubreq'})
 
     g.wasDerivedFrom('tr:WD-prov-dm-20111215', 'tr:WD-prov-dm-20111018')
 
-    g.activity('ex:act1', other_attributes={'prov:type': "publish"})
-    g.activity('ex:act2', other_attributes={'prov:type': "publish"})
+    g.activity('ex:act1', other_attributes={'voprov:type': "publish"})
+    g.activity('ex:act2', other_attributes={'voprov:type': "publish"})
 
     g.wasGeneratedBy('tr:WD-prov-dm-20111018', 'ex:act1')
     g.wasGeneratedBy('tr:WD-prov-dm-20111215', 'ex:act2')
@@ -254,7 +254,7 @@ def w3c_publication_1():
     g.used('ex:act1', 'email:2011Oct/0141')
     g.used('ex:act2', 'email:2011Dec/0111')
 
-    g.agent('w3:Consortium', other_attributes={'prov:type': "Organization"})
+    g.agent('w3:Consortium', other_attributes={'voprov:type': "Organization"})
 
     g.wasAssociatedWith('ex:act1', 'w3:Consortium', 'process:rec-advance')
     g.wasAssociatedWith('ex:act2', 'w3:Consortium', 'process:rec-advance')
@@ -304,21 +304,21 @@ def w3c_publication_2():
 
     g = ProvDocument()
 
-    g.entity(hg['Overview.html'], {'prov:type': "file in hg"})
-    g.entity(w3['WD-prov-dm-20111215'], {'prov:type': "html4"})
+    g.entity(hg['Overview.html'], {'voprov:type': "file in hg"})
+    g.entity(w3['WD-prov-dm-20111215'], {'voprov:type': "html4"})
 
-    g.activity(ex['rcp'], None, None, {'prov:type': "copy directory"})
+    g.activity(ex['rcp'], None, None, {'voprov:type': "copy directory"})
 
     g.wasGeneratedBy('w3:WD-prov-dm-20111215', 'ex:rcp', identifier=rec['g'])
 
-    g.entity('ex:req3', {'prov:type': Identifier("http://www.w3.org/2005/08/01-transitions.html#pubreq")})
+    g.entity('ex:req3', {'voprov:type': Identifier("http://www.w3.org/2005/08/01-transitions.html#pubreq")})
 
     g.used('ex:rcp', 'hg:Overview.html', identifier='rec:u')
     g.used('ex:rcp', 'ex:req3')
 
     g.wasDerivedFrom('w3:WD-prov-dm-20111215', 'hg:Overview.html', 'ex:rcp', 'rec:g', 'rec:u')
 
-    g.agent('ex:webmaster', {'prov:type': "Person"})
+    g.agent('ex:webmaster', {'voprov:type': "Person"})
 
     g.wasAssociatedWith('ex:rcp', 'ex:webmaster')
 
@@ -341,7 +341,7 @@ def bundles1():
     g.add_namespace('bob', 'http://example.org/bob/')
 
     #   entity(bob:bundle1, [prov:type='prov:Bundle'])
-    g.entity('bob:bundle1', {'prov:type': PROV['Bundle']})
+    g.entity('bob:bundle1', {'voprov:type': PROV['Bundle']})
     #   wasGeneratedBy(bob:bundle1, -, 2012-05-24T10:30:00)
     g.wasGeneratedBy('bob:bundle1', time='2012-05-24T10:30:00')
     #   agent(ex:Bob)
@@ -350,7 +350,7 @@ def bundles1():
     g.wasAttributedTo('bob:bundle1', 'ex:Bob')
 
     #   entity(alice:bundle2, [ prov:type='prov:Bundle' ])
-    g.entity('alice:bundle2', {'prov:type': PROV['Bundle']})
+    g.entity('alice:bundle2', {'voprov:type': PROV['Bundle']})
     #   wasGeneratedBy(alice:bundle2, -, 2012-05-25T11:15:00)
     g.wasGeneratedBy('alice:bundle2', time='2012-05-25T11:15:00')
     #   agent(ex:Alice)
@@ -361,7 +361,7 @@ def bundles1():
     #   bundle bob:bundle1
     b1 = g.bundle('bob:bundle1')
     #     entity(ex:report1, [ prov:type="report", ex:version=1 ])
-    b1.entity('ex:report1', {'prov:type': "report", 'ex:version': 1})
+    b1.entity('ex:report1', {'voprov:type': "report", 'ex:version': 1})
     #     wasGeneratedBy(ex:report1, -, 2012-05-24T10:00:01)
     b1.wasGeneratedBy('ex:report1', time='2012-05-24T10:00:01')
     #   endBundle
@@ -371,7 +371,7 @@ def bundles1():
     #     entity(ex:report1)
     b2.entity('ex:report1')
     #     entity(ex:report2, [ prov:type="report", ex:version=2 ])
-    b2.entity('ex:report2', {'prov:type': "report", 'ex:version': 2})
+    b2.entity('ex:report2', {'voprov:type': "report", 'ex:version': 2})
     #     wasGeneratedBy(ex:report2, -, 2012-05-25T11:00:01)
     b2.wasGeneratedBy('ex:report2', time='2012-05-25T11:00:01')
     #     wasDerivedFrom(ex:report2, ex:report1)
@@ -400,7 +400,7 @@ def bundles2():
     #   wasGeneratedBy(bob:bundle4, -, 2012-05-24T10:30:00)
     #   agent(ex:Bob)
     #   wasAttributedTo(bob:bundle4, ex:Bob)
-    g.entity('bob:bundle4', {'prov:type': PROV['Bundle']})
+    g.entity('bob:bundle4', {'voprov:type': PROV['Bundle']})
     g.wasGeneratedBy('bob:bundle4', time='2012-05-24T10:30:00')
     g.agent('ex:Bob')
     g.wasAttributedTo('bob:bundle4', 'ex:Bob')
@@ -409,7 +409,7 @@ def bundles2():
     #   wasGeneratedBy(alice:bundle5, -, 2012-05-25T11:15:00)
     #   agent(ex:Alice)
     #   wasAttributedTo(alice:bundle5, ex:Alice)
-    g.entity('alice:bundle5', {'prov:type': PROV['Bundle']})
+    g.entity('alice:bundle5', {'voprov:type': PROV['Bundle']})
     g.wasGeneratedBy('alice:bundle5', time='2012-05-25T11:15:00')
     g.agent('ex:Alice')
     g.wasAttributedTo('alice:bundle5', 'ex:Alice')
@@ -419,7 +419,7 @@ def bundles2():
     #     wasGeneratedBy(ex:report1, -, 2012-05-24T10:00:01)
     #   endBundle
     b4 = g.bundle('bob:bundle4')
-    b4.entity('ex:report1', {'prov:type': "report", 'ex:version': 1})
+    b4.entity('ex:report1', {'voprov:type': "report", 'ex:version': 1})
     b4.wasGeneratedBy('ex:report1', time='2012-05-24T10:00:01')
 
     #   bundle alice:bundle5
@@ -432,7 +432,7 @@ def bundles2():
     b5 = g.bundle('alice:bundle5')
     b5.entity('ex:report1bis')
     b5.mentionOf('ex:report1bis', 'ex:report1', 'bob:bundle4')
-    b5.entity('ex:report2', [('prov:type', "report"), ('ex:version', 2)])
+    b5.entity('ex:report2', [('voprov:type', "report"), ('ex:version', 2)])
     b5.wasGeneratedBy('ex:report2', time='2012-05-25T11:00:01')
     b5.wasDerivedFrom('ex:report2', 'ex:report1bis')
 
@@ -484,7 +484,7 @@ def long_literals():
     g.add_namespace(ex)
 
     g.entity('ex:e1', {
-        'prov:label': 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec pellentesque luctus nulla vel '
+        'voprov:label': 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec pellentesque luctus nulla vel '
                       'ullamcorper. Donec sit amet ligula sit amet lorem pretium rhoncus vel vel lorem. Sed at '
                       'consequat metus, eget eleifend massa. Fusce a facilisis turpis. Lorem volutpat.'
     })

@@ -10,11 +10,11 @@ import os
 import unittest
 import warnings
 
-from prov.identifier import Namespace, QualifiedName
-from prov.constants import PROV
-import prov.model as prov
-from prov.tests.test_model import AllTestsBase
-from prov.tests.utility import RoundTripTestCase
+from voprov.identifier import Namespace, QualifiedName
+from voprov.constants import PROV
+import voprov.model as voprov
+from voprov.tests.test_model import AllTestsBase
+from voprov.tests.utility import RoundTripTestCase
 
 
 EX_NS = ('ex', 'http://example.com/ns/ex#')
@@ -87,12 +87,12 @@ class ProvXMLTestCase(unittest.TestCase):
         Test the serialization of example 6 which is a simple entity
         description.
         """
-        document = prov.ProvDocument()
+        document = voprov.ProvDocument()
         ex_ns = document.add_namespace(*EX_NS)
         document.add_namespace(*EX_TR)
 
         document.entity("tr:WD-prov-dm-20111215", (
-            (prov.PROV_TYPE, ex_ns["Document"]),
+            (voprov.PROV_TYPE, ex_ns["Document"]),
             ("ex:version", "2")
         ))
 
@@ -104,14 +104,14 @@ class ProvXMLTestCase(unittest.TestCase):
         """
         Test the serialization of example 7 which is a basic activity.
         """
-        document = prov.ProvDocument()
+        document = voprov.ProvDocument()
         document.add_namespace(*EX_NS)
 
         document.activity(
             "ex:a1",
             "2011-11-16T16:05:00",
             "2011-11-16T16:06:00", [
-                (prov.PROV_TYPE, prov.Literal("ex:edit", prov.XSD_QNAME)),
+                (voprov.PROV_TYPE, voprov.Literal("ex:edit", voprov.XSD_QNAME)),
                 ("ex:host", "server.example.org")])
 
         with io.BytesIO() as actual:
@@ -122,7 +122,7 @@ class ProvXMLTestCase(unittest.TestCase):
         """
         Test the serialization of example 8 which deals with generation.
         """
-        document = prov.ProvDocument()
+        document = voprov.ProvDocument()
         document.add_namespace(*EX_NS)
 
         e1 = document.entity("ex:e1")
@@ -147,16 +147,16 @@ class ProvXMLTestCase(unittest.TestCase):
         Test the deserialization of example 6 which is a simple entity
         description.
         """
-        actual_doc = prov.ProvDocument.deserialize(
+        actual_doc = voprov.ProvDocument.deserialize(
             source=os.path.join(DATA_PATH, "example_06.xml"),
             format="xml")
 
-        expected_document = prov.ProvDocument()
+        expected_document = voprov.ProvDocument()
         ex_ns = expected_document.add_namespace(*EX_NS)
         expected_document.add_namespace(*EX_TR)
 
         expected_document.entity("tr:WD-prov-dm-20111215", (
-            (prov.PROV_TYPE, ex_ns["Document"]),
+            (voprov.PROV_TYPE, ex_ns["Document"]),
             ("ex:version", "2")
         ))
 
@@ -167,11 +167,11 @@ class ProvXMLTestCase(unittest.TestCase):
         Test the deserialization of example 7 which is a simple activity
         description.
         """
-        actual_doc = prov.ProvDocument.deserialize(
+        actual_doc = voprov.ProvDocument.deserialize(
             source=os.path.join(DATA_PATH, "example_07.xml"),
             format="xml")
 
-        expected_document = prov.ProvDocument()
+        expected_document = voprov.ProvDocument()
         ex_ns = Namespace(*EX_NS)
         expected_document.add_namespace(ex_ns)
 
@@ -179,7 +179,7 @@ class ProvXMLTestCase(unittest.TestCase):
             "ex:a1",
             "2011-11-16T16:05:00",
             "2011-11-16T16:06:00", [
-                (prov.PROV_TYPE, QualifiedName(ex_ns, "edit")),
+                (voprov.PROV_TYPE, QualifiedName(ex_ns, "edit")),
                 ("ex:host", "server.example.org")])
 
         self.assertEqual(actual_doc, expected_document)
@@ -193,98 +193,98 @@ class ProvXMLTestCase(unittest.TestCase):
         """
         # Example 4.
         xml_string = """
-        <prov:document
+        <voprov:document
             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
             xmlns:xsd="http://www.w3.org/2001/XMLSchema"
-            xmlns:prov="http://www.w3.org/ns/prov#"
+            xmlns:voprov="http://ivoa.net/ns/voprov#"
             xmlns:ex="http://example.com/ns/ex#"
             xmlns:tr="http://example.com/ns/tr#">
 
-          <prov:entity prov:id="tr:WD-prov-dm-20111215" xsi:type="prov:Plan">
-            <prov:type xsi:type="xsd:QName">ex:Workflow</prov:type>
-          </prov:entity>
+          <voprov:entity voprov:id="tr:WD-prov-dm-20111215" xsi:type="voprov:Plan">
+            <voprov:type xsi:type="xsd:QName">ex:Workflow</voprov:type>
+          </voprov:entity>
 
-        </prov:document>
+        </voprov:document>
         """
         with io.StringIO() as xml:
             xml.write(xml_string)
             xml.seek(0, 0)
-            actual_document = prov.ProvDocument.deserialize(source=xml,
+            actual_document = voprov.ProvDocument.deserialize(source=xml,
                                                             format="xml")
 
-        expected_document = prov.ProvDocument()
+        expected_document = voprov.ProvDocument()
         ex_ns = Namespace(*EX_NS)
         expected_document.add_namespace(ex_ns)
         expected_document.add_namespace(*EX_TR)
 
         # The xsi:type attribute is mapped to a proper PROV attribute.
         expected_document.entity("tr:WD-prov-dm-20111215", (
-            (prov.PROV_TYPE, QualifiedName(ex_ns, "Workflow")),
-            (prov.PROV_TYPE, PROV["Plan"])))
+            (voprov.PROV_TYPE, QualifiedName(ex_ns, "Workflow")),
+            (voprov.PROV_TYPE, PROV["Plan"])))
 
         self.assertEqual(actual_document, expected_document, "example_04")
 
         # Example 5.
         xml_string = """
-        <prov:document
+        <voprov:document
           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
           xmlns:xsd="http://www.w3.org/2001/XMLSchema"
-          xmlns:prov="http://www.w3.org/ns/prov#"
+          xmlns:voprov="http://ivoa.net/ns/voprov#"
           xmlns:ex="http://example.com/ns/ex#"
           xmlns:tr="http://example.com/ns/tr#">
 
-        <prov:entity prov:id="tr:WD-prov-dm-20111215" xsi:type="prov:Plan">
-          <prov:type xsi:type="xsd:QName">ex:Workflow</prov:type>
-          <prov:type xsi:type="xsd:QName">prov:Plan</prov:type> <!-- inferred -->
-          <prov:type xsi:type="xsd:QName">prov:Entity</prov:type> <!-- inferred -->
-        </prov:entity>
+        <voprov:entity voprov:id="tr:WD-prov-dm-20111215" xsi:type="voprov:Plan">
+          <voprov:type xsi:type="xsd:QName">ex:Workflow</voprov:type>
+          <voprov:type xsi:type="xsd:QName">voprov:Plan</voprov:type> <!-- inferred -->
+          <voprov:type xsi:type="xsd:QName">voprov:Entity</voprov:type> <!-- inferred -->
+        </voprov:entity>
 
-        </prov:document>
+        </voprov:document>
         """
         with io.StringIO() as xml:
             xml.write(xml_string)
             xml.seek(0, 0)
-            actual_document = prov.ProvDocument.deserialize(source=xml,
+            actual_document = voprov.ProvDocument.deserialize(source=xml,
                                                             format="xml")
 
-        expected_document = prov.ProvDocument()
+        expected_document = voprov.ProvDocument()
         expected_document.add_namespace(*EX_NS)
         expected_document.add_namespace(*EX_TR)
 
         # The xsi:type attribute is mapped to a proper PROV attribute.
         expected_document.entity("tr:WD-prov-dm-20111215", (
-            (prov.PROV_TYPE, QualifiedName(ex_ns, "Workflow")),
-            (prov.PROV_TYPE, PROV["Entity"]),
-            (prov.PROV_TYPE, PROV["Plan"])
+            (voprov.PROV_TYPE, QualifiedName(ex_ns, "Workflow")),
+            (voprov.PROV_TYPE, PROV["Entity"]),
+            (voprov.PROV_TYPE, PROV["Plan"])
         ))
 
         self.assertEqual(actual_document, expected_document, "example_05")
 
     def test_other_elements(self):
         """
-        PROV XML uses the <prov:other> element to enable the storage of non
+        PROV XML uses the <voprov:other> element to enable the storage of non
         PROV information in a PROV XML document. It will be ignored by this
         library a warning will be raised informing the user.
         """
         # This is example 42 from the PROV XML documentation.
         xml_string = """
-        <prov:document
+        <voprov:document
             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
             xmlns:xsd="http://www.w3.org/2001/XMLSchema"
-            xmlns:prov="http://www.w3.org/ns/prov#"
+            xmlns:voprov="http://ivoa.net/ns/voprov#"
             xmlns:ex="http://example.com/ns/ex#">
 
-          <!-- prov statements go here -->
+          <!-- voprov statements go here -->
 
-          <prov:other>
+          <voprov:other>
             <ex:foo>
               <ex:content>bar</ex:content>
             </ex:foo>
-          </prov:other>
+          </voprov:other>
 
-          <!-- more prov statements can go here -->
+          <!-- more voprov statements can go here -->
 
-        </prov:document>
+        </voprov:document>
         """
         with warnings.catch_warnings(record=True) as w:
             warnings.simplefilter("always")
@@ -292,11 +292,11 @@ class ProvXMLTestCase(unittest.TestCase):
             with io.StringIO() as xml:
                 xml.write(xml_string)
                 xml.seek(0, 0)
-                doc = prov.ProvDocument.deserialize(source=xml, format="xml")
+                doc = voprov.ProvDocument.deserialize(source=xml, format="xml")
 
         self.assertEqual(len(w), 1)
         self.assertTrue(
-            "Document contains non-PROV information in <prov:other>. It will "
+            "Document contains non-PROV information in <voprov:other>. It will "
             "be ignored in this package." in str(w[0].message))
 
         # This document contains nothing else.
@@ -308,7 +308,7 @@ class ProvXMLTestCase(unittest.TestCase):
         written to a bundle.
         """
         filename = os.path.join(DATA_PATH, "nested_default_namespace.xml")
-        doc = prov.ProvDocument.deserialize(source=filename, format="xml")
+        doc = voprov.ProvDocument.deserialize(source=filename, format="xml")
 
         ns = Namespace("", "http://example.org/0/")
 
@@ -323,7 +323,7 @@ class ProvXMLTestCase(unittest.TestCase):
         """
         filename = os.path.join(DATA_PATH,
                                 "namespace_redefined_but_does_not_change.xml")
-        doc = prov.ProvDocument.deserialize(source=filename, format="xml")
+        doc = voprov.ProvDocument.deserialize(source=filename, format="xml")
         # This has one record part of the original namespace.
         self.assertEqual(len(doc._records), 1)
         ns = Namespace("ex", "http://example.com/ns/ex#")
@@ -331,7 +331,7 @@ class ProvXMLTestCase(unittest.TestCase):
 
         # This also has one record but now in a different namespace.
         filename = os.path.join(DATA_PATH, "namespace_redefined.xml")
-        doc = prov.ProvDocument.deserialize(source=filename, format="xml")
+        doc = voprov.ProvDocument.deserialize(source=filename, format="xml")
         new_ns = doc._records[0].attributes[0][1].namespace
         self.assertNotEqual(new_ns, ns)
         self.assertEqual(new_ns.uri, "http://example.com/ns/new_ex#")
@@ -339,7 +339,7 @@ class ProvXMLTestCase(unittest.TestCase):
 
 class ProvXMLRoundTripFromFileTestCase(unittest.TestCase):
     def _perform_round_trip(self, filename, force_types=False):
-        document = prov.ProvDocument.deserialize(
+        document = voprov.ProvDocument.deserialize(
             source=filename, format="xml")
 
         with io.BytesIO() as new_xml:
@@ -380,8 +380,8 @@ for filename in glob.iglob(os.path.join(
     fct.__name__ = str(test_name)
 
     # Disabled round-trip XML comparisons since deserializing then serializing
-    # PROV-XML does not maintain XML equivalence. (For example, prov:entity
-    # elements with type prov:Plan become prov:plan elements)
+    # PROV-XML does not maintain XML equivalence. (For example, voprov:entity
+    # elements with type voprov:Plan become voprov:plan elements)
     # TODO: Revisit these tests
 
     # setattr(ProvXMLRoundTripFromFileTestCase, test_name, fct)
