@@ -20,7 +20,7 @@ import logging
 import traceback
 import six
 
-from prov.model import ProvDocument
+from voprov.model import ProvDocument
 
 
 logger = logging.getLogger(__name__)

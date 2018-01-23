@@ -20,8 +20,8 @@ import logging
 import traceback
 import six
 
-from prov.model import ProvDocument
-from prov import serializers
+from voprov.model import ProvDocument
+from voprov import serializers
 
 
 logger = logging.getLogger(__name__)
