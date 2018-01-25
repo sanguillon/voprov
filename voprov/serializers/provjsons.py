@@ -320,9 +320,9 @@ def decode_json_record(json_record, document):
         for member in membership_extra_members:
             document.membership(collection, valid_qualified_name(document, member))
     if membership_extra_members:			# 161212 (MS)
-        flow = attributes[PROV_ATTR_FLOW]
+        activityFlow = attributes[PROV_ATTR_ACTIVITY_FLOW]
         for member in membership_extra_members:
-            document.membership(flow, valid_qualified_name(document, member))
+            document.membership(activityFlow, valid_qualified_name(document, member))
 
 
 def encode_json_representation(value):

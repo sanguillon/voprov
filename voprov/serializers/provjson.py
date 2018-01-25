@@ -307,10 +307,10 @@ def decode_json_container(jc, bundle):
                             collection, valid_qualified_name(bundle, member)
                         )
                 if membership_extra_members:				# 161212 (MS)
-                    flow = attributes[PROV_ATTR_FLOW]
+                    activityFlow = attributes[PROV_ATTR_ACTIVITY_FLOW]
                     for member in membership_extra_members:
                         bundle.membership(
-                            flow, valid_qualified_name(bundle, member)
+                            activityFlow, valid_qualified_name(bundle, member)
                         )
 
 

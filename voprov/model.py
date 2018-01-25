@@ -343,12 +343,12 @@ class ProvRecord(object):
             else:
                 is_collection = False
             # Check if one of the attributes specifies that the current type
-            # is a flow. In that case multiple attributes of the same
+            # is a activityFlow. In that case multiple attributes of the same
             # type are allowed.
-            if PROV_ATTR_FLOW in [_i[0] for _i in attributes]:     # 161115 (MS)
-                is_flow = True                                     # 161115 (MS)
-            else:                                                  # 161115 (MS)
-                is_flow = False                                    # 161115 (MS)
+            if PROV_ATTR_ACTIVITY_FLOW in [_i[0] for _i in attributes]:     # 161115 (MS)
+                is_activityFlow = True                                      # 161115 (MS)
+            else:                                                           # 161115 (MS)
+                is_activityFlow = False                                     # 161115 (MS)
 
             for attr_name, original_value in attributes:
                 if original_value is None:
@@ -379,7 +379,7 @@ class ProvRecord(object):
                     )
 
                 #if not is_collection and attr in PROV_ATTRIBUTES and \  # 161115 (MS)
-                if not is_collection and not is_flow and attr in PROV_ATTRIBUTES and \
+                if not is_collection and not is_activityFlow and attr in PROV_ATTRIBUTES and \
                         self._attributes[attr]:
                     existing_value = first(self._attributes[attr])
                     is_not_same_value = True
@@ -725,7 +725,7 @@ class ProvMembership(ProvRelation):
         return PROV_MEMBERSHIP
 
 class ProvStepship(ProvRelation):                                # 161115 (MS)
-    FORMAL_ATTRIBUTES = (PROV_ATTR_FLOW, PROV_ATTR_ACTIVITY)     # 161115 (MS)
+    FORMAL_ATTRIBUTES = (PROV_ATTR_ACTIVITY_FLOW, PROV_ATTR_ACTIVITY)     # 161115 (MS)
 
     def get_type(self):                                          # 161115 (MS)
         return PROV_STEPSHIP                                     # 161115 (MS)
@@ -1438,17 +1438,17 @@ class ProvBundle(object):
             }
         )
 
-    def flow(self, identifier, other_attributes=None):         # 161115 (MS)
+    def activityFlow(self, identifier, other_attributes=None): # 161115 (MS)
         record = self.new_record(                              # 161115 (MS)
             PROV_ACTIVITY, identifier, None, other_attributes  # 161115 (MS)
         )                                                      # 161115 (MS)
-        record.add_asserted_type(PROV['Flow'])                 # 161115 (MS)
+        record.add_asserted_type(PROV['ActivityFlow'])         # 161115 (MS)
         return record                                          # 161115 (MS)
 
-    def stepship(self, flow, activity):                        # 161115 (MS)
+    def stepship(self, activityFlow, activity):                # 161115 (MS)
         return self.new_record(                                # 161115 (MS)
             PROV_STEPSHIP, None, {                             # 161115 (MS)
-                PROV_ATTR_FLOW: flow,                          # 161115 (MS)
+                PROV_ATTR_ACTIVITY_FLOW: activityFlow,         # 161115 (MS)
                 PROV_ATTR_ACTIVITY: activity                   # 161115 (MS)
             }                                                  # 161115 (MS)
         )                                                      # 161115 (MS)
