@@ -2,6 +2,7 @@ from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 
 from prov.constants import *
+from prov.model import Literal
 
 __author__ = 'Jean-François Sornay'
 __email__ = 'jean-francois.sornay@etu.umontpellier.fr'
@@ -50,19 +51,24 @@ PROV_BASE_CLS.update({
 #   voprov description
 #   voprov configuration
 #   voprov relation
+VOPROV_ATTR_DESCRIBED =         VOPROV['described']
+VOPROV_ATTR_DESCRIPTOR =        VOPROV['descriptor']
 
 #   Literal properties
-PROV_ATTR_TIME = PROV['time']
-VOPROV_ATTR_NAME = VOPROV['name']
+VOPROV_ATTR_NAME =              VOPROV['name']
 
 #   adding the voprov identifier to the map for the qualified name of attribute
 PROV_ATTRIBUTE_QNAMES.update({
     # voprov description
+
     # voprov configuration
+
     # voprov relation
+    VOPROV_ATTR_DESCRIBED,
+    VOPROV_ATTR_DESCRIPTOR,
 })
 
 #   adding the voprov identifier for the literals attribute
 PROV_ATTRIBUTE_LITERALS.update({
-
+    Literal(VOPROV_ATTR_NAME)
 })

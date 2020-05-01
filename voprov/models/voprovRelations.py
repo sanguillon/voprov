@@ -11,8 +11,8 @@ class VOProvRelation(ProvRelation):
 
 
 class VOProvIsDescribedBy(VOProvRelation):
-    FORMAL_ATTRIBUTES = None
-    _prov_type = None
+    FORMAL_ATTRIBUTES = (VOPROV_ATTR_DESCRIBED, VOPROV_ATTR_DESCRIPTOR)
+    _prov_type = VOPROV_DESCRIPTION_RELATION
 
 
 class VOProvWasConfiguredBy(VOProvRelation):

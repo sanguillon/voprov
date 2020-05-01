@@ -40,6 +40,8 @@ class VOProvDataSetEntity(VOProvEntity):
 
 class VOProvActivity(ProvActivity):
     """"""
+    def isDescribedBy(self, descriptor, identifier=None):
+        return self._bundle.description(self, descriptor, identifier)
 
 
 class VOProvBundle(ProvBundle):
@@ -70,9 +72,9 @@ class VOProvBundle(ProvBundle):
         :param identifier: Identifier for new communication record.
         """
         return self.new_record(
-            PROV_COMMUNICATION, identifier, {
-                PROV_ATTR_INFORMED: described,
-                PROV_ATTR_INFORMANT: descriptor
+            VOPROV_DESCRIPTION_RELATION, identifier, {
+                VOPROV_ATTR_DESCRIBED: described,
+                VOPROV_ATTR_DESCRIPTOR: descriptor
             },
             None
         )
