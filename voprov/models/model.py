@@ -1,28 +1,23 @@
+# -*- coding: ISO-8859-1 -*-
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 
-from prov.model import (ProvException, ProvDocument, ProvBundle, ProvActivity,
-                        ProvEntity, ProvUsage, PROV_REC_CLS)
-from voprov.models.constants import *
-from voprov.models.voprovDescriptions import *
-from voprov.models.voprovDescriptions import *
-from voprov.models.voprovRelations import *
-from voprov import serializers
-from voprov import visualization
-from six.moves.urllib.parse import urlparse
-from collections import defaultdict
-from copy import deepcopy
-import datetime
 import io
 import itertools
-import logging
 import os
 import shutil
 import tempfile
 
-import dateutil.parser
+from prov.model import (ProvException, ProvDocument, ProvBundle, ProvActivity,
+                        ProvEntity, ProvUsage, PROV_REC_CLS)
+from six.moves.urllib.parse import urlparse
 
-__author__ = 'Jean-François Sornay'
+from voprov.models.constants import *
+from voprov import serializers
+from voprov.models.voprovDescriptions import *
+from voprov.models.voprovRelations import *
+
+__author__ = 'Jean-Francois Sornay'
 __email__ = 'jean-francois.sornay@etu.umontpellier.fr'
 
 
