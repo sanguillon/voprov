@@ -2,7 +2,7 @@ from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 
 from prov.model import (ProvException, ProvDocument, ProvBundle, ProvActivity,
-                        ProvEntity, PROV_REC_CLS)
+                        ProvEntity, ProvUsage, PROV_REC_CLS)
 from voprov.models.constants import *
 from voprov.models.voprovDescriptions import *
 from voprov.models.voprovDescriptions import *
@@ -27,38 +27,109 @@ __email__ = 'jean-francois.sornay@etu.umontpellier.fr'
 
 
 class VOProvEntity(ProvEntity):
-    """"""
+    """Adaptation of prov Entity to VOProv Entity"""
 
 
 class VOProvValueEntity(VOProvEntity):
-    """"""
+    """Class for VOProv Value Entity"""
 
 
 class VOProvDataSetEntity(VOProvEntity):
-    """"""
+    """Class for VOProv DataSet Entity"""
 
 
 class VOProvActivity(ProvActivity):
-    """"""
-    def isDescribedBy(self, descriptor, identifier=None):
-        return self._bundle.description(self, descriptor, identifier)
+    """Adaptation of prov Activity to VOProv Activity"""
+
+    def isDescribedBy(self, activity_description, identifier=None):
+        """Link an activity description to this activity
+
+        :param activity_description:    Identifier for the activity description link to this activity.
+        :param identifier:              Identifier of the description relation created.
+        """
+        return self._bundle.description(self, activity_description, identifier)
+
+
+class VOProvUsage(ProvUsage):
+    """Adaptation of prov Used relation to VOProv Used relation"""
+
+    def isDescribedBy(self, usage_description, identifier=None):
+        """Link an usage description to this used relation.
+
+        :param usage_description:       Identifier of the usage description link to this used relation.
+        :param identifier:              Identifier of the description relation created.
+        """
+        return self._bundle.description(self, usage_description, identifier)
 
 
 class VOProvBundle(ProvBundle):
-    """VOProv Bundle"""
+    """Adaptation of prov bundle to VOProv Bundle"""
 
-    def activityDescription(self, identifier, name, other_attributes=None):
+    def activityDescription(self, identifier, name, version=None, description=None, docurl=None, type=None,
+                            subtype=None, other_attributes=None):
         """
         Creates a new activity description.
 
-        :param identifier: Identifier for new activity description.
-        :param name: human readable name describing the activity
-        :param other_attributes: Optional other attributes as a dictionary or list
-            of tuples to be added to the record optionally (default: None).
+        :param identifier:              Identifier for new activity description.
+        :param name:                    Human readable name describing the activity.
+        :param version:                 A version number, if applicable (e.g., for the code used)
+        :param description:             Additional free text describing how the activity works internally.
+        :param docurl:                  Link to further documentation on this activity, e.g., a paper, the source code
+                                        in a version control system etc.
+        :param type:                    Type of the activity.
+        :param subtype:                 More specific subtype of the activity.
+        :param other_attributes:        Optional other attributes as a dictionary or list
+                                        of tuples to be added to the record optionally (default: None).
         """
+        if other_attributes is None:
+            other_attributes = {}
+        if version is not None:
+            other_attributes.update({'voprov:version': version})
+        if description is not None:
+            other_attributes.update({'voprov:description': description})
+        if docurl is not None:
+            other_attributes.update({'voprov:docurl': docurl})
+        if type is not None:
+            other_attributes.update({'voprov:type': type})
+        if subtype is not None:
+            other_attributes.update({'voprov:subtype': subtype})
+        if len(other_attributes) is 0:
+            other_attributes = None
         return self.new_record(
             VOPROV_ACTIVITY_DESCRIPTION, identifier, {
                 VOPROV_ATTR_NAME: name
+            },
+            other_attributes
+        )
+
+    def usageDescription(self, identifier, activity_description, role, description=None, type=None,
+                         multiplicity=None, other_attributes=None):
+        """
+        Creates a new usage description.
+
+        :param identifier:              Identifier for new activity description.
+        :param activity_description:    Identifier or object of the activity description linked to the usage description.
+        :param role:                    Function of the entity with respect to the activity.
+        :param description:             A descriptive text for this kind of usage.
+        :param type:                    Type of relation.
+        :param multiplicity:            Number of expected input entities to be used with the given role.
+        :param other_attributes:        Optional other attributes as a dictionary or list
+                                        of tuples to be added to the record optionally (default: None).
+        """
+        if other_attributes is None:
+            other_attributes = {}
+        if description is not None:
+            other_attributes.update({'voprov:description': description})
+        if type is not None:
+            other_attributes.update({'voprov:type': type})
+        if multiplicity is not None:
+            other_attributes.update({'voprov:subtype': multiplicity})
+        if len(other_attributes) is 0:
+            other_attributes = None
+        self.description(identifier, activity_description)
+        return self.new_record(
+            VOPROV_USAGE_DESCRIPTION, identifier, {
+                VOPROV_ATTR_ROLE: role
             },
             other_attributes
         )
@@ -67,9 +138,9 @@ class VOProvBundle(ProvBundle):
         """
         Creates a new description relation record.
 
-        :param described: The informed activity (relationship destination).
-        :param descriptor: The informing activity (relationship source).
-        :param identifier: Identifier for new communication record.
+        :param described:               The described element (relationship destination).
+        :param descriptor:              The describing element (relationship source).
+        :param identifier:              Identifier for new description record.
         """
         return self.new_record(
             VOPROV_DESCRIPTION_RELATION, identifier, {
@@ -84,7 +155,7 @@ class VOProvBundle(ProvBundle):
 
 
 class VOProvDocument(ProvDocument, VOProvBundle):
-    """VOProvenance Document."""
+    """Adaptation of prov document to VOProvenance Document."""
 
     def __init__(self, records=None, namespaces=None):
         """
@@ -363,13 +434,15 @@ class VOProvDocument(ProvDocument, VOProvBundle):
 #  adding voprov class to the prov class mappings
 PROV_REC_CLS.update({
     # link prov class to their voprov representation
-    PROV_ENTITY:                        VOProvEntity,
-    PROV_ACTIVITY:                      VOProvActivity,
-
+    PROV_ENTITY:                    VOProvEntity,
+    PROV_ACTIVITY:                  VOProvActivity,
+    PROV_USAGE:                     VOProvUsage,
     # voprov description
-    VOPROV_ACTIVITY_DESCRIPTION:        VOProvActivityDescription,
+    VOPROV_ACTIVITY_DESCRIPTION:    VOProvActivityDescription,
+    VOPROV_USAGE_DESCRIPTION:       VOProvUsageDescription,
+
     # voprov configuration
 
     # voprov relation
-    VOPROV_DESCRIPTION_RELATION:        VOProvIsDescribedBy,
+    VOPROV_DESCRIPTION_RELATION:    VOProvIsDescribedBy,
 })

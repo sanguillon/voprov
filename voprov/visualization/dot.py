@@ -14,6 +14,10 @@ GENERIC_NODE_STYLE.update({
         'shape': 'oval', 'style': 'filled',
         'fillcolor': 'lightgray', 'color': 'dimgray'
     },
+    VOProvUsageDescription: {
+        'shape': 'oval', 'style': 'filled',
+        'fillcolor': 'lightgray', 'color': 'dimgray'
+    },
     # voprov configuration
     # voprov relation
 })
@@ -21,6 +25,10 @@ GENERIC_NODE_STYLE.update({
 DOT_PROV_STYLE.update({
     # voprov description
     VOPROV_ACTIVITY_DESCRIPTION: {
+        'shape': 'oval', 'style': 'filled',
+        'fillcolor': '#FF7C47', 'color': '#808080'
+    },
+    VOPROV_USAGE_DESCRIPTION: {
         'shape': 'oval', 'style': 'filled',
         'fillcolor': '#FF7C47', 'color': '#808080'
     },
