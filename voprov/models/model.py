@@ -6,10 +6,12 @@ import io
 import itertools
 import os
 import shutil
+import sys
 import tempfile
 
 from prov.model import (ProvException, ProvDocument, ProvBundle, ProvActivity,
-                        ProvEntity, ProvUsage, PROV_REC_CLS)
+                        ProvEntity, ProvUsage, PROV_REC_CLS, DEFAULT_NAMESPACES,
+                        NamespaceManager)
 from six.moves.urllib.parse import urlparse
 
 from voprov.models.constants import *
@@ -19,6 +21,9 @@ from voprov.models.voprovRelations import *
 
 __author__ = 'Jean-Francois Sornay'
 __email__ = 'jean-francois.sornay@etu.umontpellier.fr'
+
+
+DEFAULT_NAMESPACES.update({'voprov': VOPROV})
 
 
 class VOProvEntity(ProvEntity):
@@ -57,8 +62,62 @@ class VOProvUsage(ProvUsage):
         return self._bundle.description(self, usage_description, identifier)
 
 
+class VOProvNamespaceManager(NamespaceManager):
+    """Manages namespaces for VOPROV documents and bundles."""
+
+    def __init__(self, namespaces=None, default=None, parent=None):
+        """
+        Constructor.
+
+        :param namespaces: Optional namespaces to add to the manager
+            (default: None).
+        :param default: Optional default namespace to use (default: None).
+        :param parent: Optional parent :py:class:`NamespaceManager` to make this
+            namespace manager a child of (default: None).
+        """
+        dict.__init__(self)
+        self._default_namespaces = DEFAULT_NAMESPACES
+        self._namespaces = {}
+
+        if default is not None:
+            self.set_default_namespace(default)
+        else:
+            self._default = None
+        self.parent = parent
+        #  TODO check if default is in the default namespaces
+        self._anon_id_count = 0
+        self._uri_map = dict()
+        self._rename_map = dict()
+        self._prefix_renamed_map = dict()
+        for namespace in self._default_namespaces.values():
+            self.add_namespace(namespace)
+        self.add_namespaces(namespaces)
+
+
 class VOProvBundle(ProvBundle):
     """Adaptation of prov bundle to VOProv Bundle"""
+
+    def __init__(self, records=None, identifier=None, namespaces=None,
+                 document=None):
+        """
+        Constructor.
+
+        :param records: Optional iterable of records to add to the bundle
+            (default: None).
+        :param identifier: Optional identifier of the bundle (default: None).
+        :param namespaces: Optional iterable of :py:class:`~prov.identifier.Namespace`s
+            to set the document up with (default: None).
+        :param document: Optional document to add to the bundle (default: None).
+        """
+        #  Initializing bundle-specific attributes
+        super(VOProvBundle, self).__init__(records, identifier, namespaces, document)
+        self._namespaces = VOProvNamespaceManager(
+            namespaces,
+            parent=(document._namespaces if document is not None else None)
+        )
+        if records:
+            for record in records:
+                self.add_record(record)
 
     def activityDescription(self, identifier, name, version=None, description=None, docurl=None, type=None,
                             subtype=None, other_attributes=None):
@@ -160,7 +219,7 @@ class VOProvDocument(ProvDocument, VOProvBundle):
         :param namespaces: Optional iterable of :py:class:`~prov.identifier.Namespace`s
             to set the document up with (default: None).
         """
-        ProvBundle.__init__(
+        VOProvBundle.__init__(
             self, records=records, identifier=None, namespaces=namespaces
         )
         self._bundles = dict()
