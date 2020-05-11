@@ -5,12 +5,19 @@ from __future__ import (absolute_import, division, print_function,
 from prov.dot import *
 
 from voprov.models.voprovDescriptions import *
+from voprov.models.model import *
 
 __author__ = 'Jean-Francois Sornay'
 __email__ = 'jean-francois.sornay@etu.umontpellier.fr'
 
 
 GENERIC_NODE_STYLE.update({
+    # update of prov element and relation
+    VOProvUsage: {
+        'shape': 'oval', 'style': 'filled',
+        'fillcolor': 'lightgray', 'color': 'dimgray'
+    },
+
     # voprov description
     VOProvActivityDescription: {
         'shape': 'oval', 'style': 'filled',
@@ -38,6 +45,10 @@ DOT_PROV_STYLE.update({
     # voprov relation
     VOPROV_DESCRIPTION_RELATION: {
         'label': 'isDescribedBy', 'fontsize': '10.0',
+        'color': '#FF6629', 'fontcolor': '#FF6629'
+    },
+    VOPROV_RELATED_TO_RELATION: {
+        'label': 'isRelatedTo', 'fontsize': '10.0',
         'color': '#FF6629', 'fontcolor': '#FF6629'
     },
 })

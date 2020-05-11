@@ -20,6 +20,7 @@ VOPROV_USAGE_DESCRIPTION =              VOPROV['UsageDescription']
 
 #   voprov relation
 VOPROV_DESCRIPTION_RELATION =           VOPROV['DescriptionRelation']
+VOPROV_RELATED_TO_RELATION =           VOPROV['RelatedToRelation']
 # VOPROV_CONFIGURATION_RELATION =         VOPROV['ConfigurationRelation']
 
 # Part 2 : map for serialization usage
@@ -34,6 +35,7 @@ PROV_N_MAP.update({
 
     # voprov relation
     VOPROV_DESCRIPTION_RELATION:        u'isDescribedBy',
+    VOPROV_RELATED_TO_RELATION:         u'isRelatedTo',
     # VOPROV_CONFIGURATION_RELATION:      u'wasConfiguredBy',
 })
 
@@ -56,6 +58,7 @@ PROV_BASE_CLS.update({
 
     # voprov relation
     VOPROV_DESCRIPTION_RELATION:        VOPROV_DESCRIPTION_RELATION,
+    VOPROV_RELATED_TO_RELATION:         VOPROV_RELATED_TO_RELATION,
     # VOPROV_CONFIGURATION_RELATION:      VOPROV_CONFIGURATION_RELATION,
 })
 
@@ -63,16 +66,18 @@ PROV_BASE_CLS.update({
 # Part 3 : Identifier for voprov's attributes
 #   Identifiers for PROV's attributes
 #   voprov description
+VOPROV_ATTR_NAME =                      VOPROV['name']
+VOPROV_ATTR_ROLE =                      VOPROV['role']
+
 #   voprov configuration
+
 #   voprov relation
 VOPROV_ATTR_DESCRIBED =                 VOPROV['described']
 VOPROV_ATTR_DESCRIPTOR =                VOPROV['descriptor']
+VOPROV_ATTR_RELATED =                   VOPROV['related']
+VOPROV_ATTR_RELATOR =                   VOPROV['relator']
 # VOPROV_ATTR_CONFIGURED =         VOPROV['configured']
 # VOPROV_ATTR_CONFIGURATOR =        VOPROV['configurator']
-
-#   Literal properties
-VOPROV_ATTR_NAME =                      VOPROV['name']
-VOPROV_ATTR_ROLE =                      VOPROV['role']
 
 #   adding the voprov identifier to the map for the qualified name of attribute
 PROV_ATTRIBUTE_QNAMES.update({
@@ -85,6 +90,8 @@ PROV_ATTRIBUTE_QNAMES.update({
     # voprov relation
     VOPROV_ATTR_DESCRIBED,
     VOPROV_ATTR_DESCRIPTOR,
+    VOPROV_ATTR_RELATED,
+    VOPROV_ATTR_RELATOR,
 })
 
 #   adding the voprov identifier for the literals attribute
