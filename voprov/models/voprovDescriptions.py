@@ -47,8 +47,17 @@ class VOProvActivityDescription(VOProvDescription):
 class VOProvGenerationDescription(VOProvDescription):
     """Class for VOProv generation description"""
 
-    FORMAL_ATTRIBUTES = None
-    _prov_type = None
+    FORMAL_ATTRIBUTES = (VOPROV_ATTR_ROLE,)
+    _prov_type = VOPROV_GENERATION_DESCRIPTION
+
+    def add_relation_to_a_generation(self, wasGeneratedBy, identifier=None):
+        """
+        Creates a new relation between an usage and this usage description.
+
+        :param wasGeneratedBy:      The generated relation described by this generation description.
+        :param identifier:          Identifier for new isDescribedBy relation record (default: None).
+        """
+        return self._bundle.description(wasGeneratedBy, self, identifier)
 
 
 class VOProvUsageDescription(VOProvDescription):
@@ -62,7 +71,7 @@ class VOProvUsageDescription(VOProvDescription):
         Creates a new relation between an usage and this usage description.
 
         :param used:                The used relation described by this usage description.
-        :param identifier:          Identifier for new usage description (default: None).
+        :param identifier:          Identifier for new isDescribedBy relation record (default: None).
         """
         return self._bundle.description(used, self, identifier)
 

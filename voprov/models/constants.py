@@ -14,13 +14,13 @@ VOPROV = Namespace('voprov', 'http://www.ivoa.net/documents/ProvenanceDM/index.h
 #   voprov description
 VOPROV_ACTIVITY_DESCRIPTION =           VOPROV['ActivityDescription']
 VOPROV_USAGE_DESCRIPTION =              VOPROV['UsageDescription']
-# VOPROV_GENERATION_DESCRIPTION =         VOPROV['GenerationDescription']
+VOPROV_GENERATION_DESCRIPTION =         VOPROV['GenerationDescription']
 
 #   voprov configuration
 
 #   voprov relation
 VOPROV_DESCRIPTION_RELATION =           VOPROV['DescriptionRelation']
-VOPROV_RELATED_TO_RELATION =           VOPROV['RelatedToRelation']
+VOPROV_RELATED_TO_RELATION =            VOPROV['RelatedToRelation']
 # VOPROV_CONFIGURATION_RELATION =         VOPROV['ConfigurationRelation']
 
 # Part 2 : map for serialization usage
@@ -29,7 +29,7 @@ PROV_N_MAP.update({
     # voprov description
     VOPROV_ACTIVITY_DESCRIPTION:        u'activityDescription',
     VOPROV_USAGE_DESCRIPTION:           u'usageDescription',
-    # VOPROV_GENERATION_DESCRIPTION:      u'generationDescription',
+    VOPROV_GENERATION_DESCRIPTION:      u'generationDescription',
 
     # voprov configuration
 
@@ -52,7 +52,7 @@ PROV_BASE_CLS.update({
     # voprov description
     VOPROV_ACTIVITY_DESCRIPTION:        VOPROV_ACTIVITY_DESCRIPTION,
     VOPROV_USAGE_DESCRIPTION:           VOPROV_USAGE_DESCRIPTION,
-    # VOPROV_GENERATION_DESCRIPTION:      VOPROV_GENERATION_DESCRIPTION,
+    VOPROV_GENERATION_DESCRIPTION:      VOPROV_GENERATION_DESCRIPTION,
 
     # voprov configuration
 

@@ -102,6 +102,7 @@ class VOProvActivity(ProvActivity):
 
 class VOProvAgent(ProvAgent):
     """"""
+
     def set_name(self, name):
         """Set the name of this activity.
 
@@ -493,13 +494,45 @@ class VOProvBundle(ProvBundle):
             other_attributes
         )
 
+    def generationDescription(self, identifier, activity_description, role, description=None, type=None,
+                              multiplicity=None, other_attributes=None):
+        """
+        Creates a new usage description.
+
+        :param identifier:              Identifier for new activity description.
+        :param activity_description:    Identifier or object of the activity description linked to the usage description.
+        :param role:                    Function of the entity with respect to the activity.
+        :param description:             A descriptive text for this kind of usage.
+        :param type:                    Type of relation.
+        :param multiplicity:            Number of expected input entities to be used with the given role.
+        :param other_attributes:        Optional other attributes as a dictionary or list
+                                        of tuples to be added to the record optionally (default: None).
+        """
+        if other_attributes is None:
+            other_attributes = {}
+        if description is not None:
+            other_attributes.update({'voprov:description': description})
+        if type is not None:
+            other_attributes.update({'voprov:type': type})
+        if multiplicity is not None:
+            other_attributes.update({'voprov:multiplicity': multiplicity})
+        if len(other_attributes) is 0:
+            other_attributes = None
+        self.relate(identifier, activity_description)
+        return self.new_record(
+            VOPROV_GENERATION_DESCRIPTION, identifier, {
+                VOPROV_ATTR_ROLE: role
+            },
+            other_attributes
+        )
+
     def description(self, described, descriptor, identifier=None):
         """
         Creates a new description relation record.
 
         :param described:               The described element (relationship destination).
         :param descriptor:              The describing element (relationship source).
-        :param identifier:              Identifier for new description record.
+        :param identifier:              Identifier for new isDescribedBy relation record.
         """
         return self.new_record(
             VOPROV_DESCRIPTION_RELATION, identifier, {

@@ -27,6 +27,10 @@ GENERIC_NODE_STYLE.update({
         'shape': 'oval', 'style': 'filled',
         'fillcolor': 'lightgray', 'color': 'dimgray'
     },
+    VOProvGenerationDescription: {
+        'shape': 'oval', 'style': 'filled',
+        'fillcolor': 'lightgray', 'color': 'dimgray'
+    },
     # voprov configuration
     # voprov relation
 })
@@ -38,6 +42,10 @@ DOT_PROV_STYLE.update({
         'fillcolor': '#FF7C47', 'color': '#808080'
     },
     VOPROV_USAGE_DESCRIPTION: {
+        'shape': 'oval', 'style': 'filled',
+        'fillcolor': '#FF7C47', 'color': '#808080'
+    },
+    VOPROV_GENERATION_DESCRIPTION: {
         'shape': 'oval', 'style': 'filled',
         'fillcolor': '#FF7C47', 'color': '#808080'
     },
