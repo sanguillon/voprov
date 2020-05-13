@@ -11,15 +11,28 @@ __author__ = 'Jean-Francois Sornay'
 __email__ = 'jean-francois.sornay@etu.umontpellier.fr'
 
 
+# updating the generic node style map which is used when the object used in a relation is not declared
 GENERIC_NODE_STYLE.update({
     # update of prov element and relation
     VOProvUsage: {
         'shape': 'oval', 'style': 'filled',
         'fillcolor': 'lightgray', 'color': 'dimgray'
     },
+    VOProvGeneration: {
+        'shape': 'oval', 'style': 'filled',
+        'fillcolor': 'lightgray', 'color': 'dimgray'
+    },
 
     # voprov description
+    VOProvDescription: {
+        'shape': 'oval', 'style': 'filled',
+        'fillcolor': 'lightgray', 'color': 'blue'
+    },
     VOProvActivityDescription: {
+        'shape': 'oval', 'style': 'filled',
+        'fillcolor': 'lightgray', 'color': 'dimgray'
+    },
+    VOProvEntityDescription: {
         'shape': 'oval', 'style': 'filled',
         'fillcolor': 'lightgray', 'color': 'dimgray'
     },
@@ -35,6 +48,7 @@ GENERIC_NODE_STYLE.update({
     # voprov relation
 })
 
+# updating the style of the different prov record
 DOT_PROV_STYLE.update({
     # voprov description
     VOPROV_ACTIVITY_DESCRIPTION: {
@@ -49,7 +63,13 @@ DOT_PROV_STYLE.update({
         'shape': 'oval', 'style': 'filled',
         'fillcolor': '#FF7C47', 'color': '#808080'
     },
+    VOPROV_ENTITY_DESCRIPTION: {
+        'shape': 'oval', 'style': 'filled',
+        'fillcolor': '#FF7C47', 'color': '#808080'
+    },
+
     # voprov configuration
+
     # voprov relation
     VOPROV_DESCRIPTION_RELATION: {
         'label': 'isDescribedBy', 'fontsize': '10.0',

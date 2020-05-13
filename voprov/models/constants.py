@@ -15,6 +15,7 @@ VOPROV = Namespace('voprov', 'http://www.ivoa.net/documents/ProvenanceDM/index.h
 VOPROV_ACTIVITY_DESCRIPTION =           VOPROV['ActivityDescription']
 VOPROV_USAGE_DESCRIPTION =              VOPROV['UsageDescription']
 VOPROV_GENERATION_DESCRIPTION =         VOPROV['GenerationDescription']
+VOPROV_ENTITY_DESCRIPTION =             VOPROV['EntityDescription']
 
 #   voprov configuration
 
@@ -30,6 +31,7 @@ PROV_N_MAP.update({
     VOPROV_ACTIVITY_DESCRIPTION:        u'activityDescription',
     VOPROV_USAGE_DESCRIPTION:           u'usageDescription',
     VOPROV_GENERATION_DESCRIPTION:      u'generationDescription',
+    VOPROV_ENTITY_DESCRIPTION:          u'entityDescription',
 
     # voprov configuration
 
@@ -53,6 +55,7 @@ PROV_BASE_CLS.update({
     VOPROV_ACTIVITY_DESCRIPTION:        VOPROV_ACTIVITY_DESCRIPTION,
     VOPROV_USAGE_DESCRIPTION:           VOPROV_USAGE_DESCRIPTION,
     VOPROV_GENERATION_DESCRIPTION:      VOPROV_GENERATION_DESCRIPTION,
+    VOPROV_ENTITY_DESCRIPTION:          VOPROV_ENTITY_DESCRIPTION,
 
     # voprov configuration
 

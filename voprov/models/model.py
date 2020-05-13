@@ -10,7 +10,7 @@ import sys
 import tempfile
 
 from prov.model import (ProvException, ProvDocument, ProvBundle, ProvActivity,
-                        ProvEntity, ProvUsage, ProvAgent,
+                        ProvEntity, ProvUsage, ProvAgent, ProvGeneration,
                         PROV_REC_CLS, DEFAULT_NAMESPACES, NamespaceManager)
 from six.moves.urllib.parse import urlparse
 
@@ -108,7 +108,7 @@ class VOProvAgent(ProvAgent):
 
         :param name:                    A human-readable name for the agent.
         """
-        self._attributes["voprov:name"] = {name}
+        self._attributes[VOPROV_ATTR_NAME] = {name}
 
     def set_type(self, type):
         """Set the type of this agent.
@@ -168,7 +168,7 @@ class VOProvUsage(ProvUsage):
 
         :param role:              Function of the entity with respect to the activity.
         """
-        self._attributes["voprov:role"] = {role}
+        self._attributes[VOPROV_ATTR_ROLE] = {role}
 
     def isDescribedBy(self, usage_description, identifier=None):
         """Link an usage description to this used relation.
@@ -177,6 +177,24 @@ class VOProvUsage(ProvUsage):
         :param identifier:              Identifier of the description relation created.
         """
         return self._bundle.description(self, usage_description, identifier)
+
+
+class VOProvGeneration(ProvGeneration):
+    """"""
+    def set_role(self, role):
+        """Set the role of this generation.
+
+        :param role:              Function of the entity with respect to the activity.
+        """
+        self._attributes[VOPROV_ATTR_ROLE] = {role}
+
+    def isDescribedBy(self, generation_description, identifier=None):
+        """Link a generation description to this used relation.
+
+        :param generation_description:  Identifier of the generation description link to this used relation.
+        :param identifier:              Identifier of the description relation created.
+        """
+        return self._bundle.description(self, generation_description, identifier)
 
 
 class VOProvNamespaceManager(NamespaceManager):
@@ -256,7 +274,7 @@ class VOProvBundle(ProvBundle):
         if other_attributes is None:
             other_attributes = {}
         if name is not None:
-            other_attributes.update({'voprov:name': name})
+            other_attributes.update({VOPROV_ATTR_NAME: name})
         if comment is not None:
             other_attributes.update({'voprov:comment': comment})
         if len(other_attributes) is 0:
@@ -282,7 +300,7 @@ class VOProvBundle(ProvBundle):
         if other_attributes is None:
             other_attributes = {}
         if name is not None:
-            other_attributes.update({'voprov:name': name})
+            other_attributes.update({VOPROV_ATTR_NAME: name})
         if location is not None:
             other_attributes.update({'voprov:location': location})
         if generatedAtTime is not None:
@@ -329,10 +347,10 @@ class VOProvBundle(ProvBundle):
         if url is not None:
             other_attributes.update({'voprov:url': url})
 
-        other_attributes.update({'voprov:name': name})
+        other_attributes.update({VOPROV_ATTR_NAME: name})
         return super(VOProvBundle, self).agent(identifier, other_attributes)
 
-    def usage(self, activity, entity=None, role=None, time=None, identifier=None,
+    def usage(self, identifier, activity, entity=None, role=None, time=None,
               other_attributes=None):
         """
         Creates a new usage record for an activity.
@@ -462,12 +480,41 @@ class VOProvBundle(ProvBundle):
             other_attributes
         )
 
+    def entityDescription(self, identifier, name, description=None, docurl=None, type=None, other_attributes=None):
+        """
+        Creates a new activity description.
+
+        :param identifier:              Identifier for new activity description.
+        :param name:                    Human readable name describing the entity.
+        :param description:             A descriptive text for this kind of entity.
+        :param docurl:                  Link to more documentation.
+        :param type:                    Type of the entity.
+        :param other_attributes:        Optional other attributes as a dictionary or list
+                                        of tuples to be added to the record optionally (default: None).
+        """
+        if other_attributes is None:
+            other_attributes = {}
+        if description is not None:
+            other_attributes.update({'voprov:description': description})
+        if docurl is not None:
+            other_attributes.update({'voprov:docurl': docurl})
+        if type is not None:
+            other_attributes.update({'voprov:type': type})
+        if len(other_attributes) is 0:
+            other_attributes = None
+        return self.new_record(
+            VOPROV_ENTITY_DESCRIPTION, identifier, {
+                VOPROV_ATTR_NAME: name
+            },
+            other_attributes
+        )
+
     def usageDescription(self, identifier, activity_description, role, description=None, type=None,
                          multiplicity=None, other_attributes=None):
         """
         Creates a new usage description.
 
-        :param identifier:              Identifier for new activity description.
+        :param identifier:              Identifier for new usage description.
         :param activity_description:    Identifier or object of the activity description linked to the usage description.
         :param role:                    Function of the entity with respect to the activity.
         :param description:             A descriptive text for this kind of usage.
@@ -497,14 +544,15 @@ class VOProvBundle(ProvBundle):
     def generationDescription(self, identifier, activity_description, role, description=None, type=None,
                               multiplicity=None, other_attributes=None):
         """
-        Creates a new usage description.
+        Creates a new generation description.
 
-        :param identifier:              Identifier for new activity description.
-        :param activity_description:    Identifier or object of the activity description linked to the usage description.
+        :param identifier:              Identifier for new generation description.
+        :param activity_description:    Identifier or object of the activity description linked to the generation
+                                        description.
         :param role:                    Function of the entity with respect to the activity.
-        :param description:             A descriptive text for this kind of usage.
+        :param description:             A descriptive text for this kind of generation.
         :param type:                    Type of relation.
-        :param multiplicity:            Number of expected input entities to be used with the given role.
+        :param multiplicity:            Number of expected input entities to be generated with the given role.
         :param other_attributes:        Optional other attributes as a dictionary or list
                                         of tuples to be added to the record optionally (default: None).
         """
@@ -534,6 +582,9 @@ class VOProvBundle(ProvBundle):
         :param descriptor:              The describing element (relationship source).
         :param identifier:              Identifier for new isDescribedBy relation record.
         """
+        if isinstance(described, ProvRelation):
+            described = described.identifier if described.identifier is not None else described.get_type().localpart
+
         return self.new_record(
             VOPROV_DESCRIPTION_RELATION, identifier, {
                 VOPROV_ATTR_DESCRIBED: described,
@@ -849,18 +900,20 @@ class VOProvDocument(ProvDocument, VOProvBundle):
 #  adding voprov class to the prov class mappings
 PROV_REC_CLS.update({
     # link prov class to their voprov representation
-    PROV_ENTITY: VOProvEntity,
-    PROV_ACTIVITY: VOProvActivity,
-    PROV_AGENT: VOProvAgent,
-    PROV_USAGE: VOProvUsage,
+    PROV_ENTITY:                    VOProvEntity,
+    PROV_ACTIVITY:                  VOProvActivity,
+    PROV_AGENT:                     VOProvAgent,
+    PROV_USAGE:                     VOProvUsage,
+    PROV_GENERATION:                VOProvGeneration,
 
     # voprov description
-    VOPROV_ACTIVITY_DESCRIPTION: VOProvActivityDescription,
-    VOPROV_USAGE_DESCRIPTION: VOProvUsageDescription,
+    VOPROV_ACTIVITY_DESCRIPTION:    VOProvActivityDescription,
+    VOPROV_USAGE_DESCRIPTION:       VOProvUsageDescription,
+    VOPROV_GENERATION_DESCRIPTION:  VOProvGenerationDescription,
 
     # voprov configuration
 
     # voprov relation
-    VOPROV_DESCRIPTION_RELATION: VOProvIsDescribedBy,
-    VOPROV_RELATED_TO_RELATION: VOProvIsRelatedTo,
+    VOPROV_DESCRIPTION_RELATION:    VOProvIsDescribedBy,
+    VOPROV_RELATED_TO_RELATION:     VOProvIsRelatedTo,
 })
