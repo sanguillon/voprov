@@ -11,11 +11,19 @@ __email__ = 'jean-francois.sornay@etu.umontpellier.fr'
 VOPROV = Namespace('voprov', 'http://www.ivoa.net/documents/ProvenanceDM/index.html')
 
 # Part 1 : namespace for voprov classes
+# extend prov model
+# PROV_ACTIVITY = VOPROV['Activity']
+VOPROV_VALUE_ENTITY =                   VOPROV['ValueEntity']
+VOPROV_DATASET_ENTITY =                 VOPROV['DatasetEntity']
+
+
 #   voprov description
 VOPROV_ACTIVITY_DESCRIPTION =           VOPROV['ActivityDescription']
 VOPROV_USAGE_DESCRIPTION =              VOPROV['UsageDescription']
 VOPROV_GENERATION_DESCRIPTION =         VOPROV['GenerationDescription']
 VOPROV_ENTITY_DESCRIPTION =             VOPROV['EntityDescription']
+VOPROV_VALUE_DESCRIPTION =              VOPROV['ValueDescription']
+VOPROV_DATASET_DESCRIPTION =            VOPROV['DatasetDescription']
 
 #   voprov configuration
 
@@ -27,11 +35,17 @@ VOPROV_RELATED_TO_RELATION =            VOPROV['RelatedToRelation']
 # Part 2 : map for serialization usage
 #   adding the voprov provn representation for the map for provn representation
 PROV_N_MAP.update({
+    # extend prov model
+    VOPROV_VALUE_ENTITY:                u'valueEntity',
+    VOPROV_DATASET_ENTITY:              u'datasetEntity',
+
     # voprov description
     VOPROV_ACTIVITY_DESCRIPTION:        u'activityDescription',
     VOPROV_USAGE_DESCRIPTION:           u'usageDescription',
     VOPROV_GENERATION_DESCRIPTION:      u'generationDescription',
     VOPROV_ENTITY_DESCRIPTION:          u'entityDescription',
+    VOPROV_VALUE_DESCRIPTION:           u'valueDescription',
+    VOPROV_DATASET_DESCRIPTION:         u'datasetDescription',
 
     # voprov configuration
 
@@ -51,11 +65,17 @@ ADDITIONAL_N_MAP.update({
 #   has no baseclass it maps to itsself. This is needed for example for PROV
 #   XML (de)serializer where extended types are used a lot.
 PROV_BASE_CLS.update({
+    # extend prov model
+    VOPROV_VALUE_ENTITY:                VOPROV_VALUE_ENTITY,
+    VOPROV_DATASET_ENTITY:              VOPROV_DATASET_ENTITY,
+
     # voprov description
     VOPROV_ACTIVITY_DESCRIPTION:        VOPROV_ACTIVITY_DESCRIPTION,
     VOPROV_USAGE_DESCRIPTION:           VOPROV_USAGE_DESCRIPTION,
     VOPROV_GENERATION_DESCRIPTION:      VOPROV_GENERATION_DESCRIPTION,
     VOPROV_ENTITY_DESCRIPTION:          VOPROV_ENTITY_DESCRIPTION,
+    VOPROV_VALUE_DESCRIPTION:           VOPROV_VALUE_DESCRIPTION,
+    VOPROV_DATASET_DESCRIPTION:         VOPROV_DATASET_DESCRIPTION,
 
     # voprov configuration
 
@@ -71,7 +91,8 @@ PROV_BASE_CLS.update({
 #   voprov description
 VOPROV_ATTR_NAME =                      VOPROV['name']
 VOPROV_ATTR_ROLE =                      VOPROV['role']
-
+VOPROV_ATTR_VALUE_TYPE =                VOPROV['valueType']
+VOPROV_ATTR_CONTENT_TYPE =              VOPROV['contentType']
 #   voprov configuration
 
 #   voprov relation
@@ -87,6 +108,8 @@ PROV_ATTRIBUTE_QNAMES.update({
     # voprov description
     Literal(VOPROV_ATTR_NAME),
     Literal(VOPROV_ATTR_ROLE),
+    Literal(VOPROV_ATTR_VALUE_TYPE),
+    Literal(VOPROV_ATTR_CONTENT_TYPE),
 
     # voprov configuration
 

@@ -30,14 +30,14 @@ class VOProvActivityDescription(VOProvDescription):
 
         :param version:                 A version number, if applicable (e.g., for the code used).
         """
-        self._attributes["voprov:version"] = {version}
+        self._attributes[VOPROV['version']] = {version}
 
     def set_description(self, description):
         """Set a description for this activity description.
 
         :param description:             Additional free text describing how the activity works internally.
         """
-        self._attributes["voprov:description"] = {description}
+        self._attributes[VOPROV['description']] = {description}
 
     def set_docurl(self, docurl):
         """Set a docurl for this activity description.
@@ -45,21 +45,21 @@ class VOProvActivityDescription(VOProvDescription):
         :param docurl:                  Link to further documentation on this activity, e.g., a paper, the source code
                                         in a version control system etc.
         """
-        self._attributes["voprov:docurl"] = {docurl}
+        self._attributes[VOPROV['docurl']] = {docurl}
 
     def set_type(self, type):
         """Set the type of this activity description.
 
         :param type:                    Type of the activity.
         """
-        self._attributes["voprov:type"] = {type}
+        self._attributes[VOPROV['type']] = {type}
 
     def set_subtype(self, subtype):
         """Set a subtype for this activity description.
 
         :param subtype:                 More specific subtype of the activity.
         """
-        self._attributes["voprov:subtype"] = {subtype}
+        self._attributes[VOPROV['subtype']] = {subtype}
 
     def isDescriptorOf_activity(self, activity, identifier=None):
         """
@@ -123,21 +123,21 @@ class VOProvGenerationDescription(VOProvDescription):
 
         :param description:             A descriptive text for this kind of generation.
         """
-        self._attributes["voprov:description"] = {description}
+        self._attributes[VOPROV['description']] = {description}
 
     def set_type(self, type):
         """Set the type of this generation description.
 
         :param type:                    Type of relation.
         """
-        self._attributes["voprov:type"] = {type}
+        self._attributes[VOPROV['type']] = {type}
 
     def set_multiplicity(self, multiplicity):
         """Set a multiplicity for this generation description.
 
         :param multiplicity:            Number of expected input entities to be generated with the given role.
         """
-        self._attributes["voprov:multiplicity"] = {multiplicity}
+        self._attributes[VOPROV['multiplicity']] = {multiplicity}
 
     def isRelatedTo_entityDescription(self, entity_description, identifier=None):
         """
@@ -146,16 +146,7 @@ class VOProvGenerationDescription(VOProvDescription):
         :param entity_description:      The entity description related to this generation description.
         :param identifier:              Identifier for new isRelatedTo relation record (default: None).
         """
-        return self._bundle.relate(entity_description, self, identifier)
-
-    def isDescriptorOf_generation(self, wasGeneratedBy, identifier=None):
-        """
-        Creates a new relation between an usage and this usage description.
-
-        :param wasGeneratedBy:          The generated relation described by this generation description.
-        :param identifier:              Identifier for new isDescribedBy relation record (default: None).
-        """
-        return self._bundle.description(wasGeneratedBy, self, identifier)
+        return self._bundle.relate(self, entity_description, identifier)
 
 
 class VOProvUsageDescription(VOProvDescription):
@@ -176,21 +167,21 @@ class VOProvUsageDescription(VOProvDescription):
 
         :param description:             A descriptive text for this kind of usage.
         """
-        self._attributes["voprov:description"] = {description}
+        self._attributes[VOPROV['description']] = {description}
 
     def set_type(self, type):
         """Set the type of this usage description.
 
         :param type:                    Type of relation.
         """
-        self._attributes["voprov:type"] = {type}
+        self._attributes[VOPROV['type']] = {type}
 
     def set_multiplicity(self, multiplicity):
         """Set a multiplicity for this usage description.
 
         :param multiplicity:            Number of expected input entities to be used with the given role.
         """
-        self._attributes["voprov:multiplicity"] = {multiplicity}
+        self._attributes[VOPROV['multiplicity']] = {multiplicity}
 
     def isRelatedTo_entityDescription(self, entity_description, identifier=None):
         """
@@ -199,16 +190,7 @@ class VOProvUsageDescription(VOProvDescription):
         :param entity_description:      The entity description related to this usage description.
         :param identifier:              Identifier for new isRelatedTo relation record (default: None).
         """
-        return self._bundle.relate(entity_description, self, identifier)
-
-    def isDescriptorOf_usage(self, used, identifier=None):
-        """
-        Creates a new relation between an usage and this usage description.
-
-        :param used:                    The used relation described by this usage description.
-        :param identifier:              Identifier for new isDescribedBy relation record (default: None).
-        """
-        return self._bundle.description(used, self, identifier)
+        return self._bundle.relate(self, entity_description, identifier)
 
 
 class VOProvEntityDescription(VOProvDescription):
@@ -229,21 +211,21 @@ class VOProvEntityDescription(VOProvDescription):
 
         :param description:             A descriptive text for this kind of entity.
         """
-        self._attributes["voprov:description"] = {description}
+        self._attributes[VOPROV['description']] = {description}
 
     def set_docurl(self, docurl):
         """Set a docurl for this entity description.
 
         :param docurl:                  Link to more documentation.
         """
-        self._attributes["voprov:docurl"] = {docurl}
+        self._attributes[VOPROV['docurl']] = {docurl}
 
     def set_type(self, type):
         """Set the type of this entity description.
 
         :param type:                    Type of the entity.
         """
-        self._attributes["voprov:type"] = {type}
+        self._attributes[VOPROV['type']] = {type}
 
     def isDescriptorOf_entity(self, entity, identifier=None):
         """
@@ -276,15 +258,54 @@ class VOProvEntityDescription(VOProvDescription):
 class VOProvValueDescription(VOProvEntityDescription):
     """Class for VOProv value entity description"""
 
-    FORMAL_ATTRIBUTES = None
-    _prov_type = None
+    FORMAL_ATTRIBUTES = (VOPROV_ATTR_NAME, VOPROV_ATTR_VALUE_TYPE)
+    _prov_type = VOPROV_VALUE_DESCRIPTION
+
+    def set_valueType(self, valueType):
+        """Set the value type of this value description.
+
+        :param valueType:               Description of a value from a combination of datatype, arraysize and xtype
+                                        following VOTable 1.3.
+        """
+        self._attributes[VOPROV_ATTR_VALUE_TYPE] = {valueType}
+
+    def set_unit(self, unit):
+        """Set the unit of this value description.
+
+        :param unit:                    FVO unit, see C.1.1 and Derriere and Gray et al. (2014) for recommended unit
+                                        representation.
+        """
+        self._attributes[VOPROV['unit']] = {unit}
+
+    def set_ucd(self, ucd):
+        """Set the ucd of this value description.
+
+        :param ucd:                     Unified Content Descriptor, supplying a standardized classification of the
+                                        physical quantity.
+        """
+        self._attributes[VOPROV['ucd']] = {ucd}
+
+    def set_uType(self, uType):
+        """Set the utype of this value description.
+
+        :param uType:                   Utype, meant to express the role of the value in the context of an external
+                                        data model.
+        """
+        self._attributes[VOPROV['uType']] = {uType}
 
 
 class VOProvDataSetDescription(VOProvEntityDescription):
     """Class for VOProv data set entity description"""
 
-    FORMAL_ATTRIBUTES = None
-    _prov_type = None
+    FORMAL_ATTRIBUTES = (VOPROV_ATTR_NAME, VOPROV_ATTR_CONTENT_TYPE)
+    _prov_type = VOPROV_DATASET_DESCRIPTION
+
+    def set_contentType(self, contentType):
+        """Set the type of content of this dataset description.
+
+        :param contentType:             Format of the dataset, MIME type when applicable.
+        """
+        self._attributes[VOPROV_ATTR_CONTENT_TYPE] = {contentType}
 
 
 class VOProvConfigFileDescription(VOProvEntityDescription):

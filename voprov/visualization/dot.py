@@ -13,23 +13,13 @@ __email__ = 'jean-francois.sornay@etu.umontpellier.fr'
 
 # updating the generic node style map which is used when the object used in a relation is not declared
 GENERIC_NODE_STYLE.update({
-    # update of prov element and relation
-    VOProvUsage: {
-        'shape': 'oval', 'style': 'filled',
-        'fillcolor': 'lightgray', 'color': 'dimgray'
-    },
-    VOProvGeneration: {
-        'shape': 'oval', 'style': 'filled',
-        'fillcolor': 'lightgray', 'color': 'dimgray'
-    },
-
     # voprov description
     VOProvDescription: {
-        'shape': 'oval', 'style': 'filled',
+        'shape': 'star', 'style': 'filled',
         'fillcolor': 'lightgray', 'color': 'blue'
     },
     VOProvActivityDescription: {
-        'shape': 'oval', 'style': 'filled',
+        'shape': 'box', 'style': 'filled',
         'fillcolor': 'lightgray', 'color': 'dimgray'
     },
     VOProvEntityDescription: {
@@ -37,11 +27,11 @@ GENERIC_NODE_STYLE.update({
         'fillcolor': 'lightgray', 'color': 'dimgray'
     },
     VOProvUsageDescription: {
-        'shape': 'oval', 'style': 'filled',
+        'shape': 'invtrapezium', 'style': 'filled',
         'fillcolor': 'lightgray', 'color': 'dimgray'
     },
     VOProvGenerationDescription: {
-        'shape': 'oval', 'style': 'filled',
+        'shape': 'trapezium', 'style': 'filled',
         'fillcolor': 'lightgray', 'color': 'dimgray'
     },
     # voprov configuration
@@ -52,18 +42,26 @@ GENERIC_NODE_STYLE.update({
 DOT_PROV_STYLE.update({
     # voprov description
     VOPROV_ACTIVITY_DESCRIPTION: {
-        'shape': 'oval', 'style': 'filled',
+        'shape': 'box', 'style': 'filled',
         'fillcolor': '#FF7C47', 'color': '#808080'
     },
     VOPROV_USAGE_DESCRIPTION: {
-        'shape': 'oval', 'style': 'filled',
+        'shape': 'invtrapezium', 'style': 'filled',
         'fillcolor': '#FF7C47', 'color': '#808080'
     },
     VOPROV_GENERATION_DESCRIPTION: {
-        'shape': 'oval', 'style': 'filled',
+        'shape': 'trapezium', 'style': 'filled',
         'fillcolor': '#FF7C47', 'color': '#808080'
     },
     VOPROV_ENTITY_DESCRIPTION: {
+        'shape': 'oval', 'style': 'filled',
+        'fillcolor': '#FF7C47', 'color': '#808080'
+    },
+    VOPROV_VALUE_DESCRIPTION: {
+        'shape': 'oval', 'style': 'filled',
+        'fillcolor': '#FF7C47', 'color': '#808080'
+    },
+    VOPROV_DATASET_DESCRIPTION: {
         'shape': 'oval', 'style': 'filled',
         'fillcolor': '#FF7C47', 'color': '#808080'
     },

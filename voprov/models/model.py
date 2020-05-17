@@ -33,7 +33,7 @@ class VOProvEntity(ProvEntity):
 
         :param name:                    A human-readable name for the entity.
         """
-        self._attributes["voprov:name"] = {name}
+        self._attributes[VOPROV_ATTR_NAME] = {name}
 
     def set_location(self, location):
         """Set the location of this entity.
@@ -41,14 +41,14 @@ class VOProvEntity(ProvEntity):
         :param location:                A path or spatial coordinates, e.g., a URL, latitude-longitude coordinates
                                         on Earth, the name of a place.
         """
-        self._attributes["voprov:location"] = {location}
+        self._attributes[VOPROV['location']] = {location}
 
     def set_generatedAtTime(self, generatedAtTime):
         """Set the generated time of this entity.
 
         :param generatedAtTime:         Date and time at which the entity was created (e.g., timestamp of a file).
         """
-        self._attributes["voprov:generatedAtTime"] = {generatedAtTime}
+        self._attributes[VOPROV['generatedAtTime']] = {generatedAtTime}
 
     def set_invalidatedAtTime(self, invalidatedAtTime):
         """Set the invalidated time of this entity.
@@ -56,22 +56,39 @@ class VOProvEntity(ProvEntity):
         :param invalidatedAtTime:       Date and time of invalidation of the entity. After that date, the entity is
                                         no longer available for any use.
         """
-        self._attributes["voprov:invalidatedAtTime"] = {invalidatedAtTime}
+        self._attributes[VOPROV['invalidatedAtTime']] = {invalidatedAtTime}
 
     def set_comment(self, comment):
         """Set a comment for this entity.
 
         :param comment:                 Text containing specific comments on the entity.
         """
-        self._attributes["voprov:comment"] = {comment}
+        self._attributes[VOPROV['comment']] = {comment}
+
+    def isDescribedBy(self, activity_description, identifier=None):
+        """Link an activity description to this activity
+
+        :param activity_description:    Identifier for the activity description link to this activity.
+        :param identifier:              Identifier of the description relation created.
+        """
+        return self._bundle.description(self, activity_description, identifier)
 
 
 class VOProvValueEntity(VOProvEntity):
     """Class for VOProv Value Entity"""
+    _prov_type = VOPROV_VALUE_ENTITY
+
+    def set_value(self, value):
+        """Set a value for this entity.
+
+        :param value:                 Text containing specific comments on the entity.
+        """
+        self._attributes[VOPROV['value']] = {value}
 
 
 class VOProvDataSetEntity(VOProvEntity):
     """Class for VOProv DataSet Entity"""
+    _prov_type = VOPROV_DATASET_ENTITY
 
 
 class VOProvActivity(ProvActivity):
@@ -82,14 +99,14 @@ class VOProvActivity(ProvActivity):
 
         :param name:                    A human-readable name for the activity.
         """
-        self._attributes["voprov:name"] = {name}
+        self._attributes[VOPROV_ATTR_NAME] = {name}
 
     def set_comment(self, comment):
         """Set a comment for this activity.
 
         :param comment:                 Text containing specific comments on the activity.
         """
-        self._attributes["voprov:comment"] = {comment}
+        self._attributes[VOPROV['comment']] = {comment}
 
     def isDescribedBy(self, activity_description, identifier=None):
         """Link an activity description to this activity
@@ -115,49 +132,49 @@ class VOProvAgent(ProvAgent):
 
         :param type:                    Type of the agent.
         """
-        self._attributes["voprov:type"] = {type}
+        self._attributes[VOPROV['type']] = {type}
 
     def set_comment(self, comment):
         """Set a comment for this agent.
 
         :param comment:                 Text containing specific comments on the agent.
         """
-        self._attributes["voprov:comment"] = {comment}
+        self._attributes[VOPROV['comment']] = {comment}
 
     def set_email(self, email):
         """Set an email address for this agent.
 
         :param email:                    Contact email of the agent.
         """
-        self._attributes["voprov:email"] = {email}
+        self._attributes[VOPROV['email']] = {email}
 
     def set_affiliation(self, affiliation):
         """Set an affiliation for this agent.
 
         :param affiliation:              Affiliation of the agent.
         """
-        self._attributes["voprov:affiliation"] = {affiliation}
+        self._attributes[VOPROV['affiliation']] = {affiliation}
 
     def set_phone(self, phone):
         """Set a phone number for this agent.
 
         :param phone:                   Phone number.
         """
-        self._attributes["voprov:phone"] = {phone}
+        self._attributes[VOPROV['phone']] = {phone}
 
     def set_address(self, address):
         """Set an address for this agent.
 
         :param address:                  Address of the agent.
         """
-        self._attributes["voprov:address"] = {address}
+        self._attributes[VOPROV['address']] = {address}
 
     def set_url(self, url):
         """Set an url for this agent.
 
         :param url:                      Reference URL to the agent.
         """
-        self._attributes["voprov:url"] = {url}
+        self._attributes[VOPROV['url']] = {url}
 
 
 class VOProvUsage(ProvUsage):
@@ -181,6 +198,7 @@ class VOProvUsage(ProvUsage):
 
 class VOProvGeneration(ProvGeneration):
     """"""
+
     def set_role(self, role):
         """Set the role of this generation.
 
@@ -276,9 +294,16 @@ class VOProvBundle(ProvBundle):
         if name is not None:
             other_attributes.update({VOPROV_ATTR_NAME: name})
         if comment is not None:
-            other_attributes.update({'voprov:comment': comment})
+            other_attributes.update({VOPROV['comment']: comment})
         if len(other_attributes) is 0:
             other_attributes = None
+        """return self.new_record(
+            PROV_ACTIVITY, identifier, {
+                PROV_ATTR_STARTTIME: startTime,
+                PROV_ATTR_ENDTIME: endTime
+            },
+            other_attributes
+        )"""
         return super(VOProvBundle, self).activity(identifier, startTime, endTime, other_attributes)
 
     def entity(self, identifier, name=None, location=None, generatedAtTime=None, invalidatedAtTime=None,
@@ -302,18 +327,86 @@ class VOProvBundle(ProvBundle):
         if name is not None:
             other_attributes.update({VOPROV_ATTR_NAME: name})
         if location is not None:
-            other_attributes.update({'voprov:location': location})
+            other_attributes.update({VOPROV['location']: location})
         if generatedAtTime is not None:
-            other_attributes.update({'voprov:generatedAtTime': generatedAtTime})
+            other_attributes.update({VOPROV['generatedAtTime']: generatedAtTime})
         if invalidatedAtTime is not None:
-            other_attributes.update({'voprov:invalidatedAtTime': invalidatedAtTime})
+            other_attributes.update({VOPROV['invalidatedAtTime']: invalidatedAtTime})
         if comment is not None:
-            other_attributes.update({'voprov:comment': comment})
+            other_attributes.update({VOPROV['comment']: comment})
         if len(other_attributes) is 0:
             other_attributes = None
         return super(VOProvBundle, self).entity(identifier, other_attributes)
 
-    def agent(self, identifier, name, type=None, comment=None, email=None, affiliation=None, phone=None,
+    def valueEntity(self, identifier, value, name=None, location=None, generatedAtTime=None, invalidatedAtTime=None,
+                    comment=None, other_attributes=None):
+        """
+        Creates a new value entity.
+
+        :param identifier:              Identifier for new value entity.
+        :param value:                   The value of the entity. If a corresponding ValueDescription.valueType
+                                        attribute is set, the value string can be interpreted by this valueType.
+        :param name:                    A human-readable name for the entity.
+        :param location:                A path or spatial coordinates, e.g., a URL, latitude-longitude coordinates
+                                        on Earth, the name of a place.
+        :param generatedAtTime:         Date and time at which the entity was created (e.g., timestamp of a file).
+        :param invalidatedAtTime:       Date and time of invalidation of the entity. After that date, the entity is
+                                        no longer available for any use.
+        :param comment:                 Text containing specific comments on the value entity.
+        :param other_attributes:        Optional other attributes as a dictionary or list
+                                        of tuples to be added to the record optionally (default: None).
+        """
+        if other_attributes is None:
+            other_attributes = {}
+        if name is not None:
+            other_attributes.update({VOPROV_ATTR_NAME: name})
+        if location is not None:
+            other_attributes.update({VOPROV['location']: location})
+        if generatedAtTime is not None:
+            other_attributes.update({VOPROV['generatedAtTime']: generatedAtTime})
+        if invalidatedAtTime is not None:
+            other_attributes.update({VOPROV['invalidatedAtTime']: invalidatedAtTime})
+        if comment is not None:
+            other_attributes.update({VOPROV['comment']: comment})
+        if value is not None:
+            other_attributes.update({VOPROV['value']: value})
+        if len(other_attributes) is 0:
+            other_attributes = None
+        return super(VOProvBundle, self).entity(identifier, other_attributes)
+
+    def datasetEntity(self, identifier, name=None, location=None, generatedAtTime=None, invalidatedAtTime=None,
+                      comment=None, other_attributes=None):
+        """
+        Creates a new data set entity.
+
+        :param identifier:              Identifier for new data set entity.
+        :param name:                    A human-readable name for the data set entity.
+        :param location:                A path or spatial coordinates, e.g., a URL, latitude-longitude coordinates
+                                        on Earth, the name of a place.
+        :param generatedAtTime:         Date and time at which the entity was created (e.g., timestamp of a file).
+        :param invalidatedAtTime:       Date and time of invalidation of the entity. After that date, the entity is
+                                        no longer available for any use.
+        :param comment:                 Text containing specific comments on the data set entity.
+        :param other_attributes:        Optional other attributes as a dictionary or list
+                                        of tuples to be added to the record optionally (default: None).
+        """
+        if other_attributes is None:
+            other_attributes = {}
+        if name is not None:
+            other_attributes.update({VOPROV_ATTR_NAME: name})
+        if location is not None:
+            other_attributes.update({VOPROV['location']: location})
+        if generatedAtTime is not None:
+            other_attributes.update({VOPROV['generatedAtTime']: generatedAtTime})
+        if invalidatedAtTime is not None:
+            other_attributes.update({VOPROV['invalidatedAtTime']: invalidatedAtTime})
+        if comment is not None:
+            other_attributes.update({VOPROV['comment']: comment})
+        if len(other_attributes) is 0:
+            other_attributes = None
+        return super(VOProvBundle, self).entity(identifier, other_attributes)
+
+    def agent(self, identifier, name=None, type=None, comment=None, email=None, affiliation=None, phone=None,
               address=None, url=None, other_attributes=None):
         """
         Creates a new agent.
@@ -332,31 +425,34 @@ class VOProvBundle(ProvBundle):
         """
         if other_attributes is None:
             other_attributes = {}
+        if name is not None:
+            other_attributes.update({VOPROV_ATTR_NAME: name})
         if type is not None:
-            other_attributes.update({'voprov:type': type})
+            other_attributes.update({VOPROV['type']: type})
         if comment is not None:
-            other_attributes.update({'voprov:comment': comment})
+            other_attributes.update({VOPROV['comment']: comment})
         if email is not None:
-            other_attributes.update({'voprov:email': email})
+            other_attributes.update({VOPROV['email']: email})
         if affiliation is not None:
-            other_attributes.update({'voprov:affiliation': affiliation})
+            other_attributes.update({VOPROV['affiliation']: affiliation})
         if phone is not None:
-            other_attributes.update({'voprov:phone': phone})
+            other_attributes.update({VOPROV['phone': phone]})
         if address is not None:
-            other_attributes.update({'voprov:address': address})
+            other_attributes.update({VOPROV['address': address]})
         if url is not None:
-            other_attributes.update({'voprov:url': url})
-
-        other_attributes.update({VOPROV_ATTR_NAME: name})
+            other_attributes.update({VOPROV['url': url]})
+        if len(other_attributes) is 0:
+            other_attributes = None
         return super(VOProvBundle, self).agent(identifier, other_attributes)
 
-    def usage(self, identifier, activity, entity=None, role=None, time=None,
-              other_attributes=None):
+    def usage(self, activity, entity=None, usageDescription=None, role=None, time=None,
+              identifier=None, other_attributes=None):
         """
         Creates a new usage record for an activity.
 
         :param activity:                Activity or a string identifier for the entity.
         :param entity:                  Entity or string identifier of the entity involved in
+        :param usageDescription:        Identifier of the usage description which describe this usage.
                                         the usage relationship (default: None).
         :param role:                    Function of the entity with respect to the activity.
         :param time:                    Optional time for the usage (default: None).
@@ -369,20 +465,23 @@ class VOProvBundle(ProvBundle):
         if other_attributes is None:
             other_attributes = {}
         if role is not None:
-            other_attributes.update({'voprov:role': role})
+            other_attributes.update({VOPROV_ATTR_ROLE: role})
+        if usageDescription is not None:
+            other_attributes.update({VOPROV['Descriptor']: usageDescription})
         if len(other_attributes) is 0:
             other_attributes = None
         return super(VOProvBundle, self).usage(activity, entity, time, identifier, other_attributes)
 
-    def generation(self, entity, activity=None, role=None, time=None, identifier=None,
-                   other_attributes=None):
+    def generation(self, entity, activity=None, generationDescription=None, role=None, time=None,
+                   identifier=None, other_attributes=None):
         """
         Creates a new generation record for an entity.
 
-        :param role:                    Function of the entity with respect to the activity.
         :param entity:                  Entity or a string identifier for the entity.
         :param activity:                Activity or string identifier of the activity involved in
                                         the generation (default: None).
+        :param generationDescription:   Identifier of the generation description which describe this generation.
+        :param role:                    Function of the entity with respect to the activity.
         :param time:                    Optional time for the generation (default: None).
                                         Either a :py:class:`datetime.datetime` object or a string that can be
                                         parsed by :py:func:`dateutil.parser`.
@@ -393,7 +492,9 @@ class VOProvBundle(ProvBundle):
         if other_attributes is None:
             other_attributes = {}
         if role is not None:
-            other_attributes.update({'voprov:role': role})
+            other_attributes.update({VOPROV_ATTR_ROLE: role})
+        if generationDescription is not None:
+            other_attributes.update({VOPROV['Descriptor']: generationDescription})
         if len(other_attributes) is 0:
             other_attributes = None
         return super(VOProvBundle, self).generation(entity, activity, time, identifier, other_attributes)
@@ -415,7 +516,7 @@ class VOProvBundle(ProvBundle):
         if other_attributes is None:
             other_attributes = {}
         if role is not None:
-            other_attributes.update({'voprov:role': role})
+            other_attributes.update({VOPROV_ATTR_ROLE: role})
         if len(other_attributes) is 0:
             other_attributes = None
         return super(VOProvBundle, self).attribution(entity, agent, identifier, other_attributes)
@@ -438,7 +539,7 @@ class VOProvBundle(ProvBundle):
         if other_attributes is None:
             other_attributes = {}
         if role is not None:
-            other_attributes.update({'voprov:role': role})
+            other_attributes.update({VOPROV_ATTR_ROLE: role})
         if len(other_attributes) is 0:
             other_attributes = None
         return super(VOProvBundle, self).association(activity, agent, plan, identifier, other_attributes)
@@ -462,15 +563,15 @@ class VOProvBundle(ProvBundle):
         if other_attributes is None:
             other_attributes = {}
         if version is not None:
-            other_attributes.update({'voprov:version': version})
+            other_attributes.update({VOPROV['version']: version})
         if description is not None:
-            other_attributes.update({'voprov:description': description})
+            other_attributes.update({VOPROV['description']: description})
         if docurl is not None:
-            other_attributes.update({'voprov:docurl': docurl})
+            other_attributes.update({VOPROV['docurl']: docurl})
         if type is not None:
-            other_attributes.update({'voprov:type': type})
+            other_attributes.update({VOPROV['type']: type})
         if subtype is not None:
-            other_attributes.update({'voprov:subtype': subtype})
+            other_attributes.update({VOPROV['subtype']: subtype})
         if len(other_attributes) is 0:
             other_attributes = None
         return self.new_record(
@@ -495,16 +596,93 @@ class VOProvBundle(ProvBundle):
         if other_attributes is None:
             other_attributes = {}
         if description is not None:
-            other_attributes.update({'voprov:description': description})
+            other_attributes.update({VOPROV['description']: description})
         if docurl is not None:
-            other_attributes.update({'voprov:docurl': docurl})
+            other_attributes.update({VOPROV['docurl']: docurl})
         if type is not None:
-            other_attributes.update({'voprov:type': type})
+            other_attributes.update({VOPROV['type']: type})
         if len(other_attributes) is 0:
             other_attributes = None
         return self.new_record(
             VOPROV_ENTITY_DESCRIPTION, identifier, {
                 VOPROV_ATTR_NAME: name
+            },
+            other_attributes
+        )
+
+    def valueDescription(self, identifier, name, valueType, description=None, docurl=None, type=None,
+                         unit=None, ucd=None, utype=None, other_attributes=None):
+        """
+        Creates a new activity description.
+
+        :param identifier:              Identifier for new activity description.
+        :param name:                    Human readable name describing the entity.
+        :param valueType:               Description of a value from a combination of datatype, arraysize and xtype
+                                        following VOTable 1.3.
+        :param description:             A descriptive text for this kind of entity.
+        :param docurl:                  Link to more documentation.
+        :param type:                    Type of the entity.
+        :param unit:                    VO unit, see C.1.1 and Derriere and Gray et al. (2014) for recommended unit
+                                        representation.
+        :param ucd:                     Unified Content Descriptor, supplying a standardized classification of the
+                                        physical quantity.
+        :param utype:                   Utype, meant to express the role of the value in the context of an external
+                                        data model.
+        :param other_attributes:        Optional other attributes as a dictionary or list
+                                        of tuples to be added to the record optionally (default: None).
+        """
+        if other_attributes is None:
+            other_attributes = {}
+        if description is not None:
+            other_attributes.update({VOPROV['description']: description})
+        if docurl is not None:
+            other_attributes.update({VOPROV['docurl']: docurl})
+        if type is not None:
+            other_attributes.update({VOPROV['type']: type})
+        if unit is not None:
+            other_attributes.update({VOPROV['unit']: unit})
+        if ucd is not None:
+            other_attributes.update({VOPROV['ucd']: ucd})
+        if utype is not None:
+            other_attributes.update({VOPROV['utype']: utype})
+        if len(other_attributes) is 0:
+            other_attributes = None
+        return self.new_record(
+            VOPROV_VALUE_DESCRIPTION, identifier, {
+                VOPROV_ATTR_NAME: name,
+                VOPROV_ATTR_VALUE_TYPE: valueType
+            },
+            other_attributes
+        )
+
+    def datasetDescription(self, identifier, name, contentType, description=None, docurl=None,
+                           type=None, other_attributes=None):
+        """
+        Creates a new activity description.
+
+        :param identifier:              Identifier for new activity description.
+        :param name:                    Human readable name describing the entity.
+        :param contentType:             Format of the dataset, MIME type when applicable.
+        :param description:             A descriptive text for this kind of entity.
+        :param docurl:                  Link to more documentation.
+        :param type:                    Type of the entity.
+        :param other_attributes:        Optional other attributes as a dictionary or list
+                                        of tuples to be added to the record optionally (default: None).
+        """
+        if other_attributes is None:
+            other_attributes = {}
+        if description is not None:
+            other_attributes.update({VOPROV['description']: description})
+        if docurl is not None:
+            other_attributes.update({VOPROV['docurl']: docurl})
+        if type is not None:
+            other_attributes.update({VOPROV['type']: type})
+        if len(other_attributes) is 0:
+            other_attributes = None
+        return self.new_record(
+            VOPROV_DATASET_DESCRIPTION, identifier, {
+                VOPROV_ATTR_NAME: name,
+                VOPROV_ATTR_CONTENT_TYPE: contentType
             },
             other_attributes
         )
@@ -526,11 +704,11 @@ class VOProvBundle(ProvBundle):
         if other_attributes is None:
             other_attributes = {}
         if description is not None:
-            other_attributes.update({'voprov:description': description})
+            other_attributes.update({VOPROV['description']: description})
         if type is not None:
-            other_attributes.update({'voprov:type': type})
+            other_attributes.update({VOPROV['type']: type})
         if multiplicity is not None:
-            other_attributes.update({'voprov:multiplicity': multiplicity})
+            other_attributes.update({VOPROV['multiplicity']: multiplicity})
         if len(other_attributes) is 0:
             other_attributes = None
         self.relate(identifier, activity_description)
@@ -559,11 +737,11 @@ class VOProvBundle(ProvBundle):
         if other_attributes is None:
             other_attributes = {}
         if description is not None:
-            other_attributes.update({'voprov:description': description})
+            other_attributes.update({VOPROV['description']: description})
         if type is not None:
-            other_attributes.update({'voprov:type': type})
+            other_attributes.update({VOPROV['type']: type})
         if multiplicity is not None:
-            other_attributes.update({'voprov:multiplicity': multiplicity})
+            other_attributes.update({VOPROV['multiplicity']: multiplicity})
         if len(other_attributes) is 0:
             other_attributes = None
         self.relate(identifier, activity_description)
@@ -900,20 +1078,27 @@ class VOProvDocument(ProvDocument, VOProvBundle):
 #  adding voprov class to the prov class mappings
 PROV_REC_CLS.update({
     # link prov class to their voprov representation
-    PROV_ENTITY:                    VOProvEntity,
-    PROV_ACTIVITY:                  VOProvActivity,
-    PROV_AGENT:                     VOProvAgent,
-    PROV_USAGE:                     VOProvUsage,
-    PROV_GENERATION:                VOProvGeneration,
+    PROV_ENTITY: VOProvEntity,
+    PROV_ACTIVITY: VOProvActivity,
+    PROV_AGENT: VOProvAgent,
+    PROV_USAGE: VOProvUsage,
+    PROV_GENERATION: VOProvGeneration,
+
+    # extend prov model
+    VOPROV_VALUE_ENTITY: VOProvValueEntity,
+    VOPROV_DATASET_ENTITY: VOProvDataSetEntity,
 
     # voprov description
-    VOPROV_ACTIVITY_DESCRIPTION:    VOProvActivityDescription,
-    VOPROV_USAGE_DESCRIPTION:       VOProvUsageDescription,
-    VOPROV_GENERATION_DESCRIPTION:  VOProvGenerationDescription,
+    VOPROV_ACTIVITY_DESCRIPTION: VOProvActivityDescription,
+    VOPROV_USAGE_DESCRIPTION: VOProvUsageDescription,
+    VOPROV_GENERATION_DESCRIPTION: VOProvGenerationDescription,
+    VOPROV_ENTITY_DESCRIPTION: VOProvEntityDescription,
+    VOPROV_VALUE_DESCRIPTION: VOProvValueDescription,
+    VOPROV_DATASET_DESCRIPTION: VOProvDataSetDescription,
 
     # voprov configuration
 
     # voprov relation
-    VOPROV_DESCRIPTION_RELATION:    VOProvIsDescribedBy,
-    VOPROV_RELATED_TO_RELATION:     VOProvIsRelatedTo,
+    VOPROV_DESCRIPTION_RELATION: VOProvIsDescribedBy,
+    VOPROV_RELATED_TO_RELATION: VOProvIsRelatedTo,
 })

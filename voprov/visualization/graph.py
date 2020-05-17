@@ -11,4 +11,5 @@ __email__ = 'jean-francois.sornay@etu.umontpellier.fr'
 
 
 INFERRED_ELEMENT_CLASS.update({
+    VOPROV_ATTR_DESCRIPTOR: VOProvDescription,
 })
