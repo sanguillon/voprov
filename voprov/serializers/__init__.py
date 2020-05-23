@@ -4,7 +4,8 @@ from __future__ import (absolute_import, division, print_function,
 
 from prov.serializers import (Registry)
 from prov.serializers import *
-from voprov.serializers.provn import ProvNSerializer
+from voprov.serializers.provn import VOProvNSerializer
+from voprov.serializers.xml import VOProvXMLSerializer
 
 __author__ = 'Jean-Francois Sornay'
 __email__ = 'jean-francois.sornay@etu.umontpellier.fr'
@@ -14,5 +15,6 @@ Registry.load_serializers()
 Registry.serializers.update()
 
 Registry.serializers.update({
-            'provn': ProvNSerializer,
+    'provn': VOProvNSerializer,
+    'xml': VOProvXMLSerializer,
 })

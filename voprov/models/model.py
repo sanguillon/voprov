@@ -436,11 +436,11 @@ class VOProvBundle(ProvBundle):
         if affiliation is not None:
             other_attributes.update({VOPROV['affiliation']: affiliation})
         if phone is not None:
-            other_attributes.update({VOPROV['phone': phone]})
+            other_attributes.update({VOPROV['phone']: phone})
         if address is not None:
-            other_attributes.update({VOPROV['address': address]})
+            other_attributes.update({VOPROV['address']: address})
         if url is not None:
-            other_attributes.update({VOPROV['url': url]})
+            other_attributes.update({VOPROV['url']: url})
         if len(other_attributes) is 0:
             other_attributes = None
         return super(VOProvBundle, self).agent(identifier, other_attributes)
@@ -711,7 +711,7 @@ class VOProvBundle(ProvBundle):
             other_attributes.update({VOPROV['multiplicity']: multiplicity})
         if len(other_attributes) is 0:
             other_attributes = None
-        self.relate(identifier, activity_description)
+        self.relate(activity_description, identifier)
         return self.new_record(
             VOPROV_USAGE_DESCRIPTION, identifier, {
                 VOPROV_ATTR_ROLE: role
@@ -815,13 +815,13 @@ class VOProvDocument(ProvDocument, VOProvBundle):
         self._bundles = dict()
 
     def __repr__(self):
-        return '<ProvDocument>'
+        return '<VOProvDocument>'
 
     def __eq__(self, other):
         if not isinstance(other, ProvDocument):
             return False
         # Comparing the documents' content
-        if not super(ProvDocument, self).__eq__(other):
+        if not super(VOProvDocument, self).__eq__(other):
             return False
 
         # Comparing the documents' bundles
@@ -878,7 +878,7 @@ class VOProvDocument(ProvDocument, VOProvBundle):
         """
         if self._bundles:
             # Creating a new document for all the records
-            new_doc = ProvDocument()
+            new_doc = VOProvDocument()
             bundled_records = itertools.chain(
                 *[b.get_records() for b in self._bundles.values()]
             )
@@ -896,7 +896,7 @@ class VOProvDocument(ProvDocument, VOProvBundle):
 
         :return: :py:class:`ProvDocument`
         """
-        document = ProvDocument(self._unified_records())
+        document = VOProvDocument(self._unified_records())
         document._namespaces = self._namespaces
         for bundle in self.bundles:
             unified_bundle = bundle.unified()
@@ -951,7 +951,7 @@ class VOProvDocument(ProvDocument, VOProvBundle):
                     'Cannot add a document with nested bundles as a bundle.'
                 )
             # Make it a new ProvBundle
-            new_bundle = ProvBundle(namespaces=bundle.namespaces)
+            new_bundle = VOProvBundle(namespaces=bundle.namespaces)
             new_bundle.update(bundle)
             bundle = new_bundle
 
@@ -992,7 +992,7 @@ class VOProvDocument(ProvDocument, VOProvBundle):
             )
         if valid_id in self._bundles:
             raise ProvException('A bundle with that identifier already exists')
-        b = ProvBundle(identifier=valid_id, document=self)
+        b = VOProvBundle(identifier=valid_id, document=self)
         self._bundles[valid_id] = b
         return b
 

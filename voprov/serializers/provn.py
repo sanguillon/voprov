@@ -8,7 +8,7 @@ __author__ = 'Jean-Francois Sornay'
 __email__ = 'jean-francois.sornay@etu.umontpellier.fr'
 
 
-class ProvNSerializer(ProvNSerializer):
+class VOProvNSerializer(ProvNSerializer):
     """PROV-N serializer for ProvDocument
 
     """
@@ -25,4 +25,4 @@ class ProvNSerializer(ProvNSerializer):
         stream.write(provn_content)
 
     def deserialize(self, stream, **kwargs):
-        super(self).deserialize(stream, **kwargs)
+        super(VOProvNSerializer, self).deserialize(stream, **kwargs)

@@ -6,6 +6,7 @@ from prov.dot import *
 
 from voprov.models.voprovDescriptions import *
 from voprov.models.model import *
+from voprov.visualization.graph import *
 
 __author__ = 'Jean-Francois Sornay'
 __email__ = 'jean-francois.sornay@etu.umontpellier.fr'
@@ -46,11 +47,11 @@ DOT_PROV_STYLE.update({
         'fillcolor': '#FF7C47', 'color': '#808080'
     },
     VOPROV_USAGE_DESCRIPTION: {
-        'shape': 'invtrapezium', 'style': 'filled',
+        'shape': 'invtrapezium', 'style': 'filled', 'margin': '0 0', 'fixedsize': 'false',
         'fillcolor': '#FF7C47', 'color': '#808080'
     },
     VOPROV_GENERATION_DESCRIPTION: {
-        'shape': 'trapezium', 'style': 'filled',
+        'shape': 'trapezium', 'style': 'filled', 'margin': '0 0', 'fixedsize': 'false',
         'fillcolor': '#FF7C47', 'color': '#808080'
     },
     VOPROV_ENTITY_DESCRIPTION: {
