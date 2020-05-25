@@ -77,6 +77,7 @@ class VOProvEntity(ProvEntity):
 class VOProvValueEntity(VOProvEntity):
     """Class for VOProv Value Entity"""
     _prov_type = VOPROV_VALUE_ENTITY
+    # FORMAL_ATTRIBUTES = (,)
 
     def set_value(self, value):
         """Set a value for this entity.
@@ -372,7 +373,7 @@ class VOProvBundle(ProvBundle):
             other_attributes.update({VOPROV['value']: value})
         if len(other_attributes) is 0:
             other_attributes = None
-        return super(VOProvBundle, self).entity(identifier, other_attributes)
+        return self.new_record(VOPROV_VALUE_ENTITY, identifier, None, other_attributes)
 
     def datasetEntity(self, identifier, name=None, location=None, generatedAtTime=None, invalidatedAtTime=None,
                       comment=None, other_attributes=None):
@@ -404,7 +405,45 @@ class VOProvBundle(ProvBundle):
             other_attributes.update({VOPROV['comment']: comment})
         if len(other_attributes) is 0:
             other_attributes = None
-        return super(VOProvBundle, self).entity(identifier, other_attributes)
+        return self.new_record(VOPROV_DATASET_ENTITY, identifier, None, other_attributes)
+
+    def configFile(self, identifier, name, location, comment=None, other_attributes=None):
+        """
+        Creates a new config file.
+
+        :param identifier:              Identifier for new config file.
+        :param name:                    A human-readable name for the config file.
+        :param location:                A path to the config file, e.g., a URL/URI.
+        :param comment:                 Text containing comments on the config file.
+        :param other_attributes:        Optional other attributes as a dictionary or list
+                                        of tuples to be added to the record optionally (default: None).
+        """
+        if other_attributes is None:
+            other_attributes = {}
+        if comment is not None:
+            other_attributes.update({VOPROV['comment']: comment})
+        if len(other_attributes) is 0:
+            other_attributes = None
+        return self.new_record(VOPROV_CONFIGURATION_FILE, identifier, {
+            VOPROV_ATTR_NAME: name,
+            VOPROV_ATTR_LOCATION: location
+        }, other_attributes)
+
+    def parameter(self, identifier, name, value, other_attributes=None):
+        """
+        Creates a new parameter.
+
+        :param identifier:              Identifier for new parameter.
+        :param name:                    A human-readable name for the parameter.
+        :param value:                   The value of the parameter. If a corresponding ParameterDescription.valueType
+                                        attribute is set, the value string can be interpreted by this valueType.
+        :param other_attributes:        Optional other attributes as a dictionary or list
+                                        of tuples to be added to the record optionally (default: None).
+        """
+        return self.new_record(VOPROV_CONFIGURATION_PARAMETER, identifier, {
+            VOPROV_ATTR_NAME: name,
+            VOPROV_ATTR_VALUE: value
+        }, other_attributes)
 
     def agent(self, identifier, name=None, type=None, comment=None, email=None, affiliation=None, phone=None,
               address=None, url=None, other_attributes=None):
@@ -658,14 +697,14 @@ class VOProvBundle(ProvBundle):
     def datasetDescription(self, identifier, name, contentType, description=None, docurl=None,
                            type=None, other_attributes=None):
         """
-        Creates a new activity description.
+        Creates a new dataset description.
 
-        :param identifier:              Identifier for new activity description.
-        :param name:                    Human readable name describing the entity.
-        :param contentType:             Format of the dataset, MIME type when applicable.
-        :param description:             A descriptive text for this kind of entity.
+        :param identifier:              Identifier for new data set description.
+        :param name:                    Human readable name describing the data set.
+        :param contentType:             Format of the data set, MIME type when applicable.
+        :param description:             A descriptive text for this kind of data set.
         :param docurl:                  Link to more documentation.
-        :param type:                    Type of the entity.
+        :param type:                    Type of the data set.
         :param other_attributes:        Optional other attributes as a dictionary or list
                                         of tuples to be added to the record optionally (default: None).
         """
@@ -752,6 +791,92 @@ class VOProvBundle(ProvBundle):
             other_attributes
         )
 
+    def configFileDescription(self, identifier, activity_description, name, contentType, description=None,
+                              other_attributes=None):
+        """
+        Creates a new config file description.
+
+        :param identifier:              Identifier for new config file description.
+        :param activity_description:    Identifier or object of the activity description linked to the config file
+                                        description.
+        :param name:                    A human-readable name for the config file.
+        :param contentType:             Format of the config file, MIME type when applicable.
+        :param description:             A descriptive text for this config file.
+        :param other_attributes:        Optional other attributes as a dictionary or list
+                                        of tuples to be added to the record optionally (default: None).
+        """
+        if other_attributes is None:
+            other_attributes = {}
+        if description is not None:
+            other_attributes.update({VOPROV['description']: description})
+        if len(other_attributes) is 0:
+            other_attributes = None
+        self.relate(identifier, activity_description)
+        return self.new_record(
+            VOPROV_CONFIG_FILE_DESCRIPTION, identifier, {
+                VOPROV_ATTR_NAME: name,
+                VOPROV_ATTR_CONTENT_TYPE: contentType
+            },
+            other_attributes
+        )
+
+    def parameterDescription(self, identifier, activity_description, name, valueType, description=None, unit=None,
+                             ucd=None, utype=None, min=None, max=None, options=None, default=None,
+                             other_attributes=None):
+        """
+        Creates a new parameter description.
+
+        :param identifier:              Identifier for new generation description.
+        :param activity_description:    Identifier or object of the activity description linked to the generation
+                                        description.
+        :param name:                    Function of the entity with respect to the activity.
+        :param valueType:               Description of a value from a combination of datatype, arraysize and xtype.
+        :param description:             A descriptive text for this kind of generation.
+        :param unit:                    VO unit, see C.1.1 and Derriere and Gray et al. (2014) for recommended unit
+                                        representation.
+        :param ucd:                     Unified Content Descriptor, supplying a standardized classification of
+                                        the physical quantity.
+        :param utype:                   Utype, meant to express the role of the parameter in the context of an external
+                                        data model.
+        :param min:                     Minimum value as a string whose value can be interpreted by the valueType
+                                        attribute.
+        :param max:                     Maximum value as a string whose value can be interpreted by the valueType
+                                        attribute.
+        :param options:                 Array of possible values.
+        :param default:                 The default value of the parameter as a string whose value can be interpreted
+                                        by the valueType attribute.
+        :param other_attributes:        Optional other attributes as a dictionary or list
+                                        of tuples to be added to the record optionally (default: None).
+        """
+        if other_attributes is None:
+            other_attributes = {}
+        if description is not None:
+            other_attributes.update({VOPROV['description']: description})
+        if unit is not None:
+            other_attributes.update({VOPROV['unit']: unit})
+        if ucd is not None:
+            other_attributes.update({VOPROV['ucd']: ucd})
+        if utype is not None:
+            other_attributes.update({VOPROV['utype']: utype})
+        if min is not None:
+            other_attributes.update({VOPROV['min']: min})
+        if max is not None:
+            other_attributes.update({VOPROV['max']: max})
+        if options is not None:
+            other_attributes.update({VOPROV['options']: options})
+        if default is not None:
+            other_attributes.update({VOPROV['default']: default})
+        if len(other_attributes) is 0:
+            other_attributes = None
+        self.relate(identifier, activity_description)
+        return self.new_record(
+            VOPROV_GENERATION_DESCRIPTION, identifier, {
+                VOPROV_ATTR_NAME: name,
+                VOPROV_ATTR_VALUE_TYPE: valueType
+            },
+            other_attributes
+        )
+
     def description(self, described, descriptor, identifier=None):
         """
         Creates a new description relation record.
@@ -767,6 +892,26 @@ class VOProvBundle(ProvBundle):
             VOPROV_DESCRIPTION_RELATION, identifier, {
                 VOPROV_ATTR_DESCRIBED: described,
                 VOPROV_ATTR_DESCRIPTOR: descriptor
+            },
+            None
+        )
+
+    def configuration(self, configured, configurator, artefactType, identifier=None):
+        """
+        Creates a new description relation record.
+
+        :param configured:              The configured element (relationship destination).
+        :param configurator:            The configuring element (relationship source).
+        :param artefactType:            Literal that takes the value ?Parameter? or ?ConfigFile? to indicate the type
+                                        of class pointed by the WasConfiguredBy instance.
+        :param identifier:              Identifier for new wasConfiguredBy relation record.
+        """
+
+        return self.new_record(
+            VOPROV_CONFIGURATION_RELATION, identifier, {
+                VOPROV_ATTR_DESCRIBED: configured,
+                VOPROV_ATTR_DESCRIPTOR: configurator,
+                VOPROV_ATTR_ARTEFACT_TYPE: artefactType
             },
             None
         )
@@ -796,6 +941,7 @@ class VOProvBundle(ProvBundle):
     # alias for voprov's function
     isDescribedBy = description
     isRelatedTo = relate
+    wasConfiguredBy = configuration
 
 
 class VOProvDocument(ProvDocument, VOProvBundle):
@@ -1097,8 +1243,10 @@ PROV_REC_CLS.update({
     VOPROV_DATASET_DESCRIPTION: VOProvDataSetDescription,
 
     # voprov configuration
-
+    VOPROV_CONFIGURATION_FILE: VOProvConfigFileDescription,
+    VOPROV_CONFIGURATION_PARAMETER: VOProvParameterDescription,
     # voprov relation
     VOPROV_DESCRIPTION_RELATION: VOProvIsDescribedBy,
+    VOPROV_CONFIGURATION_RELATION: VOProvWasConfiguredBy,
     VOPROV_RELATED_TO_RELATION: VOProvIsRelatedTo,
 })

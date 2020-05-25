@@ -5,6 +5,7 @@ from __future__ import (absolute_import, division, print_function,
 from prov.dot import *
 
 from voprov.models.voprovDescriptions import *
+from voprov.models.voprovConfigurations import *
 from voprov.models.model import *
 from voprov.visualization.graph import *
 
@@ -35,8 +36,23 @@ GENERIC_NODE_STYLE.update({
         'shape': 'trapezium', 'style': 'filled',
         'fillcolor': 'lightgray', 'color': 'dimgray'
     },
+    VOProvConfigFileDescription: {
+        'shape': 'trapezium', 'style': 'filled',
+        'fillcolor': 'lightgray', 'color': 'dimgray'
+    },
+    VOProvParameterDescription: {
+        'shape': 'trapezium', 'style': 'filled',
+        'fillcolor': 'lightgray', 'color': 'dimgray'
+    },
     # voprov configuration
-    # voprov relation
+    VOProvConfigFile: {
+        'shape': 'oval', 'style': 'filled',
+        'fillcolor': 'lightgray', 'color': 'dimgray'
+    },
+    VOProvParameter: {
+        'shape': 'oval', 'style': 'filled',
+        'fillcolor': 'lightgray', 'color': 'dimgray'
+    },
 })
 
 # updating the style of the different prov record
@@ -66,8 +82,23 @@ DOT_PROV_STYLE.update({
         'shape': 'oval', 'style': 'filled',
         'fillcolor': '#FF7C47', 'color': '#808080'
     },
-
+    VOPROV_CONFIG_FILE_DESCRIPTION: {
+        'shape': 'oval', 'style': 'filled',
+        'fillcolor': '#FF7C47', 'color': '#808080'
+    },
+    VOPROV_PARAMETER_DESCRIPTION: {
+        'shape': 'oval', 'style': 'filled',
+        'fillcolor': '#FF7C47', 'color': '#808080'
+    },
     # voprov configuration
+    VOPROV_CONFIGURATION_FILE: {
+        'shape': 'oval', 'style': 'filled',
+        'fillcolor': '#FF7C47', 'color': '#808080'
+    },
+    VOPROV_CONFIGURATION_PARAMETER: {
+        'shape': 'oval', 'style': 'filled',
+        'fillcolor': '#FF7C47', 'color': '#808080'
+    },
 
     # voprov relation
     VOPROV_DESCRIPTION_RELATION: {
@@ -76,6 +107,10 @@ DOT_PROV_STYLE.update({
     },
     VOPROV_RELATED_TO_RELATION: {
         'label': 'isRelatedTo', 'fontsize': '10.0',
+        'color': '#FF6629', 'fontcolor': '#FF6629'
+    },
+    VOPROV_CONFIGURATION_RELATION: {
+        'label': 'wasConfiguredBy', 'fontsize': '10.0',
         'color': '#FF6629', 'fontcolor': '#FF6629'
     },
 })

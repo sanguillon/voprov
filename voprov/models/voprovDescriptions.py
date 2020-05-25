@@ -311,12 +311,12 @@ class VOProvDataSetDescription(VOProvEntityDescription):
 class VOProvConfigFileDescription(VOProvEntityDescription):
     """Class for VOProv configuration file description"""
 
-    FORMAL_ATTRIBUTES = None
-    _prov_type = None
+    FORMAL_ATTRIBUTES = (VOPROV_ATTR_NAME, VOPROV_ATTR_CONTENT_TYPE)
+    _prov_type = VOPROV_CONFIG_FILE_DESCRIPTION
 
 
 class VOProvParameterDescription(VOProvDescription):
     """Class for VOProv parameter description"""
 
-    FORMAL_ATTRIBUTES = None
-    _prov_type = None
+    FORMAL_ATTRIBUTES = (VOPROV_ATTR_NAME, VOPROV_ATTR_VALUE_TYPE)
+    _prov_type = VOPROV_PARAMETER_DESCRIPTION

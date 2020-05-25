@@ -22,5 +22,5 @@ class VOProvIsRelatedTo(VOProvRelation):
 
 
 class VOProvWasConfiguredBy(VOProvRelation):
-    FORMAL_ATTRIBUTES = None
-    _prov_type = None
+    FORMAL_ATTRIBUTES = (VOPROV_ATTR_CONFIGURED, VOPROV_ATTR_CONFIGURATOR, VOPROV_ATTR_ARTEFACT_TYPE)
+    _prov_type = VOPROV_CONFIGURATION_RELATION
