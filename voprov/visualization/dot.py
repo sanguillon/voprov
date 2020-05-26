@@ -57,6 +57,16 @@ GENERIC_NODE_STYLE.update({
 
 # updating the style of the different prov record
 DOT_PROV_STYLE.update({
+    # extend prov model
+    VOPROV_VALUE_ENTITY: {
+        'shape': 'oval', 'style': 'filled',
+        'fillcolor': '#FFFC87', 'color': '#808080'
+    },
+    VOPROV_DATASET_ENTITY: {
+        'shape': 'oval', 'style': 'filled',
+        'fillcolor': '#FFFC87', 'color': '#808080'
+    },
+
     # voprov description
     VOPROV_ACTIVITY_DESCRIPTION: {
         'shape': 'box', 'style': 'filled',
@@ -83,21 +93,22 @@ DOT_PROV_STYLE.update({
         'fillcolor': '#FF7C47', 'color': '#808080'
     },
     VOPROV_CONFIG_FILE_DESCRIPTION: {
-        'shape': 'oval', 'style': 'filled',
+        'shape': 'box3d', 'style': 'filled',
         'fillcolor': '#FF7C47', 'color': '#808080'
     },
     VOPROV_PARAMETER_DESCRIPTION: {
-        'shape': 'oval', 'style': 'filled',
+        'shape': 'note', 'style': 'filled',
         'fillcolor': '#FF7C47', 'color': '#808080'
     },
+
     # voprov configuration
     VOPROV_CONFIGURATION_FILE: {
-        'shape': 'oval', 'style': 'filled',
-        'fillcolor': '#FF7C47', 'color': '#808080'
+        'shape': 'box3d', 'style': 'filled',
+        'fillcolor': '#4CDD4C', 'color': '#808080'
     },
     VOPROV_CONFIGURATION_PARAMETER: {
-        'shape': 'oval', 'style': 'filled',
-        'fillcolor': '#FF7C47', 'color': '#808080'
+        'shape': 'note', 'style': 'filled',
+        'fillcolor': '#4CDD4C', 'color': '#808080'
     },
 
     # voprov relation
@@ -107,10 +118,10 @@ DOT_PROV_STYLE.update({
     },
     VOPROV_RELATED_TO_RELATION: {
         'label': 'isRelatedTo', 'fontsize': '10.0',
-        'color': '#FF6629', 'fontcolor': '#FF6629'
+        'color': '#BFC9BF', 'fontcolor': '#BFC9BF'
     },
     VOPROV_CONFIGURATION_RELATION: {
         'label': 'wasConfiguredBy', 'fontsize': '10.0',
-        'color': '#FF6629', 'fontcolor': '#FF6629'
+        'color': '#57B857', 'fontcolor': '#57B857'
     },
 })

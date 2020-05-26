@@ -17,6 +17,7 @@ from six.moves.urllib.parse import urlparse
 from voprov.models.constants import *
 from voprov import serializers
 from voprov.models.voprovDescriptions import *
+from voprov.models.voprovConfigurations import *
 from voprov.models.voprovRelations import *
 
 __author__ = 'Jean-Francois Sornay'
@@ -269,9 +270,7 @@ class VOProvBundle(ProvBundle):
             namespaces,
             parent=(document._namespaces if document is not None else None)
         )
-        if records:
-            for record in records:
-                self.add_record(record)
+
 
     def activity(self, identifier, name=None, startTime=None, endTime=None, comment=None,
                  other_attributes=None):
@@ -870,7 +869,7 @@ class VOProvBundle(ProvBundle):
             other_attributes = None
         self.relate(identifier, activity_description)
         return self.new_record(
-            VOPROV_GENERATION_DESCRIPTION, identifier, {
+            VOPROV_PARAMETER_DESCRIPTION, identifier, {
                 VOPROV_ATTR_NAME: name,
                 VOPROV_ATTR_VALUE_TYPE: valueType
             },
@@ -909,8 +908,8 @@ class VOProvBundle(ProvBundle):
 
         return self.new_record(
             VOPROV_CONFIGURATION_RELATION, identifier, {
-                VOPROV_ATTR_DESCRIBED: configured,
-                VOPROV_ATTR_DESCRIPTOR: configurator,
+                VOPROV_ATTR_CONFIGURED: configured,
+                VOPROV_ATTR_CONFIGURATOR: configurator,
                 VOPROV_ATTR_ARTEFACT_TYPE: artefactType
             },
             None
@@ -1241,10 +1240,12 @@ PROV_REC_CLS.update({
     VOPROV_ENTITY_DESCRIPTION: VOProvEntityDescription,
     VOPROV_VALUE_DESCRIPTION: VOProvValueDescription,
     VOPROV_DATASET_DESCRIPTION: VOProvDataSetDescription,
+    VOPROV_CONFIG_FILE_DESCRIPTION: VOProvConfigFileDescription,
+    VOPROV_PARAMETER_DESCRIPTION: VOProvParameterDescription,
 
     # voprov configuration
-    VOPROV_CONFIGURATION_FILE: VOProvConfigFileDescription,
-    VOPROV_CONFIGURATION_PARAMETER: VOProvParameterDescription,
+    VOPROV_CONFIGURATION_FILE: VOProvConfigFile,
+    VOPROV_CONFIGURATION_PARAMETER: VOProvParameter,
     # voprov relation
     VOPROV_DESCRIPTION_RELATION: VOProvIsDescribedBy,
     VOPROV_CONFIGURATION_RELATION: VOProvWasConfiguredBy,
