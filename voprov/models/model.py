@@ -6,7 +6,6 @@ import io
 import itertools
 import os
 import shutil
-import sys
 import tempfile
 import dateutil.parser
 from prov.model import (ProvException, ProvDocument, ProvBundle, ProvActivity,
