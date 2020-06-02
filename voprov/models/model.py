@@ -8,9 +8,12 @@ import os
 import shutil
 import sys
 import tempfile
-
+import dateutil.parser
 from prov.model import (ProvException, ProvDocument, ProvBundle, ProvActivity,
-                        ProvEntity, ProvUsage, ProvAgent, ProvGeneration,
+                        ProvEntity, ProvUsage, ProvAgent, ProvGeneration, ProvAssociation,
+                        ProvCommunication, ProvStart, ProvEnd, ProvInvalidation, ProvDerivation,
+                        ProvAttribution, ProvDelegation, ProvInfluence, ProvSpecialization,
+                        ProvAlternate, ProvMention, ProvMembership,
                         PROV_REC_CLS, DEFAULT_NAMESPACES, NamespaceManager)
 from six.moves.urllib.parse import urlparse
 
@@ -26,8 +29,17 @@ __email__ = 'jean-francois.sornay@etu.umontpellier.fr'
 DEFAULT_NAMESPACES.update({'voprov': VOPROV})
 
 
+def _ensure_datetime(value):
+    if isinstance(value, six.string_types):
+        return dateutil.parser.parse(value)
+    else:
+        return value
+
+
 class VOProvEntity(ProvEntity):
     """Adaptation of prov Entity to VOProv Entity"""
+
+    _prov_type = VOPROV_ENTITY
 
     def set_name(self, name):
         """Set the name of this entity.
@@ -78,7 +90,6 @@ class VOProvEntity(ProvEntity):
 class VOProvValueEntity(VOProvEntity):
     """Class for VOProv Value Entity"""
     _prov_type = VOPROV_VALUE_ENTITY
-    # FORMAL_ATTRIBUTES = (,)
 
     def set_value(self, value):
         """Set a value for this entity.
@@ -95,6 +106,8 @@ class VOProvDataSetEntity(VOProvEntity):
 
 class VOProvActivity(ProvActivity):
     """Adaptation of prov Activity to VOProv Activity"""
+    FORMAL_ATTRIBUTES = (VOPROV_ATTR_STARTTIME, VOPROV_ATTR_ENDTIME)
+    _prov_type = VOPROV_ACTIVITY
 
     def set_name(self, name):
         """Set the name of this activity.
@@ -120,7 +133,8 @@ class VOProvActivity(ProvActivity):
 
 
 class VOProvAgent(ProvAgent):
-    """"""
+    """Adaptation of Prov Agent class"""
+    _prov_type = VOPROV_AGENT
 
     def set_name(self, name):
         """Set the name of this activity.
@@ -181,6 +195,8 @@ class VOProvAgent(ProvAgent):
 
 class VOProvUsage(ProvUsage):
     """Adaptation of prov Used relation to VOProv Used relation"""
+    _prov_type = VOPROV_USAGE
+    FORMAL_ATTRIBUTES = (VOPROV_ATTR_ACTIVITY, VOPROV_ATTR_ENTITY, VOPROV_ATTR_TIME)
 
     def set_role(self, role):
         """Set the role of this usage.
@@ -199,7 +215,9 @@ class VOProvUsage(ProvUsage):
 
 
 class VOProvGeneration(ProvGeneration):
-    """"""
+    """Adaptation of prov generation"""
+    _prov_type = VOPROV_GENERATION
+    FORMAL_ATTRIBUTES = (VOPROV_ATTR_ENTITY, VOPROV_ATTR_ACTIVITY, VOPROV_ATTR_TIME)
 
     def set_role(self, role):
         """Set the role of this generation.
@@ -215,6 +233,115 @@ class VOProvGeneration(ProvGeneration):
         :param identifier:              Identifier of the description relation created.
         """
         return self._bundle.description(self, generation_description, identifier)
+
+
+class VOProvCommunication(ProvCommunication):
+    """Adaptation of prov Communication relationship."""
+
+    FORMAL_ATTRIBUTES = (VOPROV_ATTR_INFORMED, VOPROV_ATTR_INFORMANT)
+
+    _prov_type = VOPROV_COMMUNICATION
+
+
+class VOProvStart(ProvStart):
+    """Adaptation of prov Start relationship."""
+
+    FORMAL_ATTRIBUTES = (VOPROV_ATTR_ACTIVITY, VOPROV_ATTR_TRIGGER,
+                         VOPROV_ATTR_STARTER, VOPROV_ATTR_TIME)
+
+    _prov_type = VOPROV_START
+
+
+class VOProvEnd(ProvEnd):
+    """Adaptation of prov End relationship."""
+
+    FORMAL_ATTRIBUTES = (VOPROV_ATTR_ACTIVITY, VOPROV_ATTR_TRIGGER,
+                         VOPROV_ATTR_ENDER, VOPROV_ATTR_TIME)
+
+    _prov_type = VOPROV_END
+
+
+class VOProvInvalidation(ProvInvalidation):
+    """Adaptation of prov Invalidation relationship."""
+
+    FORMAL_ATTRIBUTES = (VOPROV_ATTR_ENTITY, VOPROV_ATTR_ACTIVITY, VOPROV_ATTR_TIME)
+
+    _prov_type = VOPROV_INVALIDATION
+
+
+class VOProvDerivation(ProvDerivation):
+    """Adaptation of prov Derivation relationship."""
+
+    FORMAL_ATTRIBUTES = (VOPROV_ATTR_GENERATED_ENTITY, VOPROV_ATTR_USED_ENTITY,
+                         VOPROV_ATTR_ACTIVITY, VOPROV_ATTR_GENERATION,
+                         VOPROV_ATTR_USAGE)
+
+    _prov_type = VOPROV_DERIVATION
+
+
+class VOProvAttribution(ProvAttribution):
+    """Adaptation of prov Attribution relationship."""
+
+    FORMAL_ATTRIBUTES = (VOPROV_ATTR_ENTITY, VOPROV_ATTR_AGENT)
+
+    _prov_type = VOPROV_ATTRIBUTION
+
+
+class VOProvAssociation(ProvAssociation):
+    """Adaptation of prov Association relationship."""
+
+    FORMAL_ATTRIBUTES = (VOPROV_ATTR_ACTIVITY, VOPROV_ATTR_AGENT, VOPROV_ATTR_PLAN)
+
+    _prov_type = VOPROV_ASSOCIATION
+
+
+class VOProvDelegation(ProvDelegation):
+    """Adaptation of prov Delegation relationship."""
+
+    FORMAL_ATTRIBUTES = (VOPROV_ATTR_DELEGATE, VOPROV_ATTR_RESPONSIBLE, VOPROV_ATTR_ACTIVITY)
+
+    _prov_type = VOPROV_DELEGATION
+
+
+class VOProvInfluence(ProvInfluence):
+    """Adaptation of prov Influence relationship."""
+
+    FORMAL_ATTRIBUTES = (VOPROV_ATTR_INFLUENCEE, VOPROV_ATTR_INFLUENCER)
+
+    _prov_type = VOPROV_INFLUENCE
+
+
+class VOProvSpecialization(ProvSpecialization):
+    """Adaptation of prov Specialization relationship."""
+
+    FORMAL_ATTRIBUTES = (VOPROV_ATTR_SPECIFIC_ENTITY, VOPROV_ATTR_GENERAL_ENTITY)
+
+    _prov_type = VOPROV_SPECIALIZATION
+
+
+class VOProvAlternate(ProvAlternate):
+    """Adaptation of prov Alternate relationship."""
+
+    FORMAL_ATTRIBUTES = (VOPROV_ATTR_ALTERNATE1, VOPROV_ATTR_ALTERNATE2)
+
+    _prov_type = VOPROV_ALTERNATE
+
+
+class VOProvMention(ProvMention, VOProvSpecialization):
+    """Adaptation of prov Mention relationship (specific Specialization)."""
+
+    FORMAL_ATTRIBUTES = (VOPROV_ATTR_SPECIFIC_ENTITY, VOPROV_ATTR_GENERAL_ENTITY,
+                         VOPROV_ATTR_BUNDLE)
+
+    _prov_type = VOPROV_MENTION
+
+
+class VOProvMembership(ProvMembership):
+    """Adaptation of prov Membership relationship."""
+
+    FORMAL_ATTRIBUTES = (VOPROV_ATTR_COLLECTION, VOPROV_ATTR_ENTITY)
+
+    _prov_type = VOPROV_MEMBERSHIP
 
 
 class VOProvNamespaceManager(NamespaceManager):
@@ -271,7 +398,6 @@ class VOProvBundle(ProvBundle):
             parent=(document._namespaces if document is not None else None)
         )
 
-
     def activity(self, identifier, name=None, startTime=None, endTime=None, comment=None,
                  other_attributes=None):
         """
@@ -297,14 +423,13 @@ class VOProvBundle(ProvBundle):
             other_attributes.update({VOPROV['comment']: comment})
         if len(other_attributes) is 0:
             other_attributes = None
-        """return self.new_record(
-            PROV_ACTIVITY, identifier, {
-                PROV_ATTR_STARTTIME: startTime,
-                PROV_ATTR_ENDTIME: endTime
+        return self.new_record(
+            VOPROV_ACTIVITY, identifier, {
+                VOPROV_ATTR_STARTTIME: startTime,
+                VOPROV_ATTR_ENDTIME: endTime
             },
             other_attributes
-        )"""
-        return super(VOProvBundle, self).activity(identifier, startTime, endTime, other_attributes)
+        )
 
     def entity(self, identifier, name=None, location=None, generatedAtTime=None, invalidatedAtTime=None,
                comment=None, other_attributes=None):
@@ -336,7 +461,9 @@ class VOProvBundle(ProvBundle):
             other_attributes.update({VOPROV['comment']: comment})
         if len(other_attributes) is 0:
             other_attributes = None
-        return super(VOProvBundle, self).entity(identifier, other_attributes)
+        return self.new_record(
+            VOPROV_ENTITY, identifier, None, other_attributes
+        )
 
     def valueEntity(self, identifier, value, name=None, location=None, generatedAtTime=None, invalidatedAtTime=None,
                     comment=None, other_attributes=None):
@@ -481,7 +608,7 @@ class VOProvBundle(ProvBundle):
             other_attributes.update({VOPROV['url']: url})
         if len(other_attributes) is 0:
             other_attributes = None
-        return super(VOProvBundle, self).agent(identifier, other_attributes)
+        return self.new_record(VOPROV_AGENT, identifier, None, other_attributes)
 
     def usage(self, activity, entity=None, usageDescription=None, role=None, time=None,
               identifier=None, other_attributes=None):
@@ -508,7 +635,13 @@ class VOProvBundle(ProvBundle):
             other_attributes.update({VOPROV['Descriptor']: usageDescription})
         if len(other_attributes) is 0:
             other_attributes = None
-        return super(VOProvBundle, self).usage(activity, entity, time, identifier, other_attributes)
+        return self.new_record(
+            VOPROV_USAGE, identifier, {
+                VOPROV_ATTR_ACTIVITY: activity,
+                VOPROV_ATTR_ENTITY: entity,
+                VOPROV_ATTR_TIME: _ensure_datetime(time)},
+            other_attributes
+        )
 
     def generation(self, entity, activity=None, generationDescription=None, role=None, time=None,
                    identifier=None, other_attributes=None):
@@ -535,7 +668,111 @@ class VOProvBundle(ProvBundle):
             other_attributes.update({VOPROV['Descriptor']: generationDescription})
         if len(other_attributes) is 0:
             other_attributes = None
-        return super(VOProvBundle, self).generation(entity, activity, time, identifier, other_attributes)
+        return self.new_record(
+            VOPROV_GENERATION, identifier, {
+                VOPROV_ATTR_ENTITY: entity,
+                VOPROV_ATTR_ACTIVITY: activity,
+                VOPROV_ATTR_TIME: _ensure_datetime(time)
+            },
+            other_attributes
+        )
+
+    def start(self, activity, trigger=None, starter=None, time=None,
+              identifier=None, other_attributes=None):
+        """
+        Creates a new start record for an activity.
+
+        :param activity: Activity or a string identifier for the entity.
+        :param trigger: Entity triggering the start of this activity.
+        :param starter: Optionally extra activity to state a qualified start
+            through which the trigger entity for the start is generated
+            (default: None).
+        :param time: Optional time for the start (default: None).
+            Either a :py:class:`datetime.datetime` object or a string that can be
+            parsed by :py:func:`dateutil.parser`.
+        :param identifier: Identifier for new start record.
+        :param other_attributes: Optional other attributes as a dictionary or list
+            of tuples to be added to the record optionally (default: None).
+        """
+        return self.new_record(
+            VOPROV_START, identifier, {
+                VOPROV_ATTR_ACTIVITY: activity,
+                VOPROV_ATTR_TRIGGER: trigger,
+                VOPROV_ATTR_STARTER: starter,
+                VOPROV_ATTR_TIME: _ensure_datetime(time)
+            },
+            other_attributes
+        )
+
+    def end(self, activity, trigger=None, ender=None, time=None,
+            identifier=None, other_attributes=None):
+        """
+        Creates a new end record for an activity.
+
+        :param activity: Activity or a string identifier for the entity.
+        :param trigger: trigger: Entity triggering the end of this activity.
+        :param ender: Optionally extra activity to state a qualified end
+            through which the trigger entity for the end is generated
+            (default: None).
+        :param time: Optional time for the end (default: None).
+            Either a :py:class:`datetime.datetime` object or a string that can be
+            parsed by :py:func:`dateutil.parser`.
+        :param identifier: Identifier for new end record.
+        :param other_attributes: Optional other attributes as a dictionary or list
+            of tuples to be added to the record optionally (default: None).
+        """
+        return self.new_record(
+            VOPROV_END, identifier, {
+                VOPROV_ATTR_ACTIVITY: activity,
+                VOPROV_ATTR_TRIGGER: trigger,
+                VOPROV_ATTR_ENDER: ender,
+                VOPROV_ATTR_TIME: _ensure_datetime(time)
+            },
+            other_attributes
+        )
+
+    def invalidation(self, entity, activity=None, time=None, identifier=None,
+                     other_attributes=None):
+        """
+        Creates a new invalidation record for an entity.
+
+        :param entity: Entity or a string identifier for the entity.
+        :param activity: Activity or string identifier of the activity involved in
+            the invalidation (default: None).
+        :param time: Optional time for the invalidation (default: None).
+            Either a :py:class:`datetime.datetime` object or a string that can be
+            parsed by :py:func:`dateutil.parser`.
+        :param identifier: Identifier for new invalidation record.
+        :param other_attributes: Optional other attributes as a dictionary or list
+            of tuples to be added to the record optionally (default: None).
+        """
+        return self.new_record(
+            VOPROV_INVALIDATION, identifier, {
+                VOPROV_ATTR_ENTITY: entity,
+                VOPROV_ATTR_ACTIVITY: activity,
+                VOPROV_ATTR_TIME: _ensure_datetime(time)
+            },
+            other_attributes
+        )
+
+    def communication(self, informed, informant, identifier=None,
+                      other_attributes=None):
+        """
+        Creates a new communication record for an entity.
+
+        :param informed: The informed activity (relationship destination).
+        :param informant: The informing activity (relationship source).
+        :param identifier: Identifier for new communication record.
+        :param other_attributes: Optional other attributes as a dictionary or list
+            of tuples to be added to the record optionally (default: None).
+        """
+        return self.new_record(
+            VOPROV_COMMUNICATION, identifier, {
+                VOPROV_ATTR_INFORMED: informed,
+                VOPROV_ATTR_INFORMANT: informant
+            },
+            other_attributes
+        )
 
     def attribution(self, entity, agent, role=None, identifier=None,
                     other_attributes=None):
@@ -557,7 +794,13 @@ class VOProvBundle(ProvBundle):
             other_attributes.update({VOPROV_ATTR_ROLE: role})
         if len(other_attributes) is 0:
             other_attributes = None
-        return super(VOProvBundle, self).attribution(entity, agent, identifier, other_attributes)
+        return self.new_record(
+            VOPROV_ATTRIBUTION, identifier, {
+                VOPROV_ATTR_ENTITY: entity,
+                VOPROV_ATTR_AGENT: agent
+            },
+            other_attributes
+        )
 
     def association(self, activity, agent=None, role=None, plan=None, identifier=None,
                     other_attributes=None):
@@ -580,7 +823,243 @@ class VOProvBundle(ProvBundle):
             other_attributes.update({VOPROV_ATTR_ROLE: role})
         if len(other_attributes) is 0:
             other_attributes = None
-        return super(VOProvBundle, self).association(activity, agent, plan, identifier, other_attributes)
+        return self.new_record(
+            VOPROV_ASSOCIATION, identifier, {
+                VOPROV_ATTR_ACTIVITY: activity,
+                VOPROV_ATTR_AGENT: agent,
+                VOPROV_ATTR_PLAN: plan
+            },
+            other_attributes
+        )
+
+    def delegation(self, delegate, responsible, activity=None, identifier=None,
+                   other_attributes=None):
+        """
+        Creates a new delegation record on behalf of an agent.
+
+        :param delegate: Agent delegating the responsibility (relationship source).
+        :param responsible: Agent the responsibility is delegated to (relationship
+            destination).
+        :param activity: Optionally extra activity to state qualified delegation
+            internally (default: None).
+        :param identifier: Identifier for new association record.
+        :param other_attributes: Optional other attributes as a dictionary or list
+            of tuples to be added to the record optionally (default: None).
+        """
+        return self.new_record(
+            VOPROV_DELEGATION, identifier, {
+                VOPROV_ATTR_DELEGATE: delegate,
+                VOPROV_ATTR_RESPONSIBLE: responsible,
+                VOPROV_ATTR_ACTIVITY: activity
+            },
+            other_attributes
+        )
+
+    def influence(self, influencee, influencer, identifier=None,
+                  other_attributes=None):
+        """
+        Creates a new influence record between two entities, activities or agents.
+
+        :param influencee: Influenced entity, activity or agent (relationship
+            source).
+        :param influencer: Influencing entity, activity or agent (relationship
+            destination).
+        :param identifier: Identifier for new influence record.
+        :param other_attributes: Optional other attributes as a dictionary or list
+            of tuples to be added to the record optionally (default: None).
+        """
+        return self.new_record(
+            VOPROV_INFLUENCE, identifier, {
+                VOPROV_ATTR_INFLUENCEE: influencee,
+                VOPROV_ATTR_INFLUENCER: influencer
+            },
+            other_attributes
+        )
+
+    def derivation(self, generatedEntity, usedEntity, activity=None,
+                   generation=None, usage=None,
+                   identifier=None, other_attributes=None):
+        """
+        Creates a new derivation record for a generated entity from a used entity.
+
+        :param generatedEntity: Entity or a string identifier for the generated
+            entity (relationship source).
+        :param usedEntity: Entity or a string identifier for the used entity
+            (relationship destination).
+        :param activity: Activity or string identifier of the activity involved in
+            the derivation (default: None).
+        :param generation: Optionally extra activity to state qualified generation
+            through a generation (default: None).
+        :param usage: XXX (default: None).
+        :param identifier: Identifier for new derivation record.
+        :param other_attributes: Optional other attributes as a dictionary or list
+            of tuples to be added to the record optionally (default: None).
+        """
+        attributes = {VOPROV_ATTR_GENERATED_ENTITY: generatedEntity,
+                      VOPROV_ATTR_USED_ENTITY: usedEntity,
+                      VOPROV_ATTR_ACTIVITY: activity,
+                      VOPROV_ATTR_GENERATION: generation,
+                      VOPROV_ATTR_USAGE: usage}
+        return self.new_record(
+            VOPROV_DERIVATION, identifier, attributes, other_attributes
+        )
+
+    def revision(self, generatedEntity, usedEntity, activity=None,
+                 generation=None, usage=None,
+                 identifier=None, other_attributes=None):
+        """
+        Creates a new revision record for a generated entity from a used entity.
+
+        :param generatedEntity: Entity or a string identifier for the generated
+            entity (relationship source).
+        :param usedEntity: Entity or a string identifier for the used entity
+            (relationship destination).
+        :param activity: Activity or string identifier of the activity involved in
+            the revision (default: None).
+        :param generation: Optionally to state qualified revision through a
+            generation activity (default: None).
+        :param usage: XXX (default: None).
+        :param identifier: Identifier for new revision record.
+        :param other_attributes: Optional other attributes as a dictionary or list
+            of tuples to be added to the record optionally (default: None).
+        """
+        record = self.derivation(
+            generatedEntity, usedEntity, activity, generation, usage,
+            identifier, other_attributes
+        )
+        record.add_asserted_type(VOPROV['Revision'])
+        return record
+
+    def quotation(self, generatedEntity, usedEntity, activity=None,
+                  generation=None, usage=None,
+                  identifier=None, other_attributes=None):
+        """
+        Creates a new quotation record for a generated entity from a used entity.
+
+        :param generatedEntity: Entity or a string identifier for the generated
+            entity (relationship source).
+        :param usedEntity: Entity or a string identifier for the used entity
+            (relationship destination).
+        :param activity: Activity or string identifier of the activity involved in
+            the quotation (default: None).
+        :param generation: Optionally to state qualified quotation through a
+            generation activity (default: None).
+        :param usage: XXX (default: None).
+        :param identifier: Identifier for new quotation record.
+        :param other_attributes: Optional other attributes as a dictionary or list
+            of tuples to be added to the record optionally (default: None).
+        """
+        record = self.derivation(
+            generatedEntity, usedEntity, activity, generation, usage,
+            identifier, other_attributes
+        )
+        record.add_asserted_type(VOPROV['Quotation'])
+        return record
+
+    def primary_source(self, generatedEntity, usedEntity, activity=None,
+                       generation=None, usage=None,
+                       identifier=None, other_attributes=None):
+        """
+        Creates a new primary source record for a generated entity from a used
+        entity.
+
+        :param generatedEntity: Entity or a string identifier for the generated
+            entity (relationship source).
+        :param usedEntity: Entity or a string identifier for the used entity
+            (relationship destination).
+        :param activity: Activity or string identifier of the activity involved in
+            the primary source (default: None).
+        :param generation: Optionally to state qualified primary source through a
+            generation activity (default: None).
+        :param usage: XXX (default: None).
+        :param identifier: Identifier for new primary source record.
+        :param other_attributes: Optional other attributes as a dictionary or list
+            of tuples to be added to the record optionally (default: None).
+        """
+        record = self.derivation(
+            generatedEntity, usedEntity, activity, generation, usage,
+            identifier, other_attributes
+        )
+        record.add_asserted_type(VOPROV['PrimarySource'])
+        return record
+
+    def specialization(self, specificEntity, generalEntity):
+        """
+        Creates a new specialisation record for a specific from a general entity.
+
+        :param specificEntity: Entity or a string identifier for the specific
+            entity (relationship source).
+        :param generalEntity: Entity or a string identifier for the general entity
+            (relationship destination).
+        """
+        return self.new_record(
+            VOPROV_SPECIALIZATION, None, {
+                VOPROV_ATTR_SPECIFIC_ENTITY: specificEntity,
+                VOPROV_ATTR_GENERAL_ENTITY: generalEntity
+            }
+        )
+
+    def alternate(self, alternate1, alternate2):
+        """
+        Creates a new alternate record between two entities.
+
+        :param alternate1: Entity or a string identifier for the first entity
+            (relationship source).
+        :param alternate2: Entity or a string identifier for the second entity
+            (relationship destination).
+        """
+        return self.new_record(
+            VOPROV_ALTERNATE, None, {
+                VOPROV_ATTR_ALTERNATE1: alternate1,
+                VOPROV_ATTR_ALTERNATE2: alternate2
+            },
+        )
+
+    def mention(self, specificEntity, generalEntity, bundle):
+        """
+        Creates a new mention record for a specific from a general entity.
+
+        :param specificEntity: Entity or a string identifier for the specific
+            entity (relationship source).
+        :param generalEntity: Entity or a string identifier for the general entity
+            (relationship destination).
+        :param bundle: XXX
+        """
+        return self.new_record(
+            VOPROV_MENTION, None, {
+                VOPROV_ATTR_SPECIFIC_ENTITY: specificEntity,
+                VOPROV_ATTR_GENERAL_ENTITY: generalEntity,
+                VOPROV_ATTR_BUNDLE: bundle
+            }
+        )
+
+    def collection(self, identifier, other_attributes=None):
+        """
+        Creates a new collection record for a particular record.
+
+        :param identifier: Identifier for new collection record.
+        :param other_attributes: Optional other attributes as a dictionary or list
+            of tuples to be added to the record optionally (default: None).
+        """
+        record = self.new_record(
+            VOPROV_ENTITY, identifier, None, other_attributes
+        )
+        record.add_asserted_type(VOPROV['Collection'])
+        return record
+
+    def membership(self, collection, entity):
+        """
+        Creates a new membership record for an entity to a collection.
+
+        :param collection: Collection the entity is to be added to.
+        :param entity: Entity to be added to the collection.
+        """
+        return self.new_record(
+            VOPROV_MEMBERSHIP, None, {
+                VOPROV_ATTR_COLLECTION: collection,
+                VOPROV_ATTR_ENTITY: entity
+            }
+        )
 
     def activityDescription(self, identifier, name, version=None, description=None, docurl=None, type=None,
                             subtype=None, other_attributes=None):
@@ -901,7 +1380,7 @@ class VOProvBundle(ProvBundle):
 
         :param configured:              The configured element (relationship destination).
         :param configurator:            The configuring element (relationship source).
-        :param artefactType:            Literal that takes the value ?Parameter? or ?ConfigFile? to indicate the type
+        :param artefactType:            Literal that takes the value "Parameter" or "ConfigFile" to indicate the type
                                         of class pointed by the WasConfiguredBy instance.
         :param identifier:              Identifier for new wasConfiguredBy relation record.
         """
@@ -936,6 +1415,20 @@ class VOProvBundle(ProvBundle):
     used = usage
     wasAttributedTo = attribution
     wasAssociatedWith = association
+    wasStartedBy = start
+    wasEndedBy = end
+    wasInvalidatedBy = invalidation
+    wasInformedBy = communication
+    actedOnBehalfOf = delegation
+    wasInfluencedBy = influence
+    wasDerivedFrom = derivation
+    wasRevisionOf = revision
+    wasQuotedFrom = quotation
+    hadPrimarySource = primary_source
+    alternateOf = alternate
+    specializationOf = specialization
+    mentionOf = mention
+    hadMember = membership
 
     # alias for voprov's function
     isDescribedBy = description
@@ -1223,31 +1716,45 @@ class VOProvDocument(ProvDocument, VOProvBundle):
 #  adding voprov class to the prov class mappings
 PROV_REC_CLS.update({
     # link prov class to their voprov representation
-    PROV_ENTITY: VOProvEntity,
-    PROV_ACTIVITY: VOProvActivity,
-    PROV_AGENT: VOProvAgent,
-    PROV_USAGE: VOProvUsage,
-    PROV_GENERATION: VOProvGeneration,
+    VOPROV_ENTITY:                      VOProvEntity,
+    VOPROV_ACTIVITY:                    VOProvActivity,
+    VOPROV_AGENT:                       VOProvAgent,
+    VOPROV_USAGE:                       VOProvUsage,
+    VOPROV_GENERATION:                  VOProvGeneration,
+    VOPROV_COMMUNICATION:               VOProvCommunication,
+    VOPROV_START:                       VOProvStart,
+    VOPROV_END:                         VOProvEnd,
+    VOPROV_INVALIDATION:                VOProvInvalidation,
+    VOPROV_DERIVATION:                  VOProvDerivation,
+    VOPROV_ATTRIBUTION:                 VOProvAttribution,
+    VOPROV_ASSOCIATION:                 VOProvAssociation,
+    VOPROV_DELEGATION:                  VOProvDelegation,
+    VOPROV_INFLUENCE:                   VOProvInfluence,
+    VOPROV_SPECIALIZATION:              VOProvSpecialization,
+    VOPROV_ALTERNATE:                   VOProvAlternate,
+    VOPROV_MENTION:                     VOProvMention,
+    VOPROV_MEMBERSHIP:                  VOProvMembership,
 
     # extend prov model
-    VOPROV_VALUE_ENTITY: VOProvValueEntity,
-    VOPROV_DATASET_ENTITY: VOProvDataSetEntity,
+    VOPROV_VALUE_ENTITY:                VOProvValueEntity,
+    VOPROV_DATASET_ENTITY:              VOProvDataSetEntity,
 
     # voprov description
-    VOPROV_ACTIVITY_DESCRIPTION: VOProvActivityDescription,
-    VOPROV_USAGE_DESCRIPTION: VOProvUsageDescription,
-    VOPROV_GENERATION_DESCRIPTION: VOProvGenerationDescription,
-    VOPROV_ENTITY_DESCRIPTION: VOProvEntityDescription,
-    VOPROV_VALUE_DESCRIPTION: VOProvValueDescription,
-    VOPROV_DATASET_DESCRIPTION: VOProvDataSetDescription,
-    VOPROV_CONFIG_FILE_DESCRIPTION: VOProvConfigFileDescription,
-    VOPROV_PARAMETER_DESCRIPTION: VOProvParameterDescription,
+    VOPROV_ACTIVITY_DESCRIPTION:        VOProvActivityDescription,
+    VOPROV_USAGE_DESCRIPTION:           VOProvUsageDescription,
+    VOPROV_GENERATION_DESCRIPTION:      VOProvGenerationDescription,
+    VOPROV_ENTITY_DESCRIPTION:          VOProvEntityDescription,
+    VOPROV_VALUE_DESCRIPTION:           VOProvValueDescription,
+    VOPROV_DATASET_DESCRIPTION:         VOProvDataSetDescription,
+    VOPROV_CONFIG_FILE_DESCRIPTION:     VOProvConfigFileDescription,
+    VOPROV_PARAMETER_DESCRIPTION:       VOProvParameterDescription,
 
     # voprov configuration
-    VOPROV_CONFIGURATION_FILE: VOProvConfigFile,
-    VOPROV_CONFIGURATION_PARAMETER: VOProvParameter,
+    VOPROV_CONFIGURATION_FILE:          VOProvConfigFile,
+    VOPROV_CONFIGURATION_PARAMETER:     VOProvParameter,
+
     # voprov relation
-    VOPROV_DESCRIPTION_RELATION: VOProvIsDescribedBy,
-    VOPROV_CONFIGURATION_RELATION: VOProvWasConfiguredBy,
-    VOPROV_RELATED_TO_RELATION: VOProvIsRelatedTo,
+    VOPROV_DESCRIPTION_RELATION:        VOProvIsDescribedBy,
+    VOPROV_CONFIGURATION_RELATION:      VOProvWasConfiguredBy,
+    VOPROV_RELATED_TO_RELATION:         VOProvIsRelatedTo,
 })

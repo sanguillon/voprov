@@ -15,6 +15,24 @@ __email__ = 'jean-francois.sornay@etu.umontpellier.fr'
 
 # updating the generic node style map which is used when the object used in a relation is not declared
 GENERIC_NODE_STYLE.update({
+    # extension of prov model
+    VOProvEntity: {
+        'shape': 'oval', 'style': 'filled',
+        'fillcolor': 'lightgray', 'color': 'dimgray'
+    },
+    VOProvActivity: {
+        'shape': 'box', 'style': 'filled',
+        'fillcolor': 'lightgray', 'color': 'dimgray'
+    },
+    VOProvAgent: {
+        'shape': 'house', 'style': 'filled',
+        'fillcolor': 'lightgray', 'color': 'dimgray'
+    },
+    VOProvBundle: {
+        'shape': 'folder', 'style': 'filled',
+        'fillcolor': 'lightgray', 'color': 'dimgray'
+    },
+
     # voprov description
     VOProvDescription: {
         'shape': 'star', 'style': 'filled',
@@ -44,6 +62,7 @@ GENERIC_NODE_STYLE.update({
         'shape': 'trapezium', 'style': 'filled',
         'fillcolor': 'lightgray', 'color': 'dimgray'
     },
+
     # voprov configuration
     VOProvConfigFile: {
         'shape': 'oval', 'style': 'filled',
@@ -58,6 +77,11 @@ GENERIC_NODE_STYLE.update({
 # updating the style of the different prov record
 DOT_PROV_STYLE.update({
     # extend prov model
+    # Elements
+    VOPROV_ENTITY: {
+        'shape': 'oval', 'style': 'filled',
+        'fillcolor': '#FFFC87', 'color': '#808080'
+    },
     VOPROV_VALUE_ENTITY: {
         'shape': 'oval', 'style': 'filled',
         'fillcolor': '#FFFC87', 'color': '#808080'
@@ -65,6 +89,70 @@ DOT_PROV_STYLE.update({
     VOPROV_DATASET_ENTITY: {
         'shape': 'oval', 'style': 'filled',
         'fillcolor': '#FFFC87', 'color': '#808080'
+    },
+    VOPROV_ACTIVITY: {
+        'shape': 'box', 'style': 'filled',
+        'fillcolor': '#9FB1FC', 'color': '#0000FF'
+    },
+    VOPROV_AGENT: {
+        'shape': 'house', 'style': 'filled',
+        'fillcolor': '#FED37F'
+    },
+    VOPROV_BUNDLE: {
+        'shape': 'folder', 'style': 'filled',
+        'fillcolor': 'aliceblue'
+    },
+    # Relations
+    VOPROV_GENERATION: {
+        'label': 'wasGeneratedBy', 'fontsize': '10.0',
+        'color': 'darkgreen', 'fontcolor': 'darkgreen'
+    },
+    VOPROV_USAGE: {
+        'label': 'used', 'fontsize': '10.0',
+        'color': 'red4', 'fontcolor': 'red'
+    },
+    VOPROV_COMMUNICATION: {
+        'label': 'wasInformedBy', 'fontsize': '10.0'
+    },
+    VOPROV_START: {
+        'label': 'wasStartedBy', 'fontsize': '10.0'
+    },
+    VOPROV_END: {
+        'label': 'wasEndedBy', 'fontsize': '10.0'
+    },
+    VOPROV_INVALIDATION: {
+        'label': 'wasInvalidatedBy', 'fontsize': '10.0'
+    },
+    VOPROV_DERIVATION: {
+        'label': 'wasDerivedFrom', 'fontsize': '10.0'
+    },
+    VOPROV_ATTRIBUTION: {
+        'label': 'wasAttributedTo', 'fontsize': '10.0',
+        'color': '#FED37F'
+    },
+    VOPROV_ASSOCIATION: {
+        'label': 'wasAssociatedWith', 'fontsize': '10.0',
+        'color': '#FED37F'
+    },
+    VOPROV_DELEGATION: {
+        'label': 'actedOnBehalfOf', 'fontsize': '10.0',
+        'color': '#FED37F'
+    },
+    VOPROV_INFLUENCE: {
+        'label': 'wasInfluencedBy', 'fontsize': '10.0',
+        'color': 'grey'
+    },
+    VOPROV_ALTERNATE: {
+        'label': 'alternateOf', 'fontsize': '10.0'
+    },
+    VOPROV_SPECIALIZATION: {
+        'label': 'specializationOf', 'fontsize': '10.0'
+    },
+    VOPROV_MENTION: {
+        'label': 'mentionOf', 'fontsize': '10.0'
+    },
+    VOPROV_MEMBERSHIP: {
+        'label': 'hadMember', 'fontsize': '10.0'
     },
 
     # voprov description
