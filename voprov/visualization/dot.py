@@ -212,4 +212,8 @@ DOT_PROV_STYLE.update({
         'label': 'wasConfiguredBy', 'fontsize': '10.0',
         'color': '#57B857', 'fontcolor': '#57B857'
     },
+    VOPROV_REFERENCE_RELATION: {
+        'label': 'hadReference', 'fontsize': '10.0',
+        'color': '#57B857', 'fontcolor': '#57B857'
+    },
 })

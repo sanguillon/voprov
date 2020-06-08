@@ -51,6 +51,7 @@ VOPROV_CONFIGURATION_PARAMETER =        VOPROV['Parameter']
 VOPROV_DESCRIPTION_RELATION =           VOPROV['DescriptionRelation']
 VOPROV_RELATED_TO_RELATION =            VOPROV['RelatedToRelation']
 VOPROV_CONFIGURATION_RELATION =         VOPROV['ConfigurationRelation']
+VOPROV_REFERENCE_RELATION =             VOPROV['HadReference']
 
 # Part 2 : map for serialization usage
 #   adding the voprov provn representation for the map for provn representation
@@ -96,6 +97,7 @@ PROV_N_MAP.update({
     VOPROV_DESCRIPTION_RELATION:        u'isDescribedBy',
     VOPROV_RELATED_TO_RELATION:         u'isRelatedTo',
     VOPROV_CONFIGURATION_RELATION:      u'wasConfiguredBy',
+    VOPROV_REFERENCE_RELATION:          u'hadReference',
 })
 
 #   adding records for the map of record defined as subtypes in PROV-N but top level types in for example
@@ -164,6 +166,7 @@ PROV_BASE_CLS.update({
     VOPROV_DESCRIPTION_RELATION:        VOPROV_DESCRIPTION_RELATION,
     VOPROV_RELATED_TO_RELATION:         VOPROV_RELATED_TO_RELATION,
     VOPROV_CONFIGURATION_RELATION:      VOPROV_CONFIGURATION_RELATION,
+    VOPROV_REFERENCE_RELATION:          VOPROV_REFERENCE_RELATION,
 })
 
 
@@ -210,6 +213,8 @@ VOPROV_ATTR_RELATED =                   VOPROV['related']
 VOPROV_ATTR_RELATOR =                   VOPROV['relator']
 VOPROV_ATTR_CONFIGURED =                VOPROV['configured']
 VOPROV_ATTR_CONFIGURATOR =              VOPROV['configurator']
+VOPROV_ATTR_REFERENCED =                VOPROV['referenced']
+VOPROV_ATTR_REFERRER =                  VOPROV['referrer']
 
 #   adding the voprov identifier to the map for the qualified name of attribute
 PROV_ATTRIBUTE_QNAMES.update({
@@ -245,6 +250,8 @@ PROV_ATTRIBUTE_QNAMES.update({
     VOPROV_ATTR_RELATOR,
     VOPROV_ATTR_CONFIGURED,
     VOPROV_ATTR_CONFIGURATOR,
+    VOPROV_ATTR_REFERENCED,
+    VOPROV_ATTR_REFERRER,
 })
 
 VOPROV_ATTR_TIME = VOPROV['time']

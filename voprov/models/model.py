@@ -85,6 +85,13 @@ class VOProvEntity(ProvEntity):
         """
         return self._bundle.description(self, activity_description, identifier)
 
+    def get_w3c(self, bundle=None):
+        if bundle is None:
+            bundle = ProvBundle()
+        entity = ProvEntity(bundle, self.identifier, self.attributes)
+        entity.add_asserted_type('VOProvEntity')
+        return entity
+
 
 class VOProvValueEntity(VOProvEntity):
     """Class for VOProv Value Entity"""
@@ -129,6 +136,23 @@ class VOProvActivity(ProvActivity):
         :param identifier:              Identifier of the description relation created.
         """
         return self._bundle.description(self, activity_description, identifier)
+
+    def get_w3c(self, bundle=None):
+        if bundle is None:
+            bundle = ProvBundle()
+
+        activity = ProvActivity(bundle, self.identifier, self.extra_attributes)
+        activity.add_asserted_type('VOProvActivity')
+
+        for formal in self.formal_attributes:
+            local_part = formal[0].localpart
+            value = formal[1]
+            if value:
+                for super_formal in super(VOProvActivity, self).FORMAL_ATTRIBUTES:
+                    if local_part is super_formal.localpart:
+                        activity.add_attributes({super_formal: value})
+                        break
+        return activity
 
 
 class VOProvAgent(ProvAgent):
@@ -190,6 +214,15 @@ class VOProvAgent(ProvAgent):
         :param url:                      Reference URL to the agent.
         """
         self._attributes[VOPROV['url']] = {url}
+
+    def get_w3c(self, bundle=None):
+        if bundle is None:
+            bundle = ProvBundle()
+
+        agent = ProvAgent(bundle, self.identifier, self.extra_attributes)
+        agent.add_asserted_type('VOProvAgent')
+
+        return agent
 
 
 class VOProvUsage(ProvUsage):
@@ -396,6 +429,23 @@ class VOProvBundle(ProvBundle):
             namespaces,
             parent=(document._namespaces if document is not None else None)
         )
+
+    def get_w3c(self, document=None):
+        if self.is_document():
+            w3c_records = ProvDocument(namespaces=self.namespaces)
+        else:
+            w3c_records = ProvBundle(identifier=self.identifier, namespaces=self.namespaces, document=document)
+
+        if self.is_document():
+            for bundle in self.bundles:
+                w3c_records.add_bundle(bundle.get_w3c(document=w3c_records))
+
+        if self.records:
+            for record in self.records:
+                w3c_records.add_record(record.get_w3c(w3c_records))
+
+        return w3c_records
+
 
     def activity(self, identifier, name=None, startTime=None, endTime=None, comment=None,
                  other_attributes=None):
@@ -1399,12 +1449,28 @@ class VOProvBundle(ProvBundle):
 
         :param related:                 The related element (relationship destination).
         :param relator:                 The relator element (relationship source).
-        :param identifier:              Identifier for new description record.
+        :param identifier:              Identifier for new relatedTo record.
         """
         return self.new_record(
             VOPROV_RELATED_TO_RELATION, identifier, {
                 VOPROV_ATTR_RELATED: related,
                 VOPROV_ATTR_RELATOR: relator
+            },
+            None
+        )
+
+    def reference(self, referenced, referrer, identifier=None):
+        """
+                Creates a new hadReference relation record.
+
+                :param referenced:              The referenced element (relationship destination).
+                :param referrer:                The referrer element (relationship source).
+                :param identifier:              Identifier for new hadReference record.
+                """
+        return self.new_record(
+            VOPROV_REFERENCE_RELATION, identifier, {
+                VOPROV_ATTR_REFERENCED: referenced,
+                VOPROV_ATTR_REFERRER: referrer
             },
             None
         )
@@ -1715,45 +1781,46 @@ class VOProvDocument(ProvDocument, VOProvBundle):
 #  adding voprov class to the prov class mappings
 PROV_REC_CLS.update({
     # link prov class to their voprov representation
-    VOPROV_ENTITY:                      VOProvEntity,
-    VOPROV_ACTIVITY:                    VOProvActivity,
-    VOPROV_AGENT:                       VOProvAgent,
-    VOPROV_USAGE:                       VOProvUsage,
-    VOPROV_GENERATION:                  VOProvGeneration,
-    VOPROV_COMMUNICATION:               VOProvCommunication,
-    VOPROV_START:                       VOProvStart,
-    VOPROV_END:                         VOProvEnd,
-    VOPROV_INVALIDATION:                VOProvInvalidation,
-    VOPROV_DERIVATION:                  VOProvDerivation,
-    VOPROV_ATTRIBUTION:                 VOProvAttribution,
-    VOPROV_ASSOCIATION:                 VOProvAssociation,
-    VOPROV_DELEGATION:                  VOProvDelegation,
-    VOPROV_INFLUENCE:                   VOProvInfluence,
-    VOPROV_SPECIALIZATION:              VOProvSpecialization,
-    VOPROV_ALTERNATE:                   VOProvAlternate,
-    VOPROV_MENTION:                     VOProvMention,
-    VOPROV_MEMBERSHIP:                  VOProvMembership,
+    VOPROV_ENTITY: VOProvEntity,
+    VOPROV_ACTIVITY: VOProvActivity,
+    VOPROV_AGENT: VOProvAgent,
+    VOPROV_USAGE: VOProvUsage,
+    VOPROV_GENERATION: VOProvGeneration,
+    VOPROV_COMMUNICATION: VOProvCommunication,
+    VOPROV_START: VOProvStart,
+    VOPROV_END: VOProvEnd,
+    VOPROV_INVALIDATION: VOProvInvalidation,
+    VOPROV_DERIVATION: VOProvDerivation,
+    VOPROV_ATTRIBUTION: VOProvAttribution,
+    VOPROV_ASSOCIATION: VOProvAssociation,
+    VOPROV_DELEGATION: VOProvDelegation,
+    VOPROV_INFLUENCE: VOProvInfluence,
+    VOPROV_SPECIALIZATION: VOProvSpecialization,
+    VOPROV_ALTERNATE: VOProvAlternate,
+    VOPROV_MENTION: VOProvMention,
+    VOPROV_MEMBERSHIP: VOProvMembership,
 
     # extend prov model
-    VOPROV_VALUE_ENTITY:                VOProvValueEntity,
-    VOPROV_DATASET_ENTITY:              VOProvDataSetEntity,
+    VOPROV_VALUE_ENTITY: VOProvValueEntity,
+    VOPROV_DATASET_ENTITY: VOProvDataSetEntity,
 
     # voprov description
-    VOPROV_ACTIVITY_DESCRIPTION:        VOProvActivityDescription,
-    VOPROV_USAGE_DESCRIPTION:           VOProvUsageDescription,
-    VOPROV_GENERATION_DESCRIPTION:      VOProvGenerationDescription,
-    VOPROV_ENTITY_DESCRIPTION:          VOProvEntityDescription,
-    VOPROV_VALUE_DESCRIPTION:           VOProvValueDescription,
-    VOPROV_DATASET_DESCRIPTION:         VOProvDataSetDescription,
-    VOPROV_CONFIG_FILE_DESCRIPTION:     VOProvConfigFileDescription,
-    VOPROV_PARAMETER_DESCRIPTION:       VOProvParameterDescription,
+    VOPROV_ACTIVITY_DESCRIPTION: VOProvActivityDescription,
+    VOPROV_USAGE_DESCRIPTION: VOProvUsageDescription,
+    VOPROV_GENERATION_DESCRIPTION: VOProvGenerationDescription,
+    VOPROV_ENTITY_DESCRIPTION: VOProvEntityDescription,
+    VOPROV_VALUE_DESCRIPTION: VOProvValueDescription,
+    VOPROV_DATASET_DESCRIPTION: VOProvDataSetDescription,
+    VOPROV_CONFIG_FILE_DESCRIPTION: VOProvConfigFileDescription,
+    VOPROV_PARAMETER_DESCRIPTION: VOProvParameterDescription,
 
     # voprov configuration
-    VOPROV_CONFIGURATION_FILE:          VOProvConfigFile,
-    VOPROV_CONFIGURATION_PARAMETER:     VOProvParameter,
+    VOPROV_CONFIGURATION_FILE: VOProvConfigFile,
+    VOPROV_CONFIGURATION_PARAMETER: VOProvParameter,
 
     # voprov relation
-    VOPROV_DESCRIPTION_RELATION:        VOProvIsDescribedBy,
-    VOPROV_CONFIGURATION_RELATION:      VOProvWasConfiguredBy,
-    VOPROV_RELATED_TO_RELATION:         VOProvIsRelatedTo,
+    VOPROV_DESCRIPTION_RELATION: VOProvIsDescribedBy,
+    VOPROV_CONFIGURATION_RELATION: VOProvWasConfiguredBy,
+    VOPROV_RELATED_TO_RELATION: VOProvIsRelatedTo,
+    VOPROV_REFERENCE_RELATION: VOProvHadReference,
 })
