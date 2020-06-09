@@ -2,7 +2,7 @@
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 
-from prov.model import (ProvElement)
+from prov.model import (ProvElement, ProvBundle, ProvEntity)
 from voprov.models.constants import *
 
 
@@ -10,6 +10,13 @@ class VOProvDescription(ProvElement):
     """Base class for VOProvDescription classes"""
     FORMAL_ATTRIBUTES = None
     _prov_type = None
+
+    def get_w3c(self, bundle=None):
+        if bundle is None:
+            bundle = ProvBundle()
+        w3c_record = ProvEntity(bundle, self.identifier, self.attributes)
+        w3c_record.add_asserted_type(self.__class__.__name__)
+        return bundle.add_record(w3c_record)
 
 
 class VOProvActivityDescription(VOProvDescription):

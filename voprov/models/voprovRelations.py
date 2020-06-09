@@ -2,13 +2,28 @@
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 
-from prov.model import (ProvRelation)
+from prov.model import (ProvRelation, ProvBundle, ProvInfluence)
 from voprov.models.constants import *
+import sys
 
 
 class VOProvRelation(ProvRelation):
     FORMAL_ATTRIBUTES = None
     _prov_type = None
+
+    def get_w3c(self, bundle=None):
+        if bundle is None:
+            bundle = ProvBundle()
+        attribute = self.extra_attributes
+        relation_formal_attribute = self.formal_attributes[0:2]
+
+        w3c_record = ProvInfluence(bundle, self.identifier, attribute)
+        namespaces = [list(i) for i in w3c_record.formal_attributes]
+        for i in range(0, 2):
+             namespaces[i][1] = relation_formal_attribute[i][1]
+        w3c_record.add_attributes(namespaces)
+        w3c_record.add_asserted_type(self.__class__.__name__)
+        return bundle.add_record(w3c_record)
 
 
 class VOProvIsDescribedBy(VOProvRelation):

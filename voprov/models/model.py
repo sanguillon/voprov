@@ -89,8 +89,8 @@ class VOProvEntity(ProvEntity):
         if bundle is None:
             bundle = ProvBundle()
         entity = ProvEntity(bundle, self.identifier, self.attributes)
-        entity.add_asserted_type('VOProvEntity')
-        return entity
+        entity.add_asserted_type(self.__class__.__name__)
+        return bundle.add_record(entity)
 
 
 class VOProvValueEntity(VOProvEntity):
@@ -104,10 +104,24 @@ class VOProvValueEntity(VOProvEntity):
         """
         self._attributes[VOPROV['value']] = {value}
 
+    # def get_w3c(self, bundle=None):
+    #     if bundle is None:
+    #         bundle = ProvBundle()
+    #     entity = ProvEntity(bundle, self.identifier, self.attributes)
+    #     entity.add_asserted_type('VOProvValueEntity')
+    #     return bundle.add_record(entity)
+
 
 class VOProvDataSetEntity(VOProvEntity):
     """Class for VOProv DataSet Entity"""
     _prov_type = VOPROV_DATASET_ENTITY
+
+    # def get_w3c(self, bundle=None):
+    #     if bundle is None:
+    #         bundle = ProvBundle()
+    #     entity = ProvEntity(bundle, self.identifier, self.attributes)
+    #     entity.add_asserted_type('VOProvDataSetEntity')
+    #     return bundle.add_record(entity)
 
 
 class VOProvActivity(ProvActivity):
@@ -152,7 +166,7 @@ class VOProvActivity(ProvActivity):
                     if local_part is super_formal.localpart:
                         activity.add_attributes({super_formal: value})
                         break
-        return activity
+        return bundle.add_record(activity)
 
 
 class VOProvAgent(ProvAgent):
@@ -219,10 +233,10 @@ class VOProvAgent(ProvAgent):
         if bundle is None:
             bundle = ProvBundle()
 
-        agent = ProvAgent(bundle, self.identifier, self.extra_attributes)
+        agent = ProvAgent(bundle, self.identifier, self.attributes)
         agent.add_asserted_type('VOProvAgent')
 
-        return agent
+        return bundle.add_record(agent)
 
 
 class VOProvUsage(ProvUsage):
@@ -245,6 +259,23 @@ class VOProvUsage(ProvUsage):
         """
         return self._bundle.description(self, usage_description, identifier)
 
+    def get_w3c(self, bundle=None):
+        if bundle is None:
+            bundle = ProvBundle()
+
+        usage = ProvUsage(bundle, self.identifier, self.extra_attributes)
+        usage.add_asserted_type('VOProvUsage')
+
+        for formal in self.formal_attributes:
+            local_part = formal[0].localpart
+            value = formal[1]
+            if value:
+                for super_formal in super(VOProvUsage, self).FORMAL_ATTRIBUTES:
+                    if local_part is super_formal.localpart:
+                        usage.add_attributes({super_formal: value})
+                        break
+        return bundle.add_record(usage)
+
 
 class VOProvGeneration(ProvGeneration):
     """Adaptation of prov generation"""
@@ -266,6 +297,23 @@ class VOProvGeneration(ProvGeneration):
         """
         return self._bundle.description(self, generation_description, identifier)
 
+    def get_w3c(self, bundle=None):
+        if bundle is None:
+            bundle = ProvBundle()
+
+        generation = ProvGeneration(bundle, self.identifier, self.extra_attributes)
+        generation.add_asserted_type('VOProvGeneration')
+
+        for formal in self.formal_attributes:
+            local_part = formal[0].localpart
+            value = formal[1]
+            if value:
+                for super_formal in super(VOProvGeneration, self).FORMAL_ATTRIBUTES:
+                    if local_part is super_formal.localpart:
+                        generation.add_attributes({super_formal: value})
+                        break
+        return bundle.add_record(generation)
+
 
 class VOProvCommunication(ProvCommunication):
     """Adaptation of prov Communication relationship."""
@@ -273,6 +321,23 @@ class VOProvCommunication(ProvCommunication):
     FORMAL_ATTRIBUTES = (VOPROV_ATTR_INFORMED, VOPROV_ATTR_INFORMANT)
 
     _prov_type = VOPROV_COMMUNICATION
+
+    def get_w3c(self, bundle=None):
+        if bundle is None:
+            bundle = ProvBundle()
+
+        communication = ProvCommunication(bundle, self.identifier, self.extra_attributes)
+        communication.add_asserted_type('VOProvCommunication')
+
+        for formal in self.formal_attributes:
+            local_part = formal[0].localpart
+            value = formal[1]
+            if value:
+                for super_formal in super(VOProvCommunication, self).FORMAL_ATTRIBUTES:
+                    if local_part is super_formal.localpart:
+                        communication.add_attributes({super_formal: value})
+                        break
+        return bundle.add_record(communication)
 
 
 class VOProvStart(ProvStart):
@@ -283,6 +348,23 @@ class VOProvStart(ProvStart):
 
     _prov_type = VOPROV_START
 
+    def get_w3c(self, bundle=None):
+        if bundle is None:
+            bundle = ProvBundle()
+
+        start = ProvStart(bundle, self.identifier, self.extra_attributes)
+        start.add_asserted_type('VOProvStart')
+
+        for formal in self.formal_attributes:
+            local_part = formal[0].localpart
+            value = formal[1]
+            if value:
+                for super_formal in super(VOProvStart, self).FORMAL_ATTRIBUTES:
+                    if local_part is super_formal.localpart:
+                        start.add_attributes({super_formal: value})
+                        break
+        return bundle.add_record(start)
+
 
 class VOProvEnd(ProvEnd):
     """Adaptation of prov End relationship."""
@@ -292,6 +374,23 @@ class VOProvEnd(ProvEnd):
 
     _prov_type = VOPROV_END
 
+    def get_w3c(self, bundle=None):
+        if bundle is None:
+            bundle = ProvBundle()
+
+        end = ProvEnd(bundle, self.identifier, self.extra_attributes)
+        end.add_asserted_type('VOProvEnd')
+
+        for formal in self.formal_attributes:
+            local_part = formal[0].localpart
+            value = formal[1]
+            if value:
+                for super_formal in super(VOProvEnd, self).FORMAL_ATTRIBUTES:
+                    if local_part is super_formal.localpart:
+                        end.add_attributes({super_formal: value})
+                        break
+        return bundle.add_record(end)
+
 
 class VOProvInvalidation(ProvInvalidation):
     """Adaptation of prov Invalidation relationship."""
@@ -299,6 +398,23 @@ class VOProvInvalidation(ProvInvalidation):
     FORMAL_ATTRIBUTES = (VOPROV_ATTR_ENTITY, VOPROV_ATTR_ACTIVITY, VOPROV_ATTR_TIME)
 
     _prov_type = VOPROV_INVALIDATION
+
+    def get_w3c(self, bundle=None):
+        if bundle is None:
+            bundle = ProvBundle()
+
+        invalidation = ProvInvalidation(bundle, self.identifier, self.extra_attributes)
+        invalidation.add_asserted_type('VOProvInvalidation')
+
+        for formal in self.formal_attributes:
+            local_part = formal[0].localpart
+            value = formal[1]
+            if value:
+                for super_formal in super(VOProvInvalidation, self).FORMAL_ATTRIBUTES:
+                    if local_part is super_formal.localpart:
+                        invalidation.add_attributes({super_formal: value})
+                        break
+        return bundle.add_record(invalidation)
 
 
 class VOProvDerivation(ProvDerivation):
@@ -310,6 +426,23 @@ class VOProvDerivation(ProvDerivation):
 
     _prov_type = VOPROV_DERIVATION
 
+    def get_w3c(self, bundle=None):
+        if bundle is None:
+            bundle = ProvBundle()
+
+        derivation = ProvDerivation(bundle, self.identifier, self.extra_attributes)
+        derivation.add_asserted_type('VOProvDerivation')
+
+        for formal in self.formal_attributes:
+            local_part = formal[0].localpart
+            value = formal[1]
+            if value:
+                for super_formal in super(VOProvDerivation, self).FORMAL_ATTRIBUTES:
+                    if local_part is super_formal.localpart:
+                        derivation.add_attributes({super_formal: value})
+                        break
+        return bundle.add_record(derivation)
+
 
 class VOProvAttribution(ProvAttribution):
     """Adaptation of prov Attribution relationship."""
@@ -317,6 +450,23 @@ class VOProvAttribution(ProvAttribution):
     FORMAL_ATTRIBUTES = (VOPROV_ATTR_ENTITY, VOPROV_ATTR_AGENT)
 
     _prov_type = VOPROV_ATTRIBUTION
+
+    def get_w3c(self, bundle=None):
+        if bundle is None:
+            bundle = ProvBundle()
+
+        attribution = ProvAttribution(bundle, self.identifier, self.extra_attributes)
+        attribution.add_asserted_type('VOProvAttribution')
+
+        for formal in self.formal_attributes:
+            local_part = formal[0].localpart
+            value = formal[1]
+            if value:
+                for super_formal in super(VOProvAttribution, self).FORMAL_ATTRIBUTES:
+                    if local_part is super_formal.localpart:
+                        attribution.add_attributes({super_formal: value})
+                        break
+        return bundle.add_record(attribution)
 
 
 class VOProvAssociation(ProvAssociation):
@@ -326,6 +476,23 @@ class VOProvAssociation(ProvAssociation):
 
     _prov_type = VOPROV_ASSOCIATION
 
+    def get_w3c(self, bundle=None):
+        if bundle is None:
+            bundle = ProvBundle()
+
+        association = ProvAssociation(bundle, self.identifier, self.extra_attributes)
+        association.add_asserted_type('VOProvAssociation')
+
+        for formal in self.formal_attributes:
+            local_part = formal[0].localpart
+            value = formal[1]
+            if value:
+                for super_formal in super(VOProvAssociation, self).FORMAL_ATTRIBUTES:
+                    if local_part is super_formal.localpart:
+                        association.add_attributes({super_formal: value})
+                        break
+        return bundle.add_record(association)
+
 
 class VOProvDelegation(ProvDelegation):
     """Adaptation of prov Delegation relationship."""
@@ -333,6 +500,23 @@ class VOProvDelegation(ProvDelegation):
     FORMAL_ATTRIBUTES = (VOPROV_ATTR_DELEGATE, VOPROV_ATTR_RESPONSIBLE, VOPROV_ATTR_ACTIVITY)
 
     _prov_type = VOPROV_DELEGATION
+
+    def get_w3c(self, bundle=None):
+        if bundle is None:
+            bundle = ProvBundle()
+
+        delegation = ProvDelegation(bundle, self.identifier, self.extra_attributes)
+        delegation.add_asserted_type('VOProvDelegation')
+
+        for formal in self.formal_attributes:
+            local_part = formal[0].localpart
+            value = formal[1]
+            if value:
+                for super_formal in super(VOProvDelegation, self).FORMAL_ATTRIBUTES:
+                    if local_part is super_formal.localpart:
+                        delegation.add_attributes({super_formal: value})
+                        break
+        return bundle.add_record(delegation)
 
 
 class VOProvInfluence(ProvInfluence):
@@ -342,6 +526,23 @@ class VOProvInfluence(ProvInfluence):
 
     _prov_type = VOPROV_INFLUENCE
 
+    def get_w3c(self, bundle=None):
+        if bundle is None:
+            bundle = ProvBundle()
+
+        influence = ProvInfluence(bundle, self.identifier, self.extra_attributes)
+        influence.add_asserted_type('VOProvInfluence')
+
+        for formal in self.formal_attributes:
+            local_part = formal[0].localpart
+            value = formal[1]
+            if value:
+                for super_formal in super(VOProvInfluence, self).FORMAL_ATTRIBUTES:
+                    if local_part is super_formal.localpart:
+                        influence.add_attributes({super_formal: value})
+                        break
+        return bundle.add_record(influence)
+
 
 class VOProvSpecialization(ProvSpecialization):
     """Adaptation of prov Specialization relationship."""
@@ -350,6 +551,23 @@ class VOProvSpecialization(ProvSpecialization):
 
     _prov_type = VOPROV_SPECIALIZATION
 
+    def get_w3c(self, bundle=None):
+        if bundle is None:
+            bundle = ProvBundle()
+
+        specialization = ProvSpecialization(bundle, self.identifier, self.extra_attributes)
+        specialization.add_asserted_type('VOProvSpecialization')
+
+        for formal in self.formal_attributes:
+            local_part = formal[0].localpart
+            value = formal[1]
+            if value:
+                for super_formal in super(VOProvSpecialization, self).FORMAL_ATTRIBUTES:
+                    if local_part is super_formal.localpart:
+                        specialization.add_attributes({super_formal: value})
+                        break
+        return bundle.add_record(specialization)
+
 
 class VOProvAlternate(ProvAlternate):
     """Adaptation of prov Alternate relationship."""
@@ -357,6 +575,23 @@ class VOProvAlternate(ProvAlternate):
     FORMAL_ATTRIBUTES = (VOPROV_ATTR_ALTERNATE1, VOPROV_ATTR_ALTERNATE2)
 
     _prov_type = VOPROV_ALTERNATE
+
+    def get_w3c(self, bundle=None):
+        if bundle is None:
+            bundle = ProvBundle()
+
+        alternate = ProvAlternate(bundle, self.identifier, self.extra_attributes)
+        alternate.add_asserted_type('VOProvAlternate')
+
+        for formal in self.formal_attributes:
+            local_part = formal[0].localpart
+            value = formal[1]
+            if value:
+                for super_formal in super(VOProvAlternate, self).FORMAL_ATTRIBUTES:
+                    if local_part is super_formal.localpart:
+                        alternate.add_attributes({super_formal: value})
+                        break
+        return bundle.add_record(alternate)
 
 
 class VOProvMention(ProvMention, VOProvSpecialization):
@@ -367,6 +602,23 @@ class VOProvMention(ProvMention, VOProvSpecialization):
 
     _prov_type = VOPROV_MENTION
 
+    def get_w3c(self, bundle=None):
+        if bundle is None:
+            bundle = ProvBundle()
+
+        mention = ProvMention(bundle, self.identifier, self.extra_attributes)
+        mention.add_asserted_type('VOProvMention')
+
+        for formal in self.formal_attributes:
+            local_part = formal[0].localpart
+            value = formal[1]
+            if value:
+                for super_formal in super(VOProvMention, self).FORMAL_ATTRIBUTES:
+                    if local_part is super_formal.localpart:
+                        mention.add_attributes({super_formal: value})
+                        break
+        return bundle.add_record(mention)
+
 
 class VOProvMembership(ProvMembership):
     """Adaptation of prov Membership relationship."""
@@ -374,6 +626,23 @@ class VOProvMembership(ProvMembership):
     FORMAL_ATTRIBUTES = (VOPROV_ATTR_COLLECTION, VOPROV_ATTR_ENTITY)
 
     _prov_type = VOPROV_MEMBERSHIP
+
+    def get_w3c(self, bundle=None):
+        if bundle is None:
+            bundle = ProvBundle()
+
+        membership = ProvMembership(bundle, self.identifier, self.extra_attributes)
+        membership.add_asserted_type('VOProvMembership')
+
+        for formal in self.formal_attributes:
+            local_part = formal[0].localpart
+            value = formal[1]
+            if value:
+                for super_formal in super(VOProvMembership, self).FORMAL_ATTRIBUTES:
+                    if local_part is super_formal.localpart:
+                        membership.add_attributes({super_formal: value})
+                        break
+        return bundle.add_record(membership)
 
 
 class VOProvNamespaceManager(NamespaceManager):
@@ -442,7 +711,7 @@ class VOProvBundle(ProvBundle):
 
         if self.records:
             for record in self.records:
-                w3c_records.add_record(record.get_w3c(w3c_records))
+                record.get_w3c(w3c_records)
 
         return w3c_records
 
@@ -1499,6 +1768,7 @@ class VOProvBundle(ProvBundle):
     isDescribedBy = description
     isRelatedTo = relate
     wasConfiguredBy = configuration
+    hadReference = reference
 
 
 class VOProvDocument(ProvDocument, VOProvBundle):
