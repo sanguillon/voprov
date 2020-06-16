@@ -3,7 +3,15 @@ from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 
 from prov.serializers.provxml import *
-from lxml import etree
+from voprov.models.constants import *
+
+# Create a dictionary containing all top-level PROV XML elements for an easy
+# mapping.
+FULL_NAMES_MAP = dict(PROV_N_MAP)
+FULL_NAMES_MAP.update(ADDITIONAL_N_MAP)
+# Inverse mapping.
+FULL_PROV_RECORD_IDS_MAP = dict((FULL_NAMES_MAP[rec_type_id], rec_type_id) for
+                                rec_type_id in FULL_NAMES_MAP)
 
 
 class VOProvXMLSerializer(ProvXMLSerializer):
@@ -178,6 +186,28 @@ class VOProvXMLSerializer(ProvXMLSerializer):
                 else:
                     subelem.text = v
         return xml_bundle_root
+
+    def _derive_record_label(self, rec_type, attributes):
+        """
+        Helper function trying to derive the record label taking care of
+        subtypes and what not. It will also remove the type declaration for
+        the attributes if it was used to specialize the type.
+
+        :param rec_type: The type of records.
+        :param attributes: The attributes of the record.
+        """
+        rec_label = FULL_NAMES_MAP[rec_type]
+
+        for key, value in list(attributes):
+            if key != VOPROV_TYPE:
+                continue
+            if isinstance(value, prov.model.Literal):
+                value = value.value
+            if value in PROV_BASE_CLS and PROV_BASE_CLS[value] != value:
+                attributes.remove((key, value))
+                rec_label = FULL_NAMES_MAP[value]
+                break
+        return rec_label
 
 
 def _ns(ns, tag):
