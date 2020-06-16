@@ -1,12 +1,13 @@
-# -*- coding: ISO-8859-1 -*-
+# -*- coding: utf-8 -*-
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 
 from prov.constants import *
 from prov.model import Literal
 
-__author__ = 'Jean-François Sornay'
-__email__ = 'jean-francois.sornay@etu.umontpellier.fr'
+__author__ = 'Jean-Francois Sornay'
+__email__ = 'jean-francois.sornay@gmail.com'
+
 
 VOPROV = Namespace('voprov', 'http://www.ivoa.net/documents/ProvenanceDM/index.html#')
 
@@ -42,16 +43,15 @@ VOPROV_VALUE_DESCRIPTION =              VOPROV['ValueDescription']
 VOPROV_DATASET_DESCRIPTION =            VOPROV['DatasetDescription']
 VOPROV_CONFIG_FILE_DESCRIPTION =        VOPROV['ConfigFileDescription']
 VOPROV_PARAMETER_DESCRIPTION =          VOPROV['ParameterDescription']
-
 #   voprov configuration
 VOPROV_CONFIGURATION_FILE =             VOPROV['ConfigFile']
 VOPROV_CONFIGURATION_PARAMETER =        VOPROV['Parameter']
-
 #   voprov relation
 VOPROV_DESCRIPTION_RELATION =           VOPROV['DescriptionRelation']
 VOPROV_RELATED_TO_RELATION =            VOPROV['RelatedToRelation']
 VOPROV_CONFIGURATION_RELATION =         VOPROV['ConfigurationRelation']
 VOPROV_REFERENCE_RELATION =             VOPROV['HadReference']
+
 
 # Part 2 : map for serialization usage
 #   adding the voprov provn representation for the map for provn representation

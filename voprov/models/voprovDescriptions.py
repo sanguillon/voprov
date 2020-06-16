@@ -1,9 +1,12 @@
-# -*- coding: ISO-8859-1 -*-
+# -*- coding: utf-8 -*-
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 
 from prov.model import (ProvElement, ProvBundle, ProvEntity)
 from voprov.models.constants import *
+
+__author__ = 'Jean-Francois Sornay'
+__email__ = 'jean-francois.sornay@gmail.com'
 
 
 class VOProvDescription(ProvElement):
@@ -12,6 +15,7 @@ class VOProvDescription(ProvElement):
     _prov_type = None
 
     def get_w3c(self, bundle=None):
+        """get this element in the prov version which is an implementation of the W3C PROV-DM standard"""
         if bundle is None:
             bundle = ProvBundle()
         w3c_record = ProvEntity(bundle, self.identifier, self.attributes)
@@ -315,7 +319,7 @@ class VOProvDataSetDescription(VOProvEntityDescription):
         self._attributes[VOPROV_ATTR_CONTENT_TYPE] = {contentType}
 
 
-class VOProvConfigFileDescription(VOProvEntityDescription):
+class VOProvConfigFileDescription(VOProvDescription):
     """Class for VOProv configuration file description"""
 
     FORMAL_ATTRIBUTES = (VOPROV_ATTR_NAME, VOPROV_ATTR_CONTENT_TYPE)

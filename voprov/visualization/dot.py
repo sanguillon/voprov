@@ -1,17 +1,12 @@
-# -*- coding: ISO-8859-1 -*-
+# -*- coding: utf-8 -*-
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 
 from prov.dot import *
-
-from voprov.models.voprovDescriptions import *
-from voprov.models.voprovConfigurations import *
-from voprov.models.model import *
 from voprov.visualization.graph import *
 
 __author__ = 'Jean-Francois Sornay'
-__email__ = 'jean-francois.sornay@etu.umontpellier.fr'
-
+__email__ = 'jean-francois.sornay@gmail.com'
 
 # updating the generic node style map which is used when the object used in a relation is not declared
 GENERIC_NODE_STYLE.update({

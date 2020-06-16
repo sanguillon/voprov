@@ -1,9 +1,12 @@
-# -*- coding: ISO-8859-1 -*-
+# -*- coding: utf-8 -*-
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 
 from prov.model import (ProvElement, ProvBundle, ProvEntity)
 from voprov.models.constants import *
+
+__author__ = 'Jean-Francois Sornay'
+__email__ = 'jean-francois.sornay@gmail.com'
 
 
 class VOProvConfig(ProvElement):
@@ -22,21 +25,7 @@ class VOProvConfigFile(VOProvConfig):
     FORMAL_ATTRIBUTES = (VOPROV_ATTR_NAME, VOPROV_ATTR_LOCATION)
     _prov_type = VOPROV_CONFIGURATION_FILE
 
-    # def get_w3c(self, bundle=None):
-    #     if bundle is None:
-    #         bundle = ProvBundle()
-    #     config_file = ProvEntity(bundle, self.identifier, self.attributes)
-    #     config_file.add_asserted_type('VOProvConfigFile')
-    #     return bundle.add_record(config_file)
-
 
 class VOProvParameter(VOProvConfig):
     FORMAL_ATTRIBUTES = (VOPROV_ATTR_NAME, VOPROV_ATTR_VALUE)
     _prov_type = VOPROV_CONFIGURATION_PARAMETER
-
-    # def get_w3c(self, bundle=None):
-    #     if bundle is None:
-    #         bundle = ProvBundle()
-    #     parameter = ProvEntity(bundle, self.identifier, self.attributes)
-    #     parameter.add_asserted_type('VOProvParameter')
-    #     return bundle.add_record(parameter)

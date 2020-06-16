@@ -1,10 +1,12 @@
-# -*- coding: ISO-8859-1 -*-
+# -*- coding: utf-8 -*-
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 
 from prov.model import (ProvRelation, ProvBundle, ProvInfluence)
 from voprov.models.constants import *
-import sys
+
+__author__ = 'Jean-Francois Sornay'
+__email__ = 'jean-francois.sornay@gmail.com'
 
 
 class VOProvRelation(ProvRelation):
@@ -12,6 +14,7 @@ class VOProvRelation(ProvRelation):
     _prov_type = None
 
     def get_w3c(self, bundle=None):
+        """get this relation in the prov version which is an implementation of the W3C PROV-DM standard"""
         if bundle is None:
             bundle = ProvBundle()
         attribute = self.extra_attributes
@@ -20,7 +23,7 @@ class VOProvRelation(ProvRelation):
         w3c_record = ProvInfluence(bundle, self.identifier, attribute)
         namespaces = [list(i) for i in w3c_record.formal_attributes]
         for i in range(0, 2):
-             namespaces[i][1] = relation_formal_attribute[i][1]
+            namespaces[i][1] = relation_formal_attribute[i][1]
         w3c_record.add_attributes(namespaces)
         w3c_record.add_asserted_type(self.__class__.__name__)
         return bundle.add_record(w3c_record)

@@ -1,19 +1,17 @@
-# -*- coding: ISO-8859-1 -*-
+# -*- coding: utf-8 -*-
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 
 from prov.serializers.provxml import *
-
-__author__ = 'Jean-Francois Sornay'
-__email__ = 'jean-francois.sornay@etu.umontpellier.fr'
+from lxml import etree
 
 
 class VOProvXMLSerializer(ProvXMLSerializer):
-    """PROV-XML serializer for :class:`~prov.model.ProvDocument`
+    """PROV-XML serializer for :class:`~voprov.models.model.VOProvDocument`
     """
     def serialize(self, stream, force_types=False, **kwargs):
         """
-        Serializes a :class:`~prov.model.ProvDocument` instance to `PROV-XML
+        Serializes a :class:`~voprov.models.model.VOProvDocument` instance to `PROV-XML
         <http://www.w3.org/TR/prov-xml/>`_.
 
         :param stream: Where to save the output.
@@ -146,7 +144,7 @@ class VOProvXMLSerializer(ProvXMLSerializer):
                         type(value) in ALWAYS_CHECK or
                         attr in [PROV_TYPE, PROV_LOCATION, PROV_VALUE]) and \
                         _ns_xsi("type") not in subelem.attrib and \
-                        not six.text_type(value).startswith("prov:") and \
+                        not six.text_type(value).startswith("voprov:") and \
                         not (attr in PROV_ATTRIBUTE_QNAMES and v) and \
                         attr not in [PROV_ATTR_TIME, PROV_LABEL]:
                     xsd_type = None

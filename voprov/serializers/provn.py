@@ -1,11 +1,8 @@
-# -*- coding: ISO-8859-1 -*-
+# -*- coding: utf-8 -*-
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 
 from prov.serializers.provn import *
-
-__author__ = 'Jean-Francois Sornay'
-__email__ = 'jean-francois.sornay@etu.umontpellier.fr'
 
 
 class VOProvNSerializer(ProvNSerializer):
@@ -14,7 +11,7 @@ class VOProvNSerializer(ProvNSerializer):
     """
     def serialize(self, stream, **kwargs):
         """
-        Serializes a :class:`prov.model.ProvDocument` instance to a
+        Serializes a :class:`voprov.models.model.VOProvDocument` instance to a
         `PROV-N <http://www.w3.org/TR/prov-n/>`_.
 
         :param stream: Where to save the output.

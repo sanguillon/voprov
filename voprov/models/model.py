@@ -1,29 +1,31 @@
-# -*- coding: ISO-8859-1 -*-
+# -*- coding: utf-8 -*-
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 
 import io
 import itertools
 import os
+import logging
 import shutil
 import tempfile
 import dateutil.parser
 from prov.model import (ProvException, ProvDocument, ProvBundle, ProvActivity,
-                        ProvEntity, ProvUsage, ProvAgent, ProvGeneration, ProvAssociation,
+                        ProvUsage, ProvAgent, ProvGeneration, ProvAssociation, ProvEntity,
                         ProvCommunication, ProvStart, ProvEnd, ProvInvalidation, ProvDerivation,
                         ProvAttribution, ProvDelegation, ProvInfluence, ProvSpecialization,
                         ProvAlternate, ProvMention, ProvMembership,
-                        PROV_REC_CLS, DEFAULT_NAMESPACES, NamespaceManager)
+                        PROV_REC_CLS, DEFAULT_NAMESPACES, NamespaceManager, first)
 from six.moves.urllib.parse import urlparse
 
-from voprov.models.constants import *
 from voprov import serializers
 from voprov.models.voprovDescriptions import *
 from voprov.models.voprovConfigurations import *
 from voprov.models.voprovRelations import *
 
 __author__ = 'Jean-Francois Sornay'
-__email__ = 'jean-francois.sornay@etu.umontpellier.fr'
+__email__ = 'jean-francois.sornay@gmail.com'
+
+logger = logging.getLogger(__name__)
 
 DEFAULT_NAMESPACES.update({'voprov': VOPROV})
 
@@ -85,7 +87,102 @@ class VOProvEntity(ProvEntity):
         """
         return self._bundle.description(self, activity_description, identifier)
 
+    def wasGeneratedBy(self, activity, time=None, attributes=None):
+        """
+        Creates a new generation record to this entity.
+
+        :param activity: Activity or string identifier of the activity involved in
+            the generation (default: None).
+        :param time: Optional time for the generation (default: None).
+            Either a :py:class:`datetime.datetime` object or a string that can be
+            parsed by :py:func:`dateutil.parser`.
+        :param attributes: Optional other attributes as a dictionary or list
+            of tuples to be added to the record optionally (default: None).
+        """
+        self._bundle.generation(
+            self, activity, time=time, other_attributes=attributes
+        )
+        return self
+
+    def wasInvalidatedBy(self, activity, time=None, attributes=None):
+        """
+        Creates a new invalidation record for this entity.
+
+        :param activity: Activity or string identifier of the activity involved in
+            the invalidation (default: None).
+        :param time: Optional time for the invalidation (default: None).
+            Either a :py:class:`datetime.datetime` object or a string that can be
+            parsed by :py:func:`dateutil.parser`.
+        :param attributes: Optional other attributes as a dictionary or list
+            of tuples to be added to the record optionally (default: None).
+        """
+        self._bundle.invalidation(
+            self, activity, time=time, other_attributes=attributes
+        )
+        return self
+
+    def wasDerivedFrom(self, usedEntity, activity=None, generation=None,
+                       usage=None, attributes=None):
+        """
+        Creates a new derivation record for this entity from a used entity.
+
+        :param usedEntity: Entity or a string identifier for the used entity.
+        :param activity: Activity or string identifier of the activity involved in
+            the derivation (default: None).
+        :param generation: Optionally extra activity to state qualified derivation
+            through an internal generation (default: None).
+        :param usage: Optionally extra entity to state qualified derivation through
+            an internal usage (default: None).
+        :param attributes: Optional other attributes as a dictionary or list
+            of tuples to be added to the record optionally (default: None).
+        """
+        self._bundle.derivation(
+            self, usedEntity, activity=activity, generation=generation, usage=usage,
+            other_attributes=attributes
+        )
+        return self
+
+    def wasAttributedTo(self, agent, attributes=None):
+        """
+        Creates a new attribution record between this entity and an agent.
+
+        :param agent: Agent or string identifier of the agent involved in the
+            attribution.
+        :param attributes: Optional other attributes as a dictionary or list
+            of tuples to be added to the record optionally (default: None).
+        """
+        self._bundle.attribution(self, agent, other_attributes=attributes)
+        return self
+
+    def alternateOf(self, alternate2):
+        """
+        Creates a new alternate record between this and another entity.
+
+        :param alternate2: Entity or a string identifier for the second entity.
+        """
+        self._bundle.alternate(self, alternate2)
+        return self
+
+    def specializationOf(self, generalEntity):
+        """
+        Creates a new specialisation record for this from a general entity.
+
+        :param generalEntity: Entity or a string identifier for the general entity.
+        """
+        self._bundle.specialization(self, generalEntity)
+        return self
+
+    def hadMember(self, entity):
+        """
+        Creates a new membership record to an entity for a collection.
+
+        :param entity: Entity to be added to the collection.
+        """
+        self._bundle.membership(self, entity)
+        return self
+
     def get_w3c(self, bundle=None):
+        """get this element in the prov version which is an implementation of the W3C PROV-DM standard"""
         if bundle is None:
             bundle = ProvBundle()
         entity = ProvEntity(bundle, self.identifier, self.attributes)
@@ -104,24 +201,10 @@ class VOProvValueEntity(VOProvEntity):
         """
         self._attributes[VOPROV['value']] = {value}
 
-    # def get_w3c(self, bundle=None):
-    #     if bundle is None:
-    #         bundle = ProvBundle()
-    #     entity = ProvEntity(bundle, self.identifier, self.attributes)
-    #     entity.add_asserted_type('VOProvValueEntity')
-    #     return bundle.add_record(entity)
-
 
 class VOProvDataSetEntity(VOProvEntity):
     """Class for VOProv DataSet Entity"""
     _prov_type = VOPROV_DATASET_ENTITY
-
-    # def get_w3c(self, bundle=None):
-    #     if bundle is None:
-    #         bundle = ProvBundle()
-    #     entity = ProvEntity(bundle, self.identifier, self.attributes)
-    #     entity.add_asserted_type('VOProvDataSetEntity')
-    #     return bundle.add_record(entity)
 
 
 class VOProvActivity(ProvActivity):
@@ -151,7 +234,126 @@ class VOProvActivity(ProvActivity):
         """
         return self._bundle.description(self, activity_description, identifier)
 
+    def set_time(self, startTime=None, endTime=None):
+        """
+        Sets the time this activity took place.
+
+        :param startTime: Start time for the activity.
+            Either a :py:class:`datetime.datetime` object or a string that can be
+            parsed by :py:func:`dateutil.parser`.
+        :param endTime: Start time for the activity.
+            Either a :py:class:`datetime.datetime` object or a string that can be
+            parsed by :py:func:`dateutil.parser`.
+        """
+        if startTime is not None:
+            self._attributes[VOPROV_ATTR_STARTTIME] = {startTime}
+        if endTime is not None:
+            self._attributes[VOPROV_ATTR_ENDTIME] = {endTime}
+
+    def get_startTime(self):
+        """
+        Returns the time the activity started.
+
+        :return: :py:class:`datetime.datetime`
+        """
+        values = self._attributes[VOPROV_ATTR_STARTTIME]
+        return first(values) if values else None
+
+    def get_endTime(self):
+        """
+        Returns the time the activity ended.
+
+        :return: :py:class:`datetime.datetime`
+        """
+        values = self._attributes[VOPROV_ATTR_ENDTIME]
+        return first(values) if values else None
+
+    # Convenient assertions that take the current ProvActivity as the first
+    # (formal) argument
+    def used(self, entity, time=None, attributes=None):
+        """
+        Creates a new usage record for this activity.
+
+        :param entity: Entity or string identifier of the entity involved in
+            the usage relationship (default: None).
+        :param time: Optional time for the usage (default: None).
+            Either a :py:class:`datetime.datetime` object or a string that can be
+            parsed by :py:func:`dateutil.parser`.
+        :param attributes: Optional other attributes as a dictionary or list
+            of tuples to be added to the record optionally (default: None).
+        """
+        self._bundle.usage(self, entity, time=time, other_attributes=attributes)
+        return self
+
+    def wasInformedBy(self, informant, attributes=None):
+        """
+        Creates a new communication record for this activity.
+
+        :param informant: The informing activity (relationship source).
+        :param attributes: Optional other attributes as a dictionary or list
+            of tuples to be added to the record optionally (default: None).
+        """
+        self._bundle.communication(
+            self, informant, other_attributes=attributes
+        )
+        return self
+
+    def wasStartedBy(self, trigger, starter=None, time=None, attributes=None):
+        """
+        Creates a new start record for this activity. The activity did not exist
+        before the start by the trigger.
+
+        :param trigger: Entity triggering the start of this activity.
+        :param starter: Optionally extra activity to state a qualified start
+            through which the trigger entity for the start is generated
+            (default: None).
+        :param time: Optional time for the start (default: None).
+            Either a :py:class:`datetime.datetime` object or a string that can be
+            parsed by :py:func:`dateutil.parser`.
+        :param attributes: Optional other attributes as a dictionary or list
+            of tuples to be added to the record optionally (default: None).
+        """
+        self._bundle.start(
+            self, trigger, starter, time, other_attributes=attributes
+        )
+        return self
+
+    def wasEndedBy(self, trigger, ender=None, time=None, attributes=None):
+        """
+        Creates a new end record for this activity.
+
+        :param trigger: Entity triggering the end of this activity.
+        :param ender: Optionally extra activity to state a qualified end through
+            which the trigger entity for the end is generated (default: None).
+        :param time: Optional time for the end (default: None).
+            Either a :py:class:`datetime.datetime` object or a string that can be
+            parsed by :py:func:`dateutil.parser`.
+        :param attributes: Optional other attributes as a dictionary or list
+            of tuples to be added to the record optionally (default: None).
+        """
+        self._bundle.end(
+            self, trigger, ender, time, other_attributes=attributes
+        )
+        return self
+
+    def wasAssociatedWith(self, agent, plan=None, attributes=None):
+        """
+        Creates a new association record for this activity.
+
+        :param agent: Agent or string identifier of the agent involved in the
+            association (default: None).
+        :param plan: Optionally extra entity to state qualified association through
+            an internal plan (default: None).
+        :param attributes: Optional other attributes as a dictionary or list
+            of tuples to be added to the record optionally (default: None).
+        """
+        self._bundle.association(
+            self, agent=agent, plan=plan, other_attributes=attributes
+        )
+        return self
+
     def get_w3c(self, bundle=None):
+        """get this element in the prov version which is an implementation of the W3C PROV-DM standard"""
         if bundle is None:
             bundle = ProvBundle()
 
@@ -229,7 +431,23 @@ class VOProvAgent(ProvAgent):
         """
         self._attributes[VOPROV['url']] = {url}
 
+    def actedOnBehalfOf(self, responsible, activity=None, attributes=None):
+        """
+        Creates a new delegation record on behalf of this agent.
+
+        :param responsible: Agent the responsibility is delegated to.
+        :param activity: Optionally extra activity to state qualified delegation
+            internally (default: None).
+        :param attributes: Optional other attributes as a dictionary or list
+            of tuples to be added to the record optionally (default: None).
+        """
+        self._bundle.delegation(
+            self, responsible, activity, other_attributes=attributes
+        )
+        return self
+
     def get_w3c(self, bundle=None):
+        """get this element in the prov version which is an implementation of the W3C PROV-DM standard"""
         if bundle is None:
             bundle = ProvBundle()
 
@@ -260,6 +478,7 @@ class VOProvUsage(ProvUsage):
         return self._bundle.description(self, usage_description, identifier)
 
     def get_w3c(self, bundle=None):
+        """get this element in the prov version which is an implementation of the W3C PROV-DM standard"""
         if bundle is None:
             bundle = ProvBundle()
 
@@ -298,6 +517,7 @@ class VOProvGeneration(ProvGeneration):
         return self._bundle.description(self, generation_description, identifier)
 
     def get_w3c(self, bundle=None):
+        """get this element in the prov version which is an implementation of the W3C PROV-DM standard"""
         if bundle is None:
             bundle = ProvBundle()
 
@@ -323,6 +543,7 @@ class VOProvCommunication(ProvCommunication):
     _prov_type = VOPROV_COMMUNICATION
 
     def get_w3c(self, bundle=None):
+        """get this element in the prov version which is an implementation of the W3C PROV-DM standard"""
         if bundle is None:
             bundle = ProvBundle()
 
@@ -349,6 +570,7 @@ class VOProvStart(ProvStart):
     _prov_type = VOPROV_START
 
     def get_w3c(self, bundle=None):
+        """get this element in the prov version which is an implementation of the W3C PROV-DM standard"""
         if bundle is None:
             bundle = ProvBundle()
 
@@ -375,6 +597,7 @@ class VOProvEnd(ProvEnd):
     _prov_type = VOPROV_END
 
     def get_w3c(self, bundle=None):
+        """get this element in the prov version which is an implementation of the W3C PROV-DM standard"""
         if bundle is None:
             bundle = ProvBundle()
 
@@ -400,6 +623,7 @@ class VOProvInvalidation(ProvInvalidation):
     _prov_type = VOPROV_INVALIDATION
 
     def get_w3c(self, bundle=None):
+        """get this element in the prov version which is an implementation of the W3C PROV-DM standard"""
         if bundle is None:
             bundle = ProvBundle()
 
@@ -427,6 +651,7 @@ class VOProvDerivation(ProvDerivation):
     _prov_type = VOPROV_DERIVATION
 
     def get_w3c(self, bundle=None):
+        """get this element in the prov version which is an implementation of the W3C PROV-DM standard"""
         if bundle is None:
             bundle = ProvBundle()
 
@@ -452,6 +677,7 @@ class VOProvAttribution(ProvAttribution):
     _prov_type = VOPROV_ATTRIBUTION
 
     def get_w3c(self, bundle=None):
+        """get this element in the prov version which is an implementation of the W3C PROV-DM standard"""
         if bundle is None:
             bundle = ProvBundle()
 
@@ -477,6 +703,7 @@ class VOProvAssociation(ProvAssociation):
     _prov_type = VOPROV_ASSOCIATION
 
     def get_w3c(self, bundle=None):
+        """get this element in the prov version which is an implementation of the W3C PROV-DM standard"""
         if bundle is None:
             bundle = ProvBundle()
 
@@ -502,6 +729,7 @@ class VOProvDelegation(ProvDelegation):
     _prov_type = VOPROV_DELEGATION
 
     def get_w3c(self, bundle=None):
+        """get this element in the prov version which is an implementation of the W3C PROV-DM standard"""
         if bundle is None:
             bundle = ProvBundle()
 
@@ -527,6 +755,7 @@ class VOProvInfluence(ProvInfluence):
     _prov_type = VOPROV_INFLUENCE
 
     def get_w3c(self, bundle=None):
+        """get this element in the prov version which is an implementation of the W3C PROV-DM standard"""
         if bundle is None:
             bundle = ProvBundle()
 
@@ -552,6 +781,7 @@ class VOProvSpecialization(ProvSpecialization):
     _prov_type = VOPROV_SPECIALIZATION
 
     def get_w3c(self, bundle=None):
+        """get this element in the prov version which is an implementation of the W3C PROV-DM standard"""
         if bundle is None:
             bundle = ProvBundle()
 
@@ -577,6 +807,7 @@ class VOProvAlternate(ProvAlternate):
     _prov_type = VOPROV_ALTERNATE
 
     def get_w3c(self, bundle=None):
+        """get this element in the prov version which is an implementation of the W3C PROV-DM standard"""
         if bundle is None:
             bundle = ProvBundle()
 
@@ -603,6 +834,7 @@ class VOProvMention(ProvMention, VOProvSpecialization):
     _prov_type = VOPROV_MENTION
 
     def get_w3c(self, bundle=None):
+        """get this element in the prov version which is an implementation of the W3C PROV-DM standard"""
         if bundle is None:
             bundle = ProvBundle()
 
@@ -628,6 +860,7 @@ class VOProvMembership(ProvMembership):
     _prov_type = VOPROV_MEMBERSHIP
 
     def get_w3c(self, bundle=None):
+        """get this element in the prov version which is an implementation of the W3C PROV-DM standard"""
         if bundle is None:
             bundle = ProvBundle()
 
@@ -700,6 +933,7 @@ class VOProvBundle(ProvBundle):
         )
 
     def get_w3c(self, document=None):
+        """get this element in the prov version which is an implementation of the W3C PROV-DM standard"""
         if self.is_document():
             w3c_records = ProvDocument(namespaces=self.namespaces)
         else:
@@ -714,7 +948,6 @@ class VOProvBundle(ProvBundle):
                 record.get_w3c(w3c_records)
 
         return w3c_records
-
 
     def activity(self, identifier, name=None, startTime=None, endTime=None, comment=None,
                  other_attributes=None):
