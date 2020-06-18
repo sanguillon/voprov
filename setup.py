@@ -20,15 +20,14 @@ test_requirements = [
 
 setup(
     name='voprov',
-    version='1.0.0',
+    version='2.0.1',
     description='A library for IVOA Provenance Data Model supporting PROV-JSON, '
                 'PROV-XML and PROV-N',
     long_description=readme,
     author='Jean-Francois Sornay',
     author_email='jeanfrancois.sornay@gmail.com',
     url='https://github.com/sanguillon/voprov/',
-    packages=find_packages(where="voprov"),
-    package_dir={'': 'voprov'},
+    packages=find_packages(),
     include_package_data=True,
     install_requires=requirements,
     extras_require={
