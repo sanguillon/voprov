@@ -12,28 +12,21 @@ with open(path.join(here, 'README.rst'), encoding='utf-8') as f:
 
 requirements = [
     'prov>=1.5.3',
-]
-
-test_requirements = [
     'pydot>=1.2.0'
 ]
 
 setup(
     name='voprov',
-    version='1.0.0',
+    packages=find_packages(),
+    version='2.0.0',
     description='A library for IVOA Provenance Data Model supporting PROV-JSON, '
                 'PROV-XML and PROV-N',
     long_description=readme,
     author='Jean-Francois Sornay',
     author_email='jeanfrancois.sornay@gmail.com',
     url='https://github.com/sanguillon/voprov/',
-    packages=find_packages(where="voprov"),
-    package_dir={'': 'voprov'},
-    include_package_data=True,
+    download_url='https://github.com/sanguillon/voprov/archive/0.0.1.tar.gz',
     install_requires=requirements,
-    extras_require={
-        'dot': ['pydot>=1.2.0'],
-    },
     license="MIT",
     zip_safe=False,
     keywords=[
@@ -57,6 +50,4 @@ setup(
         'Programming Language :: Python :: 3.8',
         'Topic :: Scientific/Engineering :: Information Analysis',
     ],
-    tests_require=test_requirements,
-    python_requires='>=2',
 )

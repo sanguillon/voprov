@@ -5,7 +5,7 @@ from prov import Error
 
 __author__ = 'Jean-Francois Sornay'
 __email__ = 'jeanfrancois.sornay@gmail.com'
-__version__ = '1.0.0'
+__version__ = '2.0.0'
 
 __all__ = ["Error", "models", "read"]
 
