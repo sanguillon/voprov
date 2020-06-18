@@ -4,7 +4,7 @@ from __future__ import (absolute_import, division, print_function,
 from prov import Error
 
 __author__ = 'Jean-Francois Sornay'
-__email__ = 'jean-francois.sornay@gmail.com'
+__email__ = 'jeanfrancois.sornay@gmail.com'
 __version__ = '1.0.0'
 
 __all__ = ["Error", "models", "read"]

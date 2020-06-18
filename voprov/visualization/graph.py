@@ -6,7 +6,7 @@ from prov.graph import *
 from voprov.models.model import *
 
 __author__ = 'Jean-Francois Sornay'
-__email__ = 'jean-francois.sornay@gmail.com'
+__email__ = 'jeanfrancois.sornay@gmail.com'
 
 INFERRED_ELEMENT_CLASS.update({
     VOPROV_ATTR_ENTITY:             VOProvEntity,

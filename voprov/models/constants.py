@@ -6,7 +6,7 @@ from prov.constants import *
 from prov.model import Literal
 
 __author__ = 'Jean-Francois Sornay'
-__email__ = 'jean-francois.sornay@gmail.com'
+__email__ = 'jeanfrancois.sornay@gmail.com'
 
 
 VOPROV = Namespace('voprov', 'http://www.ivoa.net/documents/ProvenanceDM/index.html#')

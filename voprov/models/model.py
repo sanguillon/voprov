@@ -23,7 +23,7 @@ from voprov.models.voprovConfigurations import *
 from voprov.models.voprovRelations import *
 
 __author__ = 'Jean-Francois Sornay'
-__email__ = 'jean-francois.sornay@gmail.com'
+__email__ = 'jeanfrancois.sornay@gmail.com'
 
 logger = logging.getLogger(__name__)
 

@@ -7,7 +7,7 @@ from voprov.serializers.xml import VOProvXMLSerializer
 from prov import Error
 
 __author__ = 'Jean-Francois Sornay'
-__email__ = 'jean-francois.sornay@gmail.com'
+__email__ = 'jeanfrancois.sornay@gmail.com'
 __all__ = [
     'get'
 ]

@@ -6,7 +6,7 @@ from prov.dot import *
 from voprov.visualization.graph import *
 
 __author__ = 'Jean-Francois Sornay'
-__email__ = 'jean-francois.sornay@gmail.com'
+__email__ = 'jeanfrancois.sornay@gmail.com'
 
 # updating the generic node style map which is used when the object used in a relation is not declared
 GENERIC_NODE_STYLE.update({

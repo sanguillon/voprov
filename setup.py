@@ -25,7 +25,7 @@ setup(
                 'PROV-XML and PROV-N',
     long_description=readme,
     author='Jean-Francois Sornay',
-    author_email='jean-francois.sornay@gmail.com',
+    author_email='jeanfrancois.sornay@gmail.com',
     url='https://github.com/sanguillon/voprov/',
     packages=find_packages(where="voprov"),
     package_dir={'': 'voprov'},

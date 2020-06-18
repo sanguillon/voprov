@@ -6,7 +6,7 @@ from prov.model import (ProvElement, ProvBundle, ProvEntity)
 from voprov.models.constants import *
 
 __author__ = 'Jean-Francois Sornay'
-__email__ = 'jean-francois.sornay@gmail.com'
+__email__ = 'jeanfrancois.sornay@gmail.com'
 
 
 class VOProvDescription(ProvElement):
