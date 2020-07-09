@@ -932,6 +932,18 @@ class VOProvBundle(ProvBundle):
             parent=(document._namespaces if document is not None else None)
         )
 
+    def unified(self):
+        """
+        Unifies all records in the bundle that haves same identifiers
+
+        :returns: :py:class:`VOProvBundle` -- the new unified bundle.
+        """
+        unified_records = self._unified_records()
+        bundle = VOProvBundle(
+            records=unified_records, identifier=self.identifier
+        )
+        return bundle
+
     def get_w3c(self, document=None):
         """get this element in the prov version which is an implementation of the W3C PROV-DM standard"""
         if self.is_document():
