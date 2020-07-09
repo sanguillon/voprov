@@ -1797,7 +1797,7 @@ class VOProvBundle(ProvBundle):
             other_attributes.update({VOPROV['multiplicity']: multiplicity})
         if len(other_attributes) is 0:
             other_attributes = None
-        self.relate(activity_description, identifier)
+        self.relate(identifier, activity_description)
         return self.new_record(
             VOPROV_USAGE_DESCRIPTION, identifier, {
                 VOPROV_ATTR_ROLE: role
