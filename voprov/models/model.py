@@ -1774,7 +1774,7 @@ class VOProvBundle(ProvBundle):
         )
 
     def usageDescription(self, identifier, activity_description, role, description=None, type=None,
-                         multiplicity=None, other_attributes=None):
+                         multiplicity=None, entity_description=None, other_attributes=None):
         """
         Creates a new usage description.
 
@@ -1784,6 +1784,8 @@ class VOProvBundle(ProvBundle):
         :param description:             A descriptive text for this kind of usage.
         :param type:                    Type of relation.
         :param multiplicity:            Number of expected input entities to be used with the given role.
+        :param entity_description:      Identifier(s) or object(s) of entity descriptions linked to the usage description
+                                        (can be a list),
         :param other_attributes:        Optional other attributes as a dictionary or list
                                         of tuples to be added to the record optionally (default: None).
         """
@@ -1798,6 +1800,10 @@ class VOProvBundle(ProvBundle):
         if len(other_attributes) is 0:
             other_attributes = None
         self.relate(identifier, activity_description)
+        if not isinstance(entity_description, list):
+            entity_description = [entity_description]
+        for entity_description_item in entity_description:
+            self.relate(entity_description_item, identifier)
         return self.new_record(
             VOPROV_USAGE_DESCRIPTION, identifier, {
                 VOPROV_ATTR_ROLE: role
@@ -1806,7 +1812,7 @@ class VOProvBundle(ProvBundle):
         )
 
     def generationDescription(self, identifier, activity_description, role, description=None, type=None,
-                              multiplicity=None, other_attributes=None):
+                              multiplicity=None, entity_description=None, other_attributes=None):
         """
         Creates a new generation description.
 
@@ -1817,6 +1823,8 @@ class VOProvBundle(ProvBundle):
         :param description:             A descriptive text for this kind of generation.
         :param type:                    Type of relation.
         :param multiplicity:            Number of expected input entities to be generated with the given role.
+        :param entity_description:      Identifier(s) or object(s) of entity descriptions linked to the generation
+                                        description (can be a list),
         :param other_attributes:        Optional other attributes as a dictionary or list
                                         of tuples to be added to the record optionally (default: None).
         """
@@ -1831,6 +1839,10 @@ class VOProvBundle(ProvBundle):
         if len(other_attributes) is 0:
             other_attributes = None
         self.relate(identifier, activity_description)
+        if not isinstance(entity_description, list):
+            entity_description = [entity_description]
+        for entity_description_item in entity_description:
+            self.relate(entity_description_item, identifier)
         return self.new_record(
             VOPROV_GENERATION_DESCRIPTION, identifier, {
                 VOPROV_ATTR_ROLE: role
