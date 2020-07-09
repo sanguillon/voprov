@@ -941,11 +941,17 @@ class VOProvBundle(ProvBundle):
 
         if self.is_document():
             for bundle in self.bundles:
-                w3c_records.add_bundle(bundle.get_w3c(document=w3c_records))
+                if isinstance(bundle, VOProvBundle):
+                    w3c_records.add_bundle(bundle.get_w3c(document=w3c_records))
+                else:
+                    w3c_records.add_bundle(bundle)
 
         if self.records:
             for record in self.records:
-                record.get_w3c(w3c_records)
+                if hasattr(record, "get_w3c"):
+                    record.get_w3c(w3c_records)
+                else:
+                    w3c_records.add_record(record)
 
         return w3c_records
 
