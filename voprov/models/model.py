@@ -1818,10 +1818,11 @@ class VOProvBundle(ProvBundle):
         if len(other_attributes) is 0:
             other_attributes = None
         self.relate(identifier, activityDescription)
-        if not isinstance(entityDescription, list):
-            entityDescription = [entityDescription]
-        for ed_item in entityDescription:
-            self.relate(ed_item, identifier)
+        if entityDescription:
+            if not isinstance(entityDescription, list):
+                entityDescription = [entityDescription]
+            for ed_item in entityDescription:
+                self.relate(ed_item, identifier)
         return self.new_record(
             VOPROV_USAGE_DESCRIPTION, identifier, {
                 VOPROV_ATTR_ROLE: role
@@ -1857,10 +1858,11 @@ class VOProvBundle(ProvBundle):
         if len(other_attributes) is 0:
             other_attributes = None
         self.relate(identifier, activityDescription)
-        if not isinstance(entityDescription, list):
-            entityDescription = [entityDescription]
-        for ed_item in entityDescription:
-            self.relate(ed_item, identifier)
+        if entityDescription:
+            if not isinstance(entityDescription, list):
+                entityDescription = [entityDescription]
+            for ed_item in entityDescription:
+                self.relate(ed_item, identifier)
         return self.new_record(
             VOPROV_GENERATION_DESCRIPTION, identifier, {
                 VOPROV_ATTR_ROLE: role
