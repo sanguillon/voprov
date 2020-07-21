@@ -944,6 +944,28 @@ class VOProvBundle(ProvBundle):
         )
         return bundle
 
+    def unified_relations(self):
+        """
+        Unifies all relations in the bundle that have same __repr__ (i.e. type, identifier if set, e1, e2)
+
+        :returns: :py:class:`VOProvBundle` -- the new unified bundle.
+        """
+        hash_records = []
+        if self.is_document():
+            for bundle in self._bundles:
+                self._bundles[bundle] = self._bundles[bundle].unified_relations()
+        for record in self._records:
+            if record.is_relation():
+                hash_records.append(hash(str(record)))
+            else:
+                hash_records.append(hash(record))
+        for hash_record in list(set(hash_records)):
+            while hash_records.count(hash_record) > 1:
+                rec_index = hash_records.index(hash_record)
+                self._records.pop(rec_index)
+                hash_records.pop(rec_index)
+        return self
+
     def get_w3c(self, document=None):
         """get this element in the prov version which is an implementation of the W3C PROV-DM standard"""
         if self.is_document():
