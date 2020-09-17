@@ -79,13 +79,13 @@ class VOProvEntity(ProvEntity):
         """
         self._attributes[VOPROV['comment']] = {comment}
 
-    def isDescribedBy(self, activity_description, identifier=None):
+    def isDescribedBy(self, activityDescription, identifier=None):
         """Link an activity description to this activity
 
-        :param activity_description:    Identifier for the activity description link to this activity.
+        :param activityDescription:     Identifier for the activity description link to this activity.
         :param identifier:              Identifier of the description relation created.
         """
-        return self._bundle.description(self, activity_description, identifier)
+        return self._bundle.description(self, activityDescription, identifier)
 
     def wasGeneratedBy(self, activity, time=None, attributes=None):
         """
@@ -186,7 +186,7 @@ class VOProvEntity(ProvEntity):
         if bundle is None:
             bundle = ProvBundle()
         entity = ProvEntity(bundle, self.identifier, self.attributes)
-        entity.add_asserted_type(self.__class__.__name__)
+        entity.add_asserted_type(self._prov_type)  # self.__class__.__name__)
         return bundle.add_record(entity)
 
 
@@ -226,13 +226,13 @@ class VOProvActivity(ProvActivity):
         """
         self._attributes[VOPROV['comment']] = {comment}
 
-    def isDescribedBy(self, activity_description, identifier=None):
+    def isDescribedBy(self, activityDescription, identifier=None):
         """Link an activity description to this activity
 
-        :param activity_description:    Identifier for the activity description link to this activity.
+        :param activityDescription:     Identifier for the activity description link to this activity.
         :param identifier:              Identifier of the description relation created.
         """
-        return self._bundle.description(self, activity_description, identifier)
+        return self._bundle.description(self, activityDescription, identifier)
 
     def set_time(self, startTime=None, endTime=None):
         """
@@ -358,7 +358,7 @@ class VOProvActivity(ProvActivity):
             bundle = ProvBundle()
 
         activity = ProvActivity(bundle, self.identifier, self.extra_attributes)
-        activity.add_asserted_type('VOProvActivity')
+        activity.add_asserted_type(self._prov_type)  # self.__class__.__name__)
 
         for formal in self.formal_attributes:
             local_part = formal[0].localpart
@@ -452,7 +452,7 @@ class VOProvAgent(ProvAgent):
             bundle = ProvBundle()
 
         agent = ProvAgent(bundle, self.identifier, self.attributes)
-        agent.add_asserted_type('VOProvAgent')
+        agent.add_asserted_type(self._prov_type)  # self.__class__.__name__)
 
         return bundle.add_record(agent)
 
@@ -469,13 +469,13 @@ class VOProvUsage(ProvUsage):
         """
         self._attributes[VOPROV_ATTR_ROLE] = {role}
 
-    def isDescribedBy(self, usage_description, identifier=None):
+    def isDescribedBy(self, usageDescription, identifier=None):
         """Link an usage description to this used relation.
 
-        :param usage_description:       Identifier of the usage description link to this used relation.
+        :param usageDescription:        Identifier of the usage description link to this used relation.
         :param identifier:              Identifier of the description relation created.
         """
-        return self._bundle.description(self, usage_description, identifier)
+        return self._bundle.description(self, usageDescription, identifier)
 
     def get_w3c(self, bundle=None):
         """get this element in the prov version which is an implementation of the W3C PROV-DM standard"""
@@ -483,7 +483,7 @@ class VOProvUsage(ProvUsage):
             bundle = ProvBundle()
 
         usage = ProvUsage(bundle, self.identifier, self.extra_attributes)
-        usage.add_asserted_type('VOProvUsage')
+        usage.add_asserted_type(self._prov_type)  # self.__class__.__name__)
 
         for formal in self.formal_attributes:
             local_part = formal[0].localpart
@@ -508,13 +508,13 @@ class VOProvGeneration(ProvGeneration):
         """
         self._attributes[VOPROV_ATTR_ROLE] = {role}
 
-    def isDescribedBy(self, generation_description, identifier=None):
+    def isDescribedBy(self, generationDescription, identifier=None):
         """Link a generation description to this used relation.
 
-        :param generation_description:  Identifier of the generation description link to this used relation.
+        :param generationDescription:   Identifier of the generation description link to this used relation.
         :param identifier:              Identifier of the description relation created.
         """
-        return self._bundle.description(self, generation_description, identifier)
+        return self._bundle.description(self, generationDescription, identifier)
 
     def get_w3c(self, bundle=None):
         """get this element in the prov version which is an implementation of the W3C PROV-DM standard"""
@@ -522,7 +522,7 @@ class VOProvGeneration(ProvGeneration):
             bundle = ProvBundle()
 
         generation = ProvGeneration(bundle, self.identifier, self.extra_attributes)
-        generation.add_asserted_type('VOProvGeneration')
+        generation.add_asserted_type(self._prov_type)  # self.__class__.__name__)
 
         for formal in self.formal_attributes:
             local_part = formal[0].localpart
@@ -548,7 +548,7 @@ class VOProvCommunication(ProvCommunication):
             bundle = ProvBundle()
 
         communication = ProvCommunication(bundle, self.identifier, self.extra_attributes)
-        communication.add_asserted_type('VOProvCommunication')
+        communication.add_asserted_type(self._prov_type)  # self.__class__.__name__)
 
         for formal in self.formal_attributes:
             local_part = formal[0].localpart
@@ -575,7 +575,7 @@ class VOProvStart(ProvStart):
             bundle = ProvBundle()
 
         start = ProvStart(bundle, self.identifier, self.extra_attributes)
-        start.add_asserted_type('VOProvStart')
+        start.add_asserted_type(self._prov_type)  # self.__class__.__name__)
 
         for formal in self.formal_attributes:
             local_part = formal[0].localpart
@@ -602,7 +602,7 @@ class VOProvEnd(ProvEnd):
             bundle = ProvBundle()
 
         end = ProvEnd(bundle, self.identifier, self.extra_attributes)
-        end.add_asserted_type('VOProvEnd')
+        end.add_asserted_type(self._prov_type)  # self.__class__.__name__)
 
         for formal in self.formal_attributes:
             local_part = formal[0].localpart
@@ -628,7 +628,7 @@ class VOProvInvalidation(ProvInvalidation):
             bundle = ProvBundle()
 
         invalidation = ProvInvalidation(bundle, self.identifier, self.extra_attributes)
-        invalidation.add_asserted_type('VOProvInvalidation')
+        invalidation.add_asserted_type(self._prov_type)  # self.__class__.__name__)
 
         for formal in self.formal_attributes:
             local_part = formal[0].localpart
@@ -656,7 +656,7 @@ class VOProvDerivation(ProvDerivation):
             bundle = ProvBundle()
 
         derivation = ProvDerivation(bundle, self.identifier, self.extra_attributes)
-        derivation.add_asserted_type('VOProvDerivation')
+        derivation.add_asserted_type(self._prov_type)  # self.__class__.__name__)
 
         for formal in self.formal_attributes:
             local_part = formal[0].localpart
@@ -682,7 +682,7 @@ class VOProvAttribution(ProvAttribution):
             bundle = ProvBundle()
 
         attribution = ProvAttribution(bundle, self.identifier, self.extra_attributes)
-        attribution.add_asserted_type('VOProvAttribution')
+        attribution.add_asserted_type(self._prov_type)  # self.__class__.__name__)
 
         for formal in self.formal_attributes:
             local_part = formal[0].localpart
@@ -708,7 +708,7 @@ class VOProvAssociation(ProvAssociation):
             bundle = ProvBundle()
 
         association = ProvAssociation(bundle, self.identifier, self.extra_attributes)
-        association.add_asserted_type('VOProvAssociation')
+        association.add_asserted_type(self._prov_type)  # self.__class__.__name__)
 
         for formal in self.formal_attributes:
             local_part = formal[0].localpart
@@ -734,7 +734,7 @@ class VOProvDelegation(ProvDelegation):
             bundle = ProvBundle()
 
         delegation = ProvDelegation(bundle, self.identifier, self.extra_attributes)
-        delegation.add_asserted_type('VOProvDelegation')
+        delegation.add_asserted_type(self._prov_type)  # self.__class__.__name__)
 
         for formal in self.formal_attributes:
             local_part = formal[0].localpart
@@ -760,7 +760,7 @@ class VOProvInfluence(ProvInfluence):
             bundle = ProvBundle()
 
         influence = ProvInfluence(bundle, self.identifier, self.extra_attributes)
-        influence.add_asserted_type('VOProvInfluence')
+        influence.add_asserted_type(self._prov_type)  # self.__class__.__name__)
 
         for formal in self.formal_attributes:
             local_part = formal[0].localpart
@@ -786,7 +786,7 @@ class VOProvSpecialization(ProvSpecialization):
             bundle = ProvBundle()
 
         specialization = ProvSpecialization(bundle, self.identifier, self.extra_attributes)
-        specialization.add_asserted_type('VOProvSpecialization')
+        specialization.add_asserted_type(self._prov_type)  # self.__class__.__name__)
 
         for formal in self.formal_attributes:
             local_part = formal[0].localpart
@@ -812,7 +812,7 @@ class VOProvAlternate(ProvAlternate):
             bundle = ProvBundle()
 
         alternate = ProvAlternate(bundle, self.identifier, self.extra_attributes)
-        alternate.add_asserted_type('VOProvAlternate')
+        alternate.add_asserted_type(self._prov_type)  # self.__class__.__name__)
 
         for formal in self.formal_attributes:
             local_part = formal[0].localpart
@@ -839,7 +839,7 @@ class VOProvMention(ProvMention, VOProvSpecialization):
             bundle = ProvBundle()
 
         mention = ProvMention(bundle, self.identifier, self.extra_attributes)
-        mention.add_asserted_type('VOProvMention')
+        mention.add_asserted_type(self._prov_type)  # self.__class__.__name__)
 
         for formal in self.formal_attributes:
             local_part = formal[0].localpart
@@ -865,7 +865,7 @@ class VOProvMembership(ProvMembership):
             bundle = ProvBundle()
 
         membership = ProvMembership(bundle, self.identifier, self.extra_attributes)
-        membership.add_asserted_type('VOProvMembership')
+        membership.add_asserted_type(self._prov_type)  # self.__class__.__name__)
 
         for formal in self.formal_attributes:
             local_part = formal[0].localpart
@@ -932,6 +932,40 @@ class VOProvBundle(ProvBundle):
             parent=(document._namespaces if document is not None else None)
         )
 
+    def unified(self):
+        """
+        Unifies all records in the bundle that haves same identifiers
+
+        :returns: :py:class:`VOProvBundle` -- the new unified bundle.
+        """
+        unified_records = self._unified_records()
+        bundle = VOProvBundle(
+            records=unified_records, identifier=self.identifier
+        )
+        return bundle
+
+    def unified_relations(self):
+        """
+        Unifies all relations in the bundle that have same __repr__ (i.e. type, identifier if set, e1, e2)
+
+        :returns: :py:class:`VOProvBundle` -- the new unified bundle.
+        """
+        hash_records = []
+        if self.is_document():
+            for bundle in self._bundles:
+                self._bundles[bundle] = self._bundles[bundle].unified_relations()
+        for record in self._records:
+            if record.is_relation():
+                hash_records.append(hash(str(record)))
+            else:
+                hash_records.append(hash(record))
+        for hash_record in list(set(hash_records)):
+            while hash_records.count(hash_record) > 1:
+                rec_index = hash_records.index(hash_record)
+                self._records.pop(rec_index)
+                hash_records.pop(rec_index)
+        return self
+
     def get_w3c(self, document=None):
         """get this element in the prov version which is an implementation of the W3C PROV-DM standard"""
         if self.is_document():
@@ -941,16 +975,22 @@ class VOProvBundle(ProvBundle):
 
         if self.is_document():
             for bundle in self.bundles:
-                w3c_records.add_bundle(bundle.get_w3c(document=w3c_records))
+                if isinstance(bundle, VOProvBundle):
+                    w3c_records.add_bundle(bundle.get_w3c(document=w3c_records))
+                else:
+                    w3c_records.add_bundle(bundle)
 
         if self.records:
             for record in self.records:
-                record.get_w3c(w3c_records)
+                if hasattr(record, "get_w3c"):
+                    record.get_w3c(w3c_records)
+                else:
+                    w3c_records.add_record(record)
 
         return w3c_records
 
     def activity(self, identifier, name=None, startTime=None, endTime=None, comment=None,
-                 other_attributes=None):
+                 activityDescription=None, other_attributes=None):
         """
         Creates a new activity.
 
@@ -963,6 +1003,7 @@ class VOProvBundle(ProvBundle):
                                         Either a :py:class:`datetime.datetime` object or a string that can be
                                         parsed by :py:func:`dateutil.parser`.
         :param comment:                 Text containing specific comments on the activity.
+        :param activityDescription:     Description object or identifier.
         :param other_attributes:        Optional other attributes as a dictionary or list
                                         of tuples to be added to the record optionally (default: None).
         """
@@ -972,6 +1013,8 @@ class VOProvBundle(ProvBundle):
             other_attributes.update({VOPROV_ATTR_NAME: name})
         if comment is not None:
             other_attributes.update({VOPROV['comment']: comment})
+        if activityDescription is not None:
+            self.description(identifier, activityDescription)
         if len(other_attributes) is 0:
             other_attributes = None
         return self.new_record(
@@ -983,7 +1026,7 @@ class VOProvBundle(ProvBundle):
         )
 
     def entity(self, identifier, name=None, location=None, generatedAtTime=None, invalidatedAtTime=None,
-               comment=None, other_attributes=None):
+               comment=None, entityDescription=None, other_attributes=None):
         """
         Creates a new entity.
 
@@ -995,6 +1038,7 @@ class VOProvBundle(ProvBundle):
         :param invalidatedAtTime:       Date and time of invalidation of the entity. After that date, the entity is
                                         no longer available for any use.
         :param comment:                 Text containing specific comments on the entity.
+        :param entityDescription:       Description object or identifier.
         :param other_attributes:        Optional other attributes as a dictionary or list
                                         of tuples to be added to the record optionally (default: None).
         """
@@ -1010,6 +1054,8 @@ class VOProvBundle(ProvBundle):
             other_attributes.update({VOPROV['invalidatedAtTime']: invalidatedAtTime})
         if comment is not None:
             other_attributes.update({VOPROV['comment']: comment})
+        if entityDescription is not None:
+            self.description(identifier, entityDescription)
         if len(other_attributes) is 0:
             other_attributes = None
         return self.new_record(
@@ -1017,7 +1063,7 @@ class VOProvBundle(ProvBundle):
         )
 
     def valueEntity(self, identifier, value, name=None, location=None, generatedAtTime=None, invalidatedAtTime=None,
-                    comment=None, other_attributes=None):
+                    comment=None, valueDescription=None, other_attributes=None):
         """
         Creates a new value entity.
 
@@ -1031,6 +1077,7 @@ class VOProvBundle(ProvBundle):
         :param invalidatedAtTime:       Date and time of invalidation of the entity. After that date, the entity is
                                         no longer available for any use.
         :param comment:                 Text containing specific comments on the value entity.
+        :param valueDescription:        Description object or identifier.
         :param other_attributes:        Optional other attributes as a dictionary or list
                                         of tuples to be added to the record optionally (default: None).
         """
@@ -1048,12 +1095,14 @@ class VOProvBundle(ProvBundle):
             other_attributes.update({VOPROV['comment']: comment})
         if value is not None:
             other_attributes.update({VOPROV['value']: value})
+        if valueDescription is not None:
+            self.description(identifier, valueDescription)
         if len(other_attributes) is 0:
             other_attributes = None
         return self.new_record(VOPROV_VALUE_ENTITY, identifier, None, other_attributes)
 
     def datasetEntity(self, identifier, name=None, location=None, generatedAtTime=None, invalidatedAtTime=None,
-                      comment=None, other_attributes=None):
+                      comment=None, datasetDescription=None, other_attributes=None):
         """
         Creates a new data set entity.
 
@@ -1065,6 +1114,7 @@ class VOProvBundle(ProvBundle):
         :param invalidatedAtTime:       Date and time of invalidation of the entity. After that date, the entity is
                                         no longer available for any use.
         :param comment:                 Text containing specific comments on the data set entity.
+        :param datasetDescription:      Description object or identifier.
         :param other_attributes:        Optional other attributes as a dictionary or list
                                         of tuples to be added to the record optionally (default: None).
         """
@@ -1080,11 +1130,13 @@ class VOProvBundle(ProvBundle):
             other_attributes.update({VOPROV['invalidatedAtTime']: invalidatedAtTime})
         if comment is not None:
             other_attributes.update({VOPROV['comment']: comment})
+        if datasetDescription is not None:
+            self.description(identifier, datasetDescription)
         if len(other_attributes) is 0:
             other_attributes = None
         return self.new_record(VOPROV_DATASET_ENTITY, identifier, None, other_attributes)
 
-    def configFile(self, identifier, name, location, comment=None, other_attributes=None):
+    def configFile(self, identifier, name, location, comment=None, configFileDescription=None, other_attributes=None):
         """
         Creates a new config file.
 
@@ -1092,6 +1144,7 @@ class VOProvBundle(ProvBundle):
         :param name:                    A human-readable name for the config file.
         :param location:                A path to the config file, e.g., a URL/URI.
         :param comment:                 Text containing comments on the config file.
+        :param configFileDescription:   Description object or identifier.
         :param other_attributes:        Optional other attributes as a dictionary or list
                                         of tuples to be added to the record optionally (default: None).
         """
@@ -1099,6 +1152,8 @@ class VOProvBundle(ProvBundle):
             other_attributes = {}
         if comment is not None:
             other_attributes.update({VOPROV['comment']: comment})
+        if configFileDescription is not None:
+            self.description(identifier, configFileDescription)
         if len(other_attributes) is 0:
             other_attributes = None
         return self.new_record(VOPROV_CONFIGURATION_FILE, identifier, {
@@ -1106,7 +1161,7 @@ class VOProvBundle(ProvBundle):
             VOPROV_ATTR_LOCATION: location
         }, other_attributes)
 
-    def parameter(self, identifier, name, value, other_attributes=None):
+    def parameter(self, identifier, name, value, parameterDescription=None, other_attributes=None):
         """
         Creates a new parameter.
 
@@ -1114,9 +1169,12 @@ class VOProvBundle(ProvBundle):
         :param name:                    A human-readable name for the parameter.
         :param value:                   The value of the parameter. If a corresponding ParameterDescription.valueType
                                         attribute is set, the value string can be interpreted by this valueType.
+        :param parameterDescription:    Description object or identifier.
         :param other_attributes:        Optional other attributes as a dictionary or list
                                         of tuples to be added to the record optionally (default: None).
         """
+        if parameterDescription is not None:
+            self.description(identifier, parameterDescription)
         return self.new_record(VOPROV_CONFIGURATION_PARAMETER, identifier, {
             VOPROV_ATTR_NAME: name,
             VOPROV_ATTR_VALUE: value
@@ -1183,7 +1241,7 @@ class VOProvBundle(ProvBundle):
         if role is not None:
             other_attributes.update({VOPROV_ATTR_ROLE: role})
         if usageDescription is not None:
-            other_attributes.update({VOPROV['Descriptor']: usageDescription})
+            other_attributes.update({VOPROV['descriptor']: usageDescription})
         if len(other_attributes) is 0:
             other_attributes = None
         return self.new_record(
@@ -1216,7 +1274,7 @@ class VOProvBundle(ProvBundle):
         if role is not None:
             other_attributes.update({VOPROV_ATTR_ROLE: role})
         if generationDescription is not None:
-            other_attributes.update({VOPROV['Descriptor']: generationDescription})
+            other_attributes.update({VOPROV['descriptor']: generationDescription})
         if len(other_attributes) is 0:
             other_attributes = None
         return self.new_record(
@@ -1755,17 +1813,19 @@ class VOProvBundle(ProvBundle):
             other_attributes
         )
 
-    def usageDescription(self, identifier, activity_description, role, description=None, type=None,
-                         multiplicity=None, other_attributes=None):
+    def usageDescription(self, identifier, activityDescription, role, description=None, type=None,
+                         multiplicity=None, entityDescription=None, other_attributes=None):
         """
         Creates a new usage description.
 
         :param identifier:              Identifier for new usage description.
-        :param activity_description:    Identifier or object of the activity description linked to the usage description.
+        :param activityDescription:     Identifier or object of the activity description linked to the usage description.
         :param role:                    Function of the entity with respect to the activity.
         :param description:             A descriptive text for this kind of usage.
         :param type:                    Type of relation.
         :param multiplicity:            Number of expected input entities to be used with the given role.
+        :param entityDescription:       Identifier(s) or object(s) of entity descriptions linked to the usage description
+                                        (can be a list),
         :param other_attributes:        Optional other attributes as a dictionary or list
                                         of tuples to be added to the record optionally (default: None).
         """
@@ -1779,7 +1839,12 @@ class VOProvBundle(ProvBundle):
             other_attributes.update({VOPROV['multiplicity']: multiplicity})
         if len(other_attributes) is 0:
             other_attributes = None
-        self.relate(activity_description, identifier)
+        self.relate(identifier, activityDescription)
+        if entityDescription:
+            if not isinstance(entityDescription, list):
+                entityDescription = [entityDescription]
+            for ed_item in entityDescription:
+                self.relate(ed_item, identifier)
         return self.new_record(
             VOPROV_USAGE_DESCRIPTION, identifier, {
                 VOPROV_ATTR_ROLE: role
@@ -1787,18 +1852,20 @@ class VOProvBundle(ProvBundle):
             other_attributes
         )
 
-    def generationDescription(self, identifier, activity_description, role, description=None, type=None,
-                              multiplicity=None, other_attributes=None):
+    def generationDescription(self, identifier, activityDescription, role, description=None, type=None,
+                              multiplicity=None, entityDescription=None, other_attributes=None):
         """
         Creates a new generation description.
 
         :param identifier:              Identifier for new generation description.
-        :param activity_description:    Identifier or object of the activity description linked to the generation
+        :param activityDescription:     Identifier or object of the activity description linked to the generation
                                         description.
         :param role:                    Function of the entity with respect to the activity.
         :param description:             A descriptive text for this kind of generation.
         :param type:                    Type of relation.
         :param multiplicity:            Number of expected input entities to be generated with the given role.
+        :param entityDescription:       Identifier(s) or object(s) of entity descriptions linked to the generation
+                                        description (can be a list),
         :param other_attributes:        Optional other attributes as a dictionary or list
                                         of tuples to be added to the record optionally (default: None).
         """
@@ -1812,7 +1879,12 @@ class VOProvBundle(ProvBundle):
             other_attributes.update({VOPROV['multiplicity']: multiplicity})
         if len(other_attributes) is 0:
             other_attributes = None
-        self.relate(identifier, activity_description)
+        self.relate(identifier, activityDescription)
+        if entityDescription:
+            if not isinstance(entityDescription, list):
+                entityDescription = [entityDescription]
+            for ed_item in entityDescription:
+                self.relate(ed_item, identifier)
         return self.new_record(
             VOPROV_GENERATION_DESCRIPTION, identifier, {
                 VOPROV_ATTR_ROLE: role
@@ -1820,13 +1892,13 @@ class VOProvBundle(ProvBundle):
             other_attributes
         )
 
-    def configFileDescription(self, identifier, activity_description, name, contentType, description=None,
+    def configFileDescription(self, identifier, activityDescription, name, contentType, description=None,
                               other_attributes=None):
         """
         Creates a new config file description.
 
         :param identifier:              Identifier for new config file description.
-        :param activity_description:    Identifier or object of the activity description linked to the config file
+        :param activityDescription:     Identifier or object of the activity description linked to the config file
                                         description.
         :param name:                    A human-readable name for the config file.
         :param contentType:             Format of the config file, MIME type when applicable.
@@ -1840,7 +1912,7 @@ class VOProvBundle(ProvBundle):
             other_attributes.update({VOPROV['description']: description})
         if len(other_attributes) is 0:
             other_attributes = None
-        self.relate(identifier, activity_description)
+        self.relate(identifier, activityDescription)
         return self.new_record(
             VOPROV_CONFIG_FILE_DESCRIPTION, identifier, {
                 VOPROV_ATTR_NAME: name,
@@ -1849,14 +1921,14 @@ class VOProvBundle(ProvBundle):
             other_attributes
         )
 
-    def parameterDescription(self, identifier, activity_description, name, valueType, description=None, unit=None,
+    def parameterDescription(self, identifier, activityDescription, name, valueType, description=None, unit=None,
                              ucd=None, utype=None, min=None, max=None, options=None, default=None,
                              other_attributes=None):
         """
         Creates a new parameter description.
 
         :param identifier:              Identifier for new generation description.
-        :param activity_description:    Identifier or object of the activity description linked to the generation
+        :param activityDescription:     Identifier or object of the activity description linked to the generation
                                         description.
         :param name:                    Function of the entity with respect to the activity.
         :param valueType:               Description of a value from a combination of datatype, arraysize and xtype.
@@ -1897,7 +1969,7 @@ class VOProvBundle(ProvBundle):
             other_attributes.update({VOPROV['default']: default})
         if len(other_attributes) is 0:
             other_attributes = None
-        self.relate(identifier, activity_description)
+        self.relate(identifier, activityDescription)
         return self.new_record(
             VOPROV_PARAMETER_DESCRIPTION, identifier, {
                 VOPROV_ATTR_NAME: name,
@@ -1925,7 +1997,7 @@ class VOProvBundle(ProvBundle):
             None
         )
 
-    def configuration(self, configured, configurator, artefactType, identifier=None):
+    def configuration(self, configured, configurator, artefactType="Parameter", identifier=None):
         """
         Creates a new description relation record.
 

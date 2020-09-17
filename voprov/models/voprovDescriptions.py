@@ -19,7 +19,7 @@ class VOProvDescription(ProvElement):
         if bundle is None:
             bundle = ProvBundle()
         w3c_record = ProvEntity(bundle, self.identifier, self.attributes)
-        w3c_record.add_asserted_type(self.__class__.__name__)
+        w3c_record.add_asserted_type(self._prov_type)  # self.__class__.__name__)
         return bundle.add_record(w3c_record)
 
 
@@ -83,7 +83,7 @@ class VOProvActivityDescription(VOProvDescription):
         return self._bundle.description(activity, self, identifier)
 
     def usageDescription(self, identifier, role, description=None, type=None,
-                         multiplicity=None, other_attributes=None):
+                         multiplicity=None, entityDescription=None, other_attributes=None):
         """
         Creates a new usage description.
 
@@ -96,10 +96,10 @@ class VOProvActivityDescription(VOProvDescription):
         :param other_attributes:        Optional other attributes as a dictionary or list
                                         of tuples to be added to the record optionally (default: None).
         """
-        return self._bundle.usageDescription(identifier, self, role, description, type, multiplicity, other_attributes)
+        return self._bundle.usageDescription(identifier, self, role, description, type, multiplicity, entityDescription, other_attributes)
 
     def generationDescription(self, identifier, role, description=None, type=None,
-                              multiplicity=None, other_attributes=None):
+                              multiplicity=None, entityDescription=None, other_attributes=None):
         """
         Creates a new generation description.
 
@@ -113,7 +113,7 @@ class VOProvActivityDescription(VOProvDescription):
                                         of tuples to be added to the record optionally (default: None).
         """
         return self._bundle.generationDescription(identifier, self, role, description, type,
-                                                  multiplicity, other_attributes)
+                                                  multiplicity, entityDescription, other_attributes)
 
 
 class VOProvGenerationDescription(VOProvDescription):
