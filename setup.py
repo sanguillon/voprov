@@ -20,7 +20,7 @@ test_requirements = [
 
 setup(
     name='voprov',
-    version='2.0.1',
+    version='0.0.2',
     description='A library for IVOA Provenance Data Model supporting PROV-JSON, '
                 'PROV-XML and PROV-N',
     long_description=readme,
