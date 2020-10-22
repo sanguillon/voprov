@@ -17,7 +17,6 @@ class VOProvRelation(ProvRelation):
         """get this relation in the prov version which is an implementation of the W3C PROV-DM standard"""
         if bundle is None:
             bundle = ProvBundle()
-            setattr(bundle, "label", "")
         attribute = self.extra_attributes
         relation_formal_attribute = self.formal_attributes[0:2]
 
