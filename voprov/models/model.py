@@ -185,7 +185,6 @@ class VOProvEntity(ProvEntity):
         """get this element in the prov version which is an implementation of the W3C PROV-DM standard"""
         if bundle is None:
             bundle = ProvBundle()
-            setattr(bundle, "label", "")
 
         entity = ProvEntity(bundle, self.identifier, self.attributes)
         entity.add_asserted_type(self._prov_type)  # self.__class__.__name__)
@@ -359,7 +358,6 @@ class VOProvActivity(ProvActivity):
         """get this element in the prov version which is an implementation of the W3C PROV-DM standard"""
         if bundle is None:
             bundle = ProvBundle()
-            setattr(bundle, "label", "")
 
         activity = ProvActivity(bundle, self.identifier, self.extra_attributes)
         activity.add_asserted_type(self._prov_type)  # self.__class__.__name__)
@@ -454,7 +452,6 @@ class VOProvAgent(ProvAgent):
         """get this element in the prov version which is an implementation of the W3C PROV-DM standard"""
         if bundle is None:
             bundle = ProvBundle()
-            setattr(bundle, "label", "")
 
         agent = ProvAgent(bundle, self.identifier, self.attributes)
         agent.add_asserted_type(self._prov_type)  # self.__class__.__name__)
@@ -486,7 +483,6 @@ class VOProvUsage(ProvUsage):
         """get this element in the prov version which is an implementation of the W3C PROV-DM standard"""
         if bundle is None:
             bundle = ProvBundle()
-            setattr(bundle, "label", "")
 
         usage = ProvUsage(bundle, self.identifier, self.extra_attributes)
         usage.add_asserted_type(self._prov_type)  # self.__class__.__name__)
@@ -526,7 +522,6 @@ class VOProvGeneration(ProvGeneration):
         """get this element in the prov version which is an implementation of the W3C PROV-DM standard"""
         if bundle is None:
             bundle = ProvBundle()
-            setattr(bundle, "label", "")
 
         generation = ProvGeneration(bundle, self.identifier, self.extra_attributes)
         generation.add_asserted_type(self._prov_type)  # self.__class__.__name__)
@@ -553,7 +548,6 @@ class VOProvCommunication(ProvCommunication):
         """get this element in the prov version which is an implementation of the W3C PROV-DM standard"""
         if bundle is None:
             bundle = ProvBundle()
-            setattr(bundle, "label", "")
 
         communication = ProvCommunication(bundle, self.identifier, self.extra_attributes)
         communication.add_asserted_type(self._prov_type)  # self.__class__.__name__)
@@ -581,7 +575,6 @@ class VOProvStart(ProvStart):
         """get this element in the prov version which is an implementation of the W3C PROV-DM standard"""
         if bundle is None:
             bundle = ProvBundle()
-            setattr(bundle, "label", "")
 
         start = ProvStart(bundle, self.identifier, self.extra_attributes)
         start.add_asserted_type(self._prov_type)  # self.__class__.__name__)
@@ -609,7 +602,6 @@ class VOProvEnd(ProvEnd):
         """get this element in the prov version which is an implementation of the W3C PROV-DM standard"""
         if bundle is None:
             bundle = ProvBundle()
-            setattr(bundle, "label", "")
 
         end = ProvEnd(bundle, self.identifier, self.extra_attributes)
         end.add_asserted_type(self._prov_type)  # self.__class__.__name__)
@@ -636,7 +628,6 @@ class VOProvInvalidation(ProvInvalidation):
         """get this element in the prov version which is an implementation of the W3C PROV-DM standard"""
         if bundle is None:
             bundle = ProvBundle()
-            setattr(bundle, "label", "")
 
         invalidation = ProvInvalidation(bundle, self.identifier, self.extra_attributes)
         invalidation.add_asserted_type(self._prov_type)  # self.__class__.__name__)
@@ -665,7 +656,6 @@ class VOProvDerivation(ProvDerivation):
         """get this element in the prov version which is an implementation of the W3C PROV-DM standard"""
         if bundle is None:
             bundle = ProvBundle()
-            setattr(bundle, "label", "")
 
         derivation = ProvDerivation(bundle, self.identifier, self.extra_attributes)
         derivation.add_asserted_type(self._prov_type)  # self.__class__.__name__)
@@ -692,7 +682,6 @@ class VOProvAttribution(ProvAttribution):
         """get this element in the prov version which is an implementation of the W3C PROV-DM standard"""
         if bundle is None:
             bundle = ProvBundle()
-            setattr(bundle, "label", "")
 
         attribution = ProvAttribution(bundle, self.identifier, self.extra_attributes)
         attribution.add_asserted_type(self._prov_type)  # self.__class__.__name__)
@@ -719,7 +708,6 @@ class VOProvAssociation(ProvAssociation):
         """get this element in the prov version which is an implementation of the W3C PROV-DM standard"""
         if bundle is None:
             bundle = ProvBundle()
-            setattr(bundle, "label", "")
 
         association = ProvAssociation(bundle, self.identifier, self.extra_attributes)
         association.add_asserted_type(self._prov_type)  # self.__class__.__name__)
@@ -746,7 +734,6 @@ class VOProvDelegation(ProvDelegation):
         """get this element in the prov version which is an implementation of the W3C PROV-DM standard"""
         if bundle is None:
             bundle = ProvBundle()
-            setattr(bundle, "label", "")
 
         delegation = ProvDelegation(bundle, self.identifier, self.extra_attributes)
         delegation.add_asserted_type(self._prov_type)  # self.__class__.__name__)
@@ -773,7 +760,6 @@ class VOProvInfluence(ProvInfluence):
         """get this element in the prov version which is an implementation of the W3C PROV-DM standard"""
         if bundle is None:
             bundle = ProvBundle()
-            setattr(bundle, "label", "")
 
         influence = ProvInfluence(bundle, self.identifier, self.extra_attributes)
         influence.add_asserted_type(self._prov_type)  # self.__class__.__name__)
@@ -800,7 +786,6 @@ class VOProvSpecialization(ProvSpecialization):
         """get this element in the prov version which is an implementation of the W3C PROV-DM standard"""
         if bundle is None:
             bundle = ProvBundle()
-            setattr(bundle, "label", "")
 
         specialization = ProvSpecialization(bundle, self.identifier, self.extra_attributes)
         specialization.add_asserted_type(self._prov_type)  # self.__class__.__name__)
@@ -827,7 +812,6 @@ class VOProvAlternate(ProvAlternate):
         """get this element in the prov version which is an implementation of the W3C PROV-DM standard"""
         if bundle is None:
             bundle = ProvBundle()
-            setattr(bundle, "label", "")
 
         alternate = ProvAlternate(bundle, self.identifier, self.extra_attributes)
         alternate.add_asserted_type(self._prov_type)  # self.__class__.__name__)
@@ -855,7 +839,6 @@ class VOProvMention(ProvMention, VOProvSpecialization):
         """get this element in the prov version which is an implementation of the W3C PROV-DM standard"""
         if bundle is None:
             bundle = ProvBundle()
-            setattr(bundle, "label", "")
 
         mention = ProvMention(bundle, self.identifier, self.extra_attributes)
         mention.add_asserted_type(self._prov_type)  # self.__class__.__name__)
@@ -882,7 +865,6 @@ class VOProvMembership(ProvMembership):
         """get this element in the prov version which is an implementation of the W3C PROV-DM standard"""
         if bundle is None:
             bundle = ProvBundle()
-            setattr(bundle, "label", "")
 
         membership = ProvMembership(bundle, self.identifier, self.extra_attributes)
         membership.add_asserted_type(self._prov_type)  # self.__class__.__name__)
@@ -951,7 +933,6 @@ class VOProvBundle(ProvBundle):
             namespaces,
             parent=(document._namespaces if document is not None else None)
         )
-        self.label = ""
 
     def unified(self):
         """
@@ -993,7 +974,6 @@ class VOProvBundle(ProvBundle):
             w3c_records = ProvDocument(namespaces=self.namespaces)
         else:
             w3c_records = ProvBundle(identifier=self.identifier, namespaces=self.namespaces, document=document)
-            setattr(w3c_records, "label", "")
 
         if self.is_document():
             for bundle in self.bundles:
