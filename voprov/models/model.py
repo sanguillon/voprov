@@ -16,6 +16,7 @@ from prov.model import (ProvException, ProvDocument, ProvBundle, ProvActivity,
                         ProvAlternate, ProvMention, ProvMembership,
                         PROV_REC_CLS, DEFAULT_NAMESPACES, NamespaceManager, first)
 from six.moves.urllib.parse import urlparse
+import six
 
 from voprov import serializers
 from voprov.models.voprovDescriptions import *
