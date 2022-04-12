@@ -1,11 +1,9 @@
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-
 Introduction
 ============
 
 A library for IVOA Provenance Data Model supporting PROV-N, PROV-XML, PROV-JSON export
 
-* Free software: MIT license
+* Free software: MIT license (https://opensource.org/licenses/MIT)
 * Documentation: (incoming).
 
 Features
