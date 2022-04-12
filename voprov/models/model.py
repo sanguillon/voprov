@@ -16,6 +16,7 @@ from prov.model import (ProvException, ProvDocument, ProvBundle, ProvActivity,
                         ProvAlternate, ProvMention, ProvMembership,
                         PROV_REC_CLS, DEFAULT_NAMESPACES, NamespaceManager, first)
 from six.moves.urllib.parse import urlparse
+import six
 
 from voprov import serializers
 from voprov.models.voprovDescriptions import *
@@ -1017,7 +1018,7 @@ class VOProvBundle(ProvBundle):
             other_attributes.update({VOPROV['comment']: comment})
         if activityDescription is not None:
             self.description(identifier, activityDescription)
-        if len(other_attributes) is 0:
+        if len(other_attributes) == 0:
             other_attributes = None
         return self.new_record(
             VOPROV_ACTIVITY, identifier, {
@@ -1058,7 +1059,7 @@ class VOProvBundle(ProvBundle):
             other_attributes.update({VOPROV['comment']: comment})
         if entityDescription is not None:
             self.description(identifier, entityDescription)
-        if len(other_attributes) is 0:
+        if len(other_attributes) == 0:
             other_attributes = None
         return self.new_record(
             VOPROV_ENTITY, identifier, None, other_attributes
@@ -1099,7 +1100,7 @@ class VOProvBundle(ProvBundle):
             other_attributes.update({VOPROV['value']: value})
         if valueDescription is not None:
             self.description(identifier, valueDescription)
-        if len(other_attributes) is 0:
+        if len(other_attributes) == 0:
             other_attributes = None
         return self.new_record(VOPROV_VALUE_ENTITY, identifier, None, other_attributes)
 
@@ -1134,7 +1135,7 @@ class VOProvBundle(ProvBundle):
             other_attributes.update({VOPROV['comment']: comment})
         if datasetDescription is not None:
             self.description(identifier, datasetDescription)
-        if len(other_attributes) is 0:
+        if len(other_attributes) == 0:
             other_attributes = None
         return self.new_record(VOPROV_DATASET_ENTITY, identifier, None, other_attributes)
 
@@ -1156,7 +1157,7 @@ class VOProvBundle(ProvBundle):
             other_attributes.update({VOPROV['comment']: comment})
         if configFileDescription is not None:
             self.description(identifier, configFileDescription)
-        if len(other_attributes) is 0:
+        if len(other_attributes) == 0:
             other_attributes = None
         return self.new_record(VOPROV_CONFIGURATION_FILE, identifier, {
             VOPROV_ATTR_NAME: name,
@@ -1179,7 +1180,8 @@ class VOProvBundle(ProvBundle):
             self.description(identifier, parameterDescription)
         return self.new_record(VOPROV_CONFIGURATION_PARAMETER, identifier, {
             VOPROV_ATTR_NAME: name,
-            VOPROV_ATTR_VALUE: value
+            VOPROV_ATTR_VALUE: value,
+            PROV_LABEL: name + " = " + value
         }, other_attributes)
 
     def agent(self, identifier, name=None, type=None, comment=None, email=None, affiliation=None, phone=None,
@@ -1217,7 +1219,7 @@ class VOProvBundle(ProvBundle):
             other_attributes.update({VOPROV['address']: address})
         if url is not None:
             other_attributes.update({VOPROV['url']: url})
-        if len(other_attributes) is 0:
+        if len(other_attributes) == 0:
             other_attributes = None
         return self.new_record(VOPROV_AGENT, identifier, None, other_attributes)
 
@@ -1244,7 +1246,7 @@ class VOProvBundle(ProvBundle):
             other_attributes.update({VOPROV_ATTR_ROLE: role})
         if usageDescription is not None:
             other_attributes.update({VOPROV['descriptor']: usageDescription})
-        if len(other_attributes) is 0:
+        if len(other_attributes) == 0:
             other_attributes = None
         return self.new_record(
             VOPROV_USAGE, identifier, {
@@ -1277,7 +1279,7 @@ class VOProvBundle(ProvBundle):
             other_attributes.update({VOPROV_ATTR_ROLE: role})
         if generationDescription is not None:
             other_attributes.update({VOPROV['descriptor']: generationDescription})
-        if len(other_attributes) is 0:
+        if len(other_attributes) == 0:
             other_attributes = None
         return self.new_record(
             VOPROV_GENERATION, identifier, {
@@ -1403,7 +1405,7 @@ class VOProvBundle(ProvBundle):
             other_attributes = {}
         if role is not None:
             other_attributes.update({VOPROV_ATTR_ROLE: role})
-        if len(other_attributes) is 0:
+        if len(other_attributes) == 0:
             other_attributes = None
         return self.new_record(
             VOPROV_ATTRIBUTION, identifier, {
@@ -1432,7 +1434,7 @@ class VOProvBundle(ProvBundle):
             other_attributes = {}
         if role is not None:
             other_attributes.update({VOPROV_ATTR_ROLE: role})
-        if len(other_attributes) is 0:
+        if len(other_attributes) == 0:
             other_attributes = None
         return self.new_record(
             VOPROV_ASSOCIATION, identifier, {
@@ -1700,7 +1702,7 @@ class VOProvBundle(ProvBundle):
             other_attributes.update({VOPROV['type']: type})
         if subtype is not None:
             other_attributes.update({VOPROV['subtype']: subtype})
-        if len(other_attributes) is 0:
+        if len(other_attributes) == 0:
             other_attributes = None
         return self.new_record(
             VOPROV_ACTIVITY_DESCRIPTION, identifier, {
@@ -1729,7 +1731,7 @@ class VOProvBundle(ProvBundle):
             other_attributes.update({VOPROV['docurl']: docurl})
         if type is not None:
             other_attributes.update({VOPROV['type']: type})
-        if len(other_attributes) is 0:
+        if len(other_attributes) == 0:
             other_attributes = None
         return self.new_record(
             VOPROV_ENTITY_DESCRIPTION, identifier, {
@@ -1773,7 +1775,7 @@ class VOProvBundle(ProvBundle):
             other_attributes.update({VOPROV['ucd']: ucd})
         if utype is not None:
             other_attributes.update({VOPROV['utype']: utype})
-        if len(other_attributes) is 0:
+        if len(other_attributes) == 0:
             other_attributes = None
         return self.new_record(
             VOPROV_VALUE_DESCRIPTION, identifier, {
@@ -1805,7 +1807,7 @@ class VOProvBundle(ProvBundle):
             other_attributes.update({VOPROV['docurl']: docurl})
         if type is not None:
             other_attributes.update({VOPROV['type']: type})
-        if len(other_attributes) is 0:
+        if len(other_attributes) == 0:
             other_attributes = None
         return self.new_record(
             VOPROV_DATASET_DESCRIPTION, identifier, {
@@ -1839,7 +1841,7 @@ class VOProvBundle(ProvBundle):
             other_attributes.update({VOPROV['type']: type})
         if multiplicity is not None:
             other_attributes.update({VOPROV['multiplicity']: multiplicity})
-        if len(other_attributes) is 0:
+        if len(other_attributes) == 0:
             other_attributes = None
         self.relate(identifier, activityDescription)
         if entityDescription:
@@ -1879,7 +1881,7 @@ class VOProvBundle(ProvBundle):
             other_attributes.update({VOPROV['type']: type})
         if multiplicity is not None:
             other_attributes.update({VOPROV['multiplicity']: multiplicity})
-        if len(other_attributes) is 0:
+        if len(other_attributes) == 0:
             other_attributes = None
         self.relate(identifier, activityDescription)
         if entityDescription:
@@ -1912,7 +1914,7 @@ class VOProvBundle(ProvBundle):
             other_attributes = {}
         if description is not None:
             other_attributes.update({VOPROV['description']: description})
-        if len(other_attributes) is 0:
+        if len(other_attributes) == 0:
             other_attributes = None
         self.relate(identifier, activityDescription)
         return self.new_record(
@@ -1969,7 +1971,7 @@ class VOProvBundle(ProvBundle):
             other_attributes.update({VOPROV['options']: options})
         if default is not None:
             other_attributes.update({VOPROV['default']: default})
-        if len(other_attributes) is 0:
+        if len(other_attributes) == 0:
             other_attributes = None
         self.relate(identifier, activityDescription)
         return self.new_record(
