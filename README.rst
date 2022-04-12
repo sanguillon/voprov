@@ -18,4 +18,5 @@ Features
 Uses
 ----
 
-A short tutorial for using this package is in development.
+A short tutorial for using this package is available here:
+https://github.com/mservillat/voprov/blob/master/tutorials/voprov_tutorial.ipynb
