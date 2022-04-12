@@ -8,7 +8,7 @@ Tutorial
 ========
 
 A tutorial to build a provenance graph is available here:
-
+https://github.com/mservillat/voprov/blob/master/tutorials/voprov_tutorial.ipynb
 
 --
 The code is released under the MIT license.
