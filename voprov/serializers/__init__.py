@@ -4,6 +4,7 @@ from __future__ import (absolute_import, division, print_function,
 
 from voprov.serializers.provn import VOProvNSerializer
 from voprov.serializers.xml import VOProvXMLSerializer
+from voprov.serializers.provjson import VOProvJSONSerializer
 from prov import Error
 
 __author__ = 'Jean-Francois Sornay'
@@ -27,13 +28,13 @@ class Registry:
     @staticmethod
     def load_serializers():
         """Loads all available serializers into the registry."""
-        from prov.serializers.provjson import ProvJSONSerializer
+        from voprov.serializers.provjson import VOProvJSONSerializer
         from voprov.serializers.provn import VOProvNSerializer
         from voprov.serializers.xml import VOProvXMLSerializer
         from prov.serializers.provrdf import ProvRDFSerializer
 
         Registry.serializers = {
-            'json': ProvJSONSerializer,
+            'json': VOProvJSONSerializer,
             'rdf': ProvRDFSerializer,
             'provn': VOProvNSerializer,
             'xml': VOProvXMLSerializer
