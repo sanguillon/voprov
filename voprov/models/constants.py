@@ -172,38 +172,38 @@ PROV_BASE_CLS.update({
 
 # Part 3 : Identifier for voprov's attributes
 #   Adaptation of identifiers for PROV's attributes
-VOPROV_ATTR_ENTITY =                    VOPROV['entity']
-VOPROV_ATTR_ACTIVITY =                  VOPROV['activity']
-VOPROV_ATTR_TRIGGER =                   VOPROV['trigger']
-VOPROV_ATTR_INFORMED =                  VOPROV['informed']
-VOPROV_ATTR_INFORMANT =                 VOPROV['informant']
-VOPROV_ATTR_STARTER =                   VOPROV['starter']
-VOPROV_ATTR_ENDER =                     VOPROV['ender']
-VOPROV_ATTR_AGENT =                     VOPROV['agent']
-VOPROV_ATTR_PLAN =                      VOPROV['plan']
-VOPROV_ATTR_DELEGATE =                  VOPROV['delegate']
-VOPROV_ATTR_RESPONSIBLE =               VOPROV['responsible']
-VOPROV_ATTR_GENERATED_ENTITY =          VOPROV['generatedEntity']
-VOPROV_ATTR_USED_ENTITY =               VOPROV['usedEntity']
-VOPROV_ATTR_GENERATION =                VOPROV['generation']
-VOPROV_ATTR_USAGE =                     VOPROV['usage']
-VOPROV_ATTR_SPECIFIC_ENTITY =           VOPROV['specificEntity']
-VOPROV_ATTR_GENERAL_ENTITY =            VOPROV['generalEntity']
-VOPROV_ATTR_ALTERNATE1 =                VOPROV['alternate1']
-VOPROV_ATTR_ALTERNATE2 =                VOPROV['alternate2']
-VOPROV_ATTR_BUNDLE =                    VOPROV['bundle']
-VOPROV_ATTR_INFLUENCEE =                VOPROV['influencee']
-VOPROV_ATTR_INFLUENCER =                VOPROV['influencer']
-VOPROV_ATTR_COLLECTION =                VOPROV['collection']
+VOPROV_ATTR_ENTITY =                    PROV['entity']
+VOPROV_ATTR_ACTIVITY =                  PROV['activity']
+VOPROV_ATTR_TRIGGER =                   PROV['trigger']
+VOPROV_ATTR_INFORMED =                  PROV['informed']
+VOPROV_ATTR_INFORMANT =                 PROV['informant']
+VOPROV_ATTR_STARTER =                   PROV['starter']
+VOPROV_ATTR_ENDER =                     PROV['ender']
+VOPROV_ATTR_AGENT =                     PROV['agent']
+VOPROV_ATTR_PLAN =                      PROV['plan']
+VOPROV_ATTR_DELEGATE =                  PROV['delegate']
+VOPROV_ATTR_RESPONSIBLE =               PROV['responsible']
+VOPROV_ATTR_GENERATED_ENTITY =          PROV['generatedEntity']
+VOPROV_ATTR_USED_ENTITY =               PROV['usedEntity']
+VOPROV_ATTR_GENERATION =                PROV['generation']
+VOPROV_ATTR_USAGE =                     PROV['usage']
+VOPROV_ATTR_SPECIFIC_ENTITY =           PROV['specificEntity']
+VOPROV_ATTR_GENERAL_ENTITY =            PROV['generalEntity']
+VOPROV_ATTR_ALTERNATE1 =                PROV['alternate1']
+VOPROV_ATTR_ALTERNATE2 =                PROV['alternate2']
+VOPROV_ATTR_BUNDLE =                    PROV['bundle']
+VOPROV_ATTR_INFLUENCEE =                PROV['influencee']
+VOPROV_ATTR_INFLUENCER =                PROV['influencer']
+VOPROV_ATTR_COLLECTION =                PROV['collection']
 #   (some is used in description and configuration element, so in this case, they only appear in description part)
 #   voprov description
-VOPROV_ATTR_NAME =                      VOPROV['name']
-VOPROV_ATTR_ROLE =                      VOPROV['role']
+VOPROV_ATTR_NAME =                      PROV['name']
+VOPROV_ATTR_ROLE =                      PROV['role']
 VOPROV_ATTR_VALUE_TYPE =                VOPROV['valueType']
 VOPROV_ATTR_CONTENT_TYPE =              VOPROV['contentType']
 #   voprov configuration
-VOPROV_ATTR_LOCATION =                  VOPROV['location']
-VOPROV_ATTR_VALUE =                     VOPROV['value']
+VOPROV_ATTR_LOCATION =                  PROV['location']
+VOPROV_ATTR_VALUE =                     PROV['value']
 VOPROV_ATTR_ARTEFACT_TYPE =             VOPROV['artefactType']
 
 #   voprov relation
@@ -254,9 +254,9 @@ PROV_ATTRIBUTE_QNAMES.update({
     VOPROV_ATTR_REFERRER,
 })
 
-VOPROV_ATTR_TIME = VOPROV['time']
-VOPROV_ATTR_STARTTIME = VOPROV['startTime']
-VOPROV_ATTR_ENDTIME = VOPROV['endTime']
+VOPROV_ATTR_TIME = PROV['time']
+VOPROV_ATTR_STARTTIME = PROV['startTime']
+VOPROV_ATTR_ENDTIME = PROV['endTime']
 
 #   adding the voprov identifier for the literals attribute
 PROV_ATTRIBUTE_LITERALS.update({
@@ -292,10 +292,10 @@ PROV_ATTRIBUTES_ID_MAP = dict(
 )
 
 # Extra definition for convenience
-VOPROV_TYPE = VOPROV['type']
-VOPROV_LABEL = VOPROV['label']
-VOPROV_VALUE = VOPROV['value']
-VOPROV_LOCATION = VOPROV['location']
-VOPROV_ROLE = VOPROV['role']
+VOPROV_TYPE = PROV['type']
+VOPROV_LABEL = PROV['label']
+VOPROV_VALUE = PROV['value']
+VOPROV_LOCATION = PROV['location']
+VOPROV_ROLE = PROV['role']
 
-VOPROV_QUALIFIEDNAME = VOPROV['QUALIFIED_NAME']
+VOPROV_QUALIFIEDNAME = PROV['QUALIFIED_NAME']
