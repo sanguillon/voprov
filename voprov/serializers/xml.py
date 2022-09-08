@@ -4,6 +4,7 @@ from __future__ import (absolute_import, division, print_function,
 
 from prov.serializers.provxml import *
 from voprov.models.constants import *
+import six
 
 # Create a dictionary containing all top-level PROV XML elements for an easy
 # mapping.
