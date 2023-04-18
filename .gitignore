@@ -1,2 +1,7 @@
 *.pyc
 .idea
+voprov.egg-info
+tutorials/*.json
+tutorials/*.png
+tutorials/*.xml
+tutorials/.ipynb_checkpoints
