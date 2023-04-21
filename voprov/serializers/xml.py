@@ -1,10 +1,6 @@
 # -*- coding: utf-8 -*-
-from __future__ import (absolute_import, division, print_function,
-                        unicode_literals)
-
 from prov.serializers.provxml import *
 from voprov.models.constants import *
-import six
 
 # Create a dictionary containing all top-level PROV XML elements for an easy
 # mapping.
@@ -29,7 +25,7 @@ class VOProvXMLSerializer(ProvXMLSerializer):
             attributes mainly PROV-"attributes", e.g. tags not in the
             PROV namespace. Off by default meaning xsd:type attributes will
             only be set for prov:type, prov:location, and prov:value as is
-            done in the official PROV-XML specification. Furthermore the
+            done in the official PROV-XML specification. Furthermore, the
             types will always be set if the Python type requires it. False
             is a good default and it should rarely require changing.
         """
@@ -90,11 +86,11 @@ class VOProvXMLSerializer(ProvXMLSerializer):
 
         if bundle.identifier:
             xml_bundle_root.attrib[_ns_prov("id")] = \
-                six.text_type(bundle.identifier)
+                str(bundle.identifier)
 
         for record in bundle._records:
             rec_type = record.get_type()
-            identifier = six.text_type(record._identifier) \
+            identifier = str(record._identifier) \
                 if record._identifier else None
 
             if identifier:
@@ -125,11 +121,11 @@ class VOProvXMLSerializer(ProvXMLSerializer):
                 elif isinstance(value, prov.model.QualifiedName):
                     if attr not in PROV_ATTRIBUTE_QNAMES:
                         subelem.attrib[_ns_xsi("type")] = "xsd:QName"
-                    v = six.text_type(value)
+                    v = str(value)
                 elif isinstance(value, datetime.datetime):
                     v = value.isoformat()
                 else:
-                    v = six.text_type(value)
+                    v = str(value)
 
                 # xsd type inference.
                 #
@@ -145,26 +141,24 @@ class VOProvXMLSerializer(ProvXMLSerializer):
                 # To enable a mapping of Python types to XML and back,
                 # the XSD type must be written for these types.
                 ALWAYS_CHECK = [bool, datetime.datetime, float,
-                                prov.identifier.Identifier]
-                # Add long and int on Python 2, only int on Python 3.
-                ALWAYS_CHECK.extend(six.integer_types)
+                                prov.identifier.Identifier, int]
                 ALWAYS_CHECK = tuple(ALWAYS_CHECK)
                 if (force_types or
                         type(value) in ALWAYS_CHECK or
                         attr in [PROV_TYPE, PROV_LOCATION, PROV_VALUE]) and \
                         _ns_xsi("type") not in subelem.attrib and \
-                        not six.text_type(value).startswith("voprov:") and \
+                        not str(value).startswith("voprov:") and \
                         not (attr in PROV_ATTRIBUTE_QNAMES and v) and \
                         attr not in [PROV_ATTR_TIME, PROV_LABEL]:
                     xsd_type = None
                     if isinstance(value, bool):
                         xsd_type = XSD_BOOLEAN
                         v = v.lower()
-                    elif isinstance(value, six.string_types):
+                    elif isinstance(value, str):
                         xsd_type = XSD_STRING
                     elif isinstance(value, float):
                         xsd_type = XSD_DOUBLE
-                    elif isinstance(value, six.integer_types):
+                    elif isinstance(value, int):
                         xsd_type = XSD_INT
                     elif isinstance(value, datetime.datetime):
                         # Exception of the exception, while technically
@@ -180,7 +174,7 @@ class VOProvXMLSerializer(ProvXMLSerializer):
 
                     if xsd_type is not None:
                         subelem.attrib[_ns_xsi("type")] = \
-                            six.text_type(xsd_type)
+                            str(xsd_type)
 
                 if attr in PROV_ATTRIBUTE_QNAMES and v:
                     subelem.attrib[_ns_prov("ref")] = v

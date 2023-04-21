@@ -1,7 +1,4 @@
 # -*- coding: utf-8 -*-
-from __future__ import (absolute_import, division, print_function,
-                        unicode_literals)
-
 from prov.model import (ProvElement, ProvBundle, ProvEntity)
 from voprov.models.constants import *
 
@@ -96,7 +93,8 @@ class VOProvActivityDescription(VOProvDescription):
         :param other_attributes:        Optional other attributes as a dictionary or list
                                         of tuples to be added to the record optionally (default: None).
         """
-        return self._bundle.usageDescription(identifier, self, role, description, type, multiplicity, entityDescription, other_attributes)
+        return self._bundle.usageDescription(identifier, self, role, description, type, multiplicity, entityDescription,
+                                             other_attributes)
 
     def generationDescription(self, identifier, role, description=None, type=None,
                               multiplicity=None, entityDescription=None, other_attributes=None):

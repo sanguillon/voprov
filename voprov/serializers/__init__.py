@@ -1,7 +1,4 @@
 # -*- coding: utf-8 -*-
-from __future__ import (absolute_import, division, print_function,
-                        unicode_literals)
-
 from voprov.serializers.provn import VOProvNSerializer
 from voprov.serializers.xml import VOProvXMLSerializer
 from voprov.serializers.provjson import VOProvJSONSerializer

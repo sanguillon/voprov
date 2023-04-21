@@ -1,7 +1,4 @@
 # -*- coding: utf-8 -*-
-from __future__ import (absolute_import, division, print_function,
-                        unicode_literals)
-
 import io
 import itertools
 import os
@@ -15,8 +12,7 @@ from prov.model import (ProvException, ProvDocument, ProvBundle, ProvActivity,
                         ProvAttribution, ProvDelegation, ProvInfluence, ProvSpecialization,
                         ProvAlternate, ProvMention, ProvMembership,
                         PROV_REC_CLS, DEFAULT_NAMESPACES, NamespaceManager, first)
-from six.moves.urllib.parse import urlparse
-import six
+from urllib.parse import urlparse
 
 from voprov import serializers
 from voprov.models.voprovDescriptions import *
@@ -32,7 +28,7 @@ DEFAULT_NAMESPACES.update({'voprov': VOPROV})
 
 
 def _ensure_datetime(value):
-    if isinstance(value, six.string_types):
+    if isinstance(value, str):
         return dateutil.parser.parse(value)
     else:
         return value
@@ -2344,7 +2340,7 @@ class VOProvDocument(ProvDocument, VOProvBundle):
         if content is not None:
             # io.StringIO only accepts unicode strings
             stream = io.StringIO(
-                content if not isinstance(content, six.binary_type)
+                content if not isinstance(content, bytes)
                 else content.decode()
             )
             return serializer.deserialize(stream, **args)
