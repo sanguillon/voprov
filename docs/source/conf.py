@@ -16,9 +16,11 @@ import mock
 
 sys.path.insert(0, os.path.abspath('../voprov/'))
 
-MOCK_MODULES = ['voprov', 'voprov.models.constants', 'voprov.models.model', 'voprov.models.voprovConfigurations',
-                'voprov.models.voprovDescriptions', 'voprov.models.voprovRelations', 'voprov.serializers.provn',
-                'voprov.serializers.xml', 'voprov.visualization.dot', 'voprov.visualization.graph']
+MOCK_MODULES = ['voprov', 'voprov.models', 'voprov.models.constants', 'voprov.models.model',
+                'voprov.models.voprovConfigurations', 'voprov.models.voprovDescriptions',
+                'voprov.models.voprovRelations', 'voprov.serializers', 'voprov.serializers.provn',
+                'voprov.serializers.xml', 'voprov.visualization', 'voprov.visualization.dot',
+                'voprov.visualization.graph']
 for mod_name in MOCK_MODULES:
     sys.modules[mod_name] = mock.Mock()
 
