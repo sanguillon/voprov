@@ -5,12 +5,14 @@ Credits
 Development Lead
 ----------------
 
-* Jean-François Sornay
-* Michèle Sanguillon
+* Benjamin Parciany
+* Mathieu Servillat
 
 Contributors
 ------------
-* Mathieu Servillat
+
+* Jean-François Sornay
+* Michèle Sanguillon
 * Mireille Louys
 * François Bonnarel
 * Catherine Boisson

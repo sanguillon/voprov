@@ -11,7 +11,7 @@ with open(path.join(here, 'README.rst'), encoding='utf-8') as f:
     readme = f.read()
 
 requirements = [
-    'prov>=1.5.3',
+    'prov>=2.0',
 ]
 
 test_requirements = [
@@ -20,12 +20,12 @@ test_requirements = [
 
 setup(
     name='voprov',
-    version='0.0.2',
+    version='0.0.3',
     description='A library for IVOA Provenance Data Model supporting PROV-JSON, '
                 'PROV-XML and PROV-N',
     long_description=readme,
-    author='Jean-Francois Sornay',
-    author_email='jeanfrancois.sornay@gmail.com',
+    author='Benjamin Parciany',
+    author_email='benjamin.parciany@obspm.fr',
     url='https://github.com/sanguillon/voprov/',
     packages=find_packages(),
     include_package_data=True,
@@ -47,15 +47,14 @@ setup(
         'License :: OSI Approved :: MIT License',
         'Natural Language :: French',
         'Operating System :: OS Independent',
-        'Programming Language :: Python :: 2',
-        'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
+        'Programming Language :: Python :: 3.11',
         'Topic :: Scientific/Engineering :: Information Analysis',
     ],
     tests_require=test_requirements,
-    python_requires='>=2',
+    python_requires='>=3',
 )
