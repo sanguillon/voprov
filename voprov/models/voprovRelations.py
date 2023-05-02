@@ -1,7 +1,4 @@
 # -*- coding: utf-8 -*-
-from __future__ import (absolute_import, division, print_function,
-                        unicode_literals)
-
 from prov.model import (ProvRelation, ProvBundle, ProvInfluence)
 from voprov.models.constants import *
 

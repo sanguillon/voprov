@@ -1,7 +1,4 @@
 # -*- coding: utf-8 -*-
-from __future__ import (absolute_import, division, print_function,
-                        unicode_literals)
-
 import io
 import itertools
 import os
@@ -15,8 +12,7 @@ from prov.model import (ProvException, ProvDocument, ProvBundle, ProvActivity,
                         ProvAttribution, ProvDelegation, ProvInfluence, ProvSpecialization,
                         ProvAlternate, ProvMention, ProvMembership,
                         PROV_REC_CLS, DEFAULT_NAMESPACES, NamespaceManager, first)
-from six.moves.urllib.parse import urlparse
-import six
+from urllib.parse import urlparse
 
 from voprov import serializers
 from voprov.models.voprovDescriptions import *
@@ -32,7 +28,7 @@ DEFAULT_NAMESPACES.update({'voprov': VOPROV})
 
 
 def _ensure_datetime(value):
-    if isinstance(value, six.string_types):
+    if isinstance(value, str):
         return dateutil.parser.parse(value)
     else:
         return value
@@ -82,7 +78,6 @@ class VOProvEntity(ProvEntity):
 
     def isDescribedBy(self, activityDescription, identifier=None):
         """Link an activity description to this activity
-
         :param activityDescription:     Identifier for the activity description link to this activity.
         :param identifier:              Identifier of the description relation created.
         """
@@ -372,6 +367,13 @@ class VOProvActivity(ProvActivity):
                         activity.add_attributes({super_formal: value})
                         break
         return bundle.add_record(activity)
+
+    def add_parameter(self, idbundle, idparam, nameparam, valueparam):
+        """add a parameter to an activity"""
+        if self._bundle.valid_qualified_name(idbundle) not in self._bundle._bundles:
+            bundle_config = self._bundle.bundle(idbundle)
+            param = bundle_config.parameter(idparam, nameparam, valueparam)
+            self._bundle.wasConfiguredBy(self, param)
 
 
 class VOProvAgent(ProvAgent):
@@ -2344,7 +2346,7 @@ class VOProvDocument(ProvDocument, VOProvBundle):
         if content is not None:
             # io.StringIO only accepts unicode strings
             stream = io.StringIO(
-                content if not isinstance(content, six.binary_type)
+                content if not isinstance(content, bytes)
                 else content.decode()
             )
             return serializer.deserialize(stream, **args)
