@@ -919,7 +919,7 @@ class VOProvBundle(ProvBundle):
     """Adaptation of prov bundle to VOProv Bundle"""
 
     def __init__(self, records=None, identifier=None, namespaces=None,
-                 document=None):
+                 document=None, label=None):
         """
         Constructor.
 
@@ -932,6 +932,7 @@ class VOProvBundle(ProvBundle):
         """
         #  Initializing bundle-specific attributes
         super(VOProvBundle, self).__init__(records, identifier, namespaces, document)
+        self.label = label
         self._namespaces = VOProvNamespaceManager(
             namespaces,
             parent=(document._namespaces if document is not None else None)
