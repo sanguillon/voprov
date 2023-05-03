@@ -377,6 +377,15 @@ class VOProvActivity(ProvActivity):
         param = bundle_config.parameter(idparam, nameparam, valueparam)
         self._bundle.wasConfiguredBy(self, param)
 
+    def add_configFile(self, idbundle, idfile, namefile, locationfile):
+        """add a configuration file to an activity"""
+        if self._bundle.valid_qualified_name(idbundle) not in self._bundle._bundles:
+            bundle_config = self._bundle.bundle(idbundle)
+        else:
+            bundle_config = self._bundle._bundles[self._bundle.valid_qualified_name(idbundle)]
+        file = bundle_config.configFile(idfile, namefile, locationfile)
+        self._bundle.wasConfiguredBy(self, file, 'ConfigFile')
+
 class VOProvAgent(ProvAgent):
     """Adaptation of Prov Agent class"""
     _prov_type = VOPROV_AGENT
