@@ -372,9 +372,10 @@ class VOProvActivity(ProvActivity):
         """add a parameter to an activity"""
         if self._bundle.valid_qualified_name(idbundle) not in self._bundle._bundles:
             bundle_config = self._bundle.bundle(idbundle)
-            param = bundle_config.parameter(idparam, nameparam, valueparam)
-            self._bundle.wasConfiguredBy(self, param)
-
+        else:
+            bundle_config = self._bundle._bundles[self._bundle.valid_qualified_name(idbundle)]
+        param = bundle_config.parameter(idparam, nameparam, valueparam)
+        self._bundle.wasConfiguredBy(self, param)
 
 class VOProvAgent(ProvAgent):
     """Adaptation of Prov Agent class"""
