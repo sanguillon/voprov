@@ -2065,6 +2065,16 @@ class VOProvBundle(ProvBundle):
             },
             None
         )
+    def add_activity_description(self, idbundle, iddescription, namedescription, version = None, description = None,
+                                 docurl = None, type = None, subtype = None, other_attributes = None):
+        """add an activity description to an activity"""
+        if self.valid_qualified_name(idbundle) not in self._bundles:
+            bundle_description = self.bundle(idbundle)
+        else:
+            bundle_description = self._bundles[self.valid_qualified_name(idbundle)]
+        description = bundle_description.activityDescription(iddescription, namedescription, version, description,
+                                                             docurl, type, subtype, other_attributes)
+
 
     # update alias of prov function
     wasGeneratedBy = generation
@@ -2091,6 +2101,8 @@ class VOProvBundle(ProvBundle):
     isRelatedTo = relate
     wasConfiguredBy = configuration
     hadReference = reference
+
+
 
 
 class VOProvDocument(ProvDocument, VOProvBundle):
