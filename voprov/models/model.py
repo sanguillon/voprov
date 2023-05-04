@@ -368,22 +368,23 @@ class VOProvActivity(ProvActivity):
                         break
         return bundle.add_record(activity)
 
-    def add_parameter(self, idbundle, idparam, nameparam, valueparam):
+    def add_parameter(self, idbundle, idparam, nameparam, valueparam, parameterDescription=None, other_attributes=None):
         """add a parameter to an activity"""
         if self._bundle.valid_qualified_name(idbundle) not in self._bundle._bundles:
             bundle_config = self._bundle.bundle(idbundle)
         else:
             bundle_config = self._bundle._bundles[self._bundle.valid_qualified_name(idbundle)]
-        param = bundle_config.parameter(idparam, nameparam, valueparam)
+        param = bundle_config.parameter(idparam, nameparam, valueparam, parameterDescription, other_attributes)
         self._bundle.wasConfiguredBy(self, param)
 
-    def add_configFile(self, idbundle, idfile, namefile, locationfile):
+    def add_configFile(self, idbundle, idfile, namefile, locationfile, comment=None, configFileDescription=None,
+                       other_attributes=None):
         """add a configuration file to an activity"""
         if self._bundle.valid_qualified_name(idbundle) not in self._bundle._bundles:
             bundle_config = self._bundle.bundle(idbundle)
         else:
             bundle_config = self._bundle._bundles[self._bundle.valid_qualified_name(idbundle)]
-        file = bundle_config.configFile(idfile, namefile, locationfile)
+        file = bundle_config.configFile(idfile, namefile, locationfile, comment, configFileDescription, other_attributes)
         self._bundle.wasConfiguredBy(self, file, 'ConfigFile')
 
 class VOProvAgent(ProvAgent):
