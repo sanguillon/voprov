@@ -187,6 +187,13 @@ class VOProvEntity(ProvEntity):
 
         return bundle.add_record(entity)
 
+    def add_agent(self, identifier, name=None, type=None, comment=None, email=None, affiliation=None, phone=None,
+              address=None, url=None, other_attributes=None):
+        """add an agent to an entity"""
+        agent = self._bundle.agent(identifier, name, type, comment, email, affiliation, phone,
+              address, url, other_attributes)
+        self._bundle.wasAttributedTo(self, agent)
+
 
 class VOProvValueEntity(VOProvEntity):
     """Class for VOProv Value Entity"""
@@ -386,6 +393,27 @@ class VOProvActivity(ProvActivity):
             bundle_config = self._bundle._bundles[self._bundle.valid_qualified_name(idbundle)]
         file = bundle_config.configFile(idfile, namefile, locationfile, comment, configFileDescription, other_attributes)
         self._bundle.wasConfiguredBy(self, file, 'ConfigFile')
+
+    def add_agent(self, identifier, name=None, type=None, comment=None, email=None, affiliation=None, phone=None,
+                  address=None, url=None, other_attributes=None):
+        """add an agent to an activity"""
+        agent = self._bundle.agent(identifier, name, type, comment, email, affiliation, phone,
+                                   address, url, other_attributes)
+        self._bundle.wasAssociatedWith(self, agent)
+
+    def add_used_entity(self, identifier, name=None, location=None, generatedAtTime=None, invalidatedAtTime=None,
+               comment=None, entityDescription=None, other_attributes=None, time=None, attributes=None):
+        """add a used entity to an activity"""
+        entity = self._bundle.entity(identifier, name, location, generatedAtTime, invalidatedAtTime,
+               comment, entityDescription, other_attributes)
+        self.used(entity, time, attributes)
+
+    def add_generated_entity(self, identifier, name=None, location=None, generatedAtTime=None, invalidatedAtTime=None,
+               comment=None, entityDescription=None, other_attributes=None, time=None, attributes=None):
+        """add a generated entity to an activity"""
+        entity = self._bundle.entity(identifier, name, location, generatedAtTime, invalidatedAtTime,
+               comment, entityDescription, other_attributes)
+        entity.wasGeneratedBy(self, time, attributes)
 
 class VOProvAgent(ProvAgent):
     """Adaptation of Prov Agent class"""
