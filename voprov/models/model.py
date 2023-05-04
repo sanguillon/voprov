@@ -2066,15 +2066,38 @@ class VOProvBundle(ProvBundle):
             },
             None
         )
+
     def add_activity_description(self, idbundle, iddescription, namedescription, version = None, description = None,
                                  docurl = None, type = None, subtype = None, other_attributes = None):
-        """add an activity description to an activity"""
+        """add a description to an activity"""
         if self.valid_qualified_name(idbundle) not in self._bundles:
             bundle_description = self.bundle(idbundle)
         else:
             bundle_description = self._bundles[self.valid_qualified_name(idbundle)]
-        description = bundle_description.activityDescription(iddescription, namedescription, version, description,
-                                                             docurl, type, subtype, other_attributes)
+        bundle_description.activityDescription(iddescription, namedescription, version, description, docurl, type,
+                                               subtype, other_attributes)
+
+    def add_usage_description(self, idbundle, identifier, activityDescription, role, description=None, type=None,
+                         multiplicity=None, entityDescription=None, other_attributes=None):
+        """add a description to a usage"""
+        bundle_description = self._bundles[self.valid_qualified_name(idbundle)]
+        bundle_description.usageDescription(identifier, activityDescription, role, description, type, multiplicity,
+                                               entityDescription, other_attributes)
+
+    def add_generation_description(self, idbundle, identifier, activityDescription, role, description=None, type=None,
+                              multiplicity=None, entityDescription=None, other_attributes=None):
+        """add a description to a generation"""
+        bundle_description = self._bundles[self.valid_qualified_name(idbundle)]
+        bundle_description.generationDescription(identifier, activityDescription, role, description, type, multiplicity,
+                                               entityDescription, other_attributes)
+
+    def add_parameter_description(self, idbundle, identifier, activityDescription, name, valueType, description=None, unit=None,
+                             ucd=None, utype=None, min=None, max=None, options=None, default=None,
+                             other_attributes=None):
+        """add a description to a parameter"""
+        bundle_description = self._bundles[self.valid_qualified_name(idbundle)]
+        bundle_description.parameterDescription(identifier, activityDescription, name, valueType, description, unit,
+                                               ucd, utype, min, max, options, default, other_attributes)
 
 
     # update alias of prov function
@@ -2381,6 +2404,11 @@ class VOProvDocument(ProvDocument, VOProvBundle):
             else:
                 with open(source) as f:
                     return serializer.deserialize(f, **args)
+
+    def add_entity_description(self, identity, iddescription, name, description=None, docurl=None, type=None, other_attributes=None):
+        """add a description to an entity"""
+        description = self.entityDescription(iddescription, name, description, docurl, type, other_attributes)
+        self.description(identity, iddescription)
 
 
 #  adding voprov class to the prov class mappings
