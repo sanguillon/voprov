@@ -383,6 +383,7 @@ class VOProvActivity(ProvActivity):
             bundle_config = self._bundle._bundles[self._bundle.valid_qualified_name(idbundle)]
         param = bundle_config.parameter(idparam, nameparam, valueparam, parameterDescription, other_attributes)
         self._bundle.wasConfiguredBy(self, param)
+        self._bundle.unified_relations()
 
     def add_configFile(self, idbundle, idfile, namefile, locationfile, comment=None, configFileDescription=None,
                        other_attributes=None):
