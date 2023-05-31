@@ -6,6 +6,7 @@ import logging
 import shutil
 import tempfile
 import dateutil.parser
+import requests
 from prov.model import (ProvException, ProvDocument, ProvBundle, ProvActivity,
                         ProvUsage, ProvAgent, ProvGeneration, ProvAssociation, ProvEntity,
                         ProvCommunication, ProvStart, ProvEnd, ProvInvalidation, ProvDerivation,
@@ -2151,7 +2152,36 @@ class VOProvBundle(ProvBundle):
         return bundle_description.parameterDescription(identifier, activityDescription, name, valueType, description, unit,
                                                ucd, utype, min, max, options, default, other_attributes)
 
-    #TODO:add_one_step()
+    def add_one_step(self, onestep):
+        if 'activityDescription' in onestep:
+            self.add_activity_description(onestep['activityDescription'], onestep['activityDescriptionName'])
+            act = self.activity(onestep['activity'], activityDescription=onestep['activityDescription'])
+        else:
+            act = self.activity(onestep['activity'])
+        used = act.add_used_entity(onestep['used'])
+        generated = act.add_generated_entity(onestep['generated'])
+        if 'agentUsedEntity' in onestep:
+            used.add_agent(onestep['agentUsedEntity'])
+        if 'agentGeneratedEntity' in onestep:
+            generated.add_agent(onestep['agentGeneratedEntity'])
+        if 'agentActivity' in onestep:
+            act.add_agent(onestep['agentActivity'])
+        if 'usedEntityDescription' in onestep:
+            self.add_entity_description(used, onestep['usedEntityDescription'], onestep['usedEntityDescriptionName'])
+            if 'usageDescription' in onestep and 'usageRole' in onestep and 'activityDescription' in onestep:
+                self.add_usage_description(onestep['usageDescription'], onestep['activityDescription'], onestep['usageRole'],
+                                           entityDescription=onestep['usedEntityDescription'])
+        if 'generatedEntityDescription' in onestep:
+            self.add_entity_description(generated, onestep['generatedEntityDescription'], onestep['generatedEntityDescriptionName'])
+            if 'generationDescription' in onestep and 'generationRole' in onestep and 'activityDescription' in onestep:
+                self.add_generation_description(onestep['generationDescription'], onestep['activityDescription'], onestep['generationRole'],
+                                                entityDescription=onestep['generatedEntityDescription'])
+        if 'idParameter' in onestep and 'nameParameter' in onestep and 'valueParameter' in onestep:
+            act.add_parameter(onestep['idParameter'], onestep['nameParameter'], onestep['valueParameter'])
+
+    def get_from_provsap(self, url):
+        r = requests.get(url)
+        return r.json()
 
     # update alias of prov function
     wasGeneratedBy = generation
