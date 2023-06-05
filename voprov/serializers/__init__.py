@@ -29,12 +29,14 @@ class Registry:
         from voprov.serializers.provn import VOProvNSerializer
         from voprov.serializers.xml import VOProvXMLSerializer
         from prov.serializers.provrdf import ProvRDFSerializer
+        from voprov.serializers.voyaml import VOProvYAMLSerializer
 
         Registry.serializers = {
             'json': VOProvJSONSerializer,
             'rdf': ProvRDFSerializer,
             'provn': VOProvNSerializer,
-            'xml': VOProvXMLSerializer
+            'xml': VOProvXMLSerializer,
+            'yaml': VOProvYAMLSerializer
         }
 
 
