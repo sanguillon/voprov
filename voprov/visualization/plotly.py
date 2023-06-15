@@ -3,12 +3,8 @@ import urllib.request
 import plotly.graph_objects as go
 from voprov.models.model import VOProvDocument
 
-#url = 'https://raw.githubusercontent.com/plotly/plotly.js/master/test/image/mocks/sankey_energy.json'
-#response = urllib.request.urlopen(url)
-#data = json.loads(response.read())
 
-
-def prov_to_plotly(bundle):
+def prov_to_plotly(data):
     """
     Convert a provenance bundle/document into a plotly object.
 
@@ -18,8 +14,6 @@ def prov_to_plotly(bundle):
     """
 
     if isinstance(bundle, VOProvDocument):
-        data = json.loads(bundle.serialize())
-
         node = []
         color_node = []
         for e in data['entity']:

@@ -23,7 +23,6 @@ class VOProvYAMLSerializer(Serializer):
         dict_all_activity_description = {}
 
         for record in list_records:
-            print(record)
             if isinstance(record, VOProvEntity):
                 dict_all_entity[record.identifier._str] = None
                 if record.attributes:
@@ -125,7 +124,6 @@ class VOProvYAMLSerializer(Serializer):
         if isinstance(stream, io.TextIOBase):
             yaml.dump(dict_record)
         else:
-            print(yaml.dump(dict_record, encoding="utf-8"))
             stream.write(yaml.dump(dict_record, encoding="utf-8"))
 
 
