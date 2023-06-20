@@ -6,6 +6,7 @@ import logging
 import shutil
 import tempfile
 import dateutil.parser
+import requests
 from prov.model import (ProvException, ProvDocument, ProvBundle, ProvActivity,
                         ProvUsage, ProvAgent, ProvGeneration, ProvAssociation, ProvEntity,
                         ProvCommunication, ProvStart, ProvEnd, ProvInvalidation, ProvDerivation,
@@ -186,6 +187,15 @@ class VOProvEntity(ProvEntity):
         entity.add_asserted_type(self._prov_type)  # self.__class__.__name__)
 
         return bundle.add_record(entity)
+
+    def add_agent(self, identifier, name=None, type=None, comment=None, email=None, affiliation=None, phone=None,
+              address=None, url=None, other_attributes=None):
+        """add an agent to an entity"""
+        agent = self._bundle.agent(identifier, name, type, comment, email, affiliation, phone,
+              address, url, other_attributes)
+        self._bundle.wasAttributedTo(self, agent)
+        self._bundle.unified()
+        return agent
 
 
 class VOProvValueEntity(VOProvEntity):
@@ -368,13 +378,54 @@ class VOProvActivity(ProvActivity):
                         break
         return bundle.add_record(activity)
 
-    def add_parameter(self, idbundle, idparam, nameparam, valueparam):
+    def add_parameter(self, idparam, nameparam, valueparam, parameterDescription=None, other_attributes=None):
         """add a parameter to an activity"""
+        idbundle = "#configuration#" + self.identifier._str.replace(":", "#")
         if self._bundle.valid_qualified_name(idbundle) not in self._bundle._bundles:
             bundle_config = self._bundle.bundle(idbundle)
-            param = bundle_config.parameter(idparam, nameparam, valueparam)
-            self._bundle.wasConfiguredBy(self, param)
+        else:
+            bundle_config = self._bundle._bundles[self._bundle.valid_qualified_name(idbundle)]
+        param = bundle_config.parameter(idparam, nameparam, valueparam, parameterDescription, other_attributes)
+        self._bundle.wasConfiguredBy(self, param)
+        self._bundle.unified_relations()
+        return param
 
+    def add_configFile(self, idfile, namefile, locationfile, comment=None, configFileDescription=None,
+                       other_attributes=None):
+        """add a configuration file to an activity"""
+        idbundle = "#configuration#" + self.identifier._str.replace(":", "#")
+        if self._bundle.valid_qualified_name(idbundle) not in self._bundle._bundles:
+            bundle_config = self._bundle.bundle(idbundle)
+        else:
+            bundle_config = self._bundle._bundles[self._bundle.valid_qualified_name(idbundle)]
+        file = bundle_config.configFile(idfile, namefile, locationfile, comment, configFileDescription, other_attributes)
+        self._bundle.wasConfiguredBy(self, file, 'ConfigFile')
+        return file
+
+    def add_agent(self, identifier, name=None, type=None, comment=None, email=None, affiliation=None, phone=None,
+                  address=None, url=None, other_attributes=None):
+        """add an agent to an activity"""
+        agent = self._bundle.agent(identifier, name, type, comment, email, affiliation, phone,
+                                   address, url, other_attributes)
+        self._bundle.wasAssociatedWith(self, agent)
+        self._bundle.unified()
+        return agent
+
+    def add_used_entity(self, identifier, name=None, location=None, generatedAtTime=None, invalidatedAtTime=None,
+               comment=None, entityDescription=None, other_attributes=None, time=None, attributes=None):
+        """add a used entity to an activity"""
+        entity = self._bundle.entity(identifier, name, location, generatedAtTime, invalidatedAtTime,
+               comment, entityDescription, other_attributes)
+        self.used(entity, time, attributes)
+        return entity
+
+    def add_generated_entity(self, identifier, name=None, location=None, generatedAtTime=None, invalidatedAtTime=None,
+               comment=None, entityDescription=None, other_attributes=None, time=None, attributes=None):
+        """add a generated entity to an activity"""
+        entity = self._bundle.entity(identifier, name, location, generatedAtTime, invalidatedAtTime,
+               comment, entityDescription, other_attributes)
+        entity.wasGeneratedBy(self, time, attributes)
+        return entity
 
 class VOProvAgent(ProvAgent):
     """Adaptation of Prov Agent class"""
@@ -919,7 +970,7 @@ class VOProvBundle(ProvBundle):
     """Adaptation of prov bundle to VOProv Bundle"""
 
     def __init__(self, records=None, identifier=None, namespaces=None,
-                 document=None):
+                 document=None, label=""):
         """
         Constructor.
 
@@ -932,6 +983,7 @@ class VOProvBundle(ProvBundle):
         """
         #  Initializing bundle-specific attributes
         super(VOProvBundle, self).__init__(records, identifier, namespaces, document)
+        self.label = label
         self._namespaces = VOProvNamespaceManager(
             namespaces,
             parent=(document._namespaces if document is not None else None)
@@ -1180,7 +1232,7 @@ class VOProvBundle(ProvBundle):
         """
         if parameterDescription is not None:
             self.description(identifier, parameterDescription)
-        return self.new_record(VOPROV_CONFIGURATION_PARAMETER, identifier, {
+        return self.new_record(VOPROV_CONFIGURATION_PARAMETER   , identifier, {
             VOPROV_ATTR_NAME: name,
             VOPROV_ATTR_VALUE: value,
             PROV_LABEL: name + " = " + value
@@ -2055,6 +2107,82 @@ class VOProvBundle(ProvBundle):
             None
         )
 
+    def add_activity_description(self, iddescription, namedescription, version = None, description = None,
+                                 docurl = None, type = None, subtype = None, other_attributes = None):
+        """add a description to an activity"""
+        idbundle = '#description#' + iddescription.replace(":", "#")
+        if self.valid_qualified_name(idbundle) not in self._bundles:
+            bundle_description = self.bundle(idbundle)
+        else:
+            bundle_description = self._bundles[self.valid_qualified_name(idbundle)]
+        return bundle_description.activityDescription(iddescription, namedescription, version, description, docurl, type,
+                                               subtype, other_attributes)
+
+    def add_usage_description(self, identifier, activityDescription, role, description=None, type=None,
+                         multiplicity=None, entityDescription=None, other_attributes=None):
+        """add a description to a usage"""
+        idbundle = '#description#' + activityDescription.replace(":", "#")
+        if self.valid_qualified_name(idbundle) not in self._bundles:
+            bundle_description = self.bundle(idbundle)
+        else:
+            bundle_description = self._bundles[self.valid_qualified_name(idbundle)]
+        return bundle_description.usageDescription(identifier, activityDescription, role, description, type, multiplicity,
+                                               entityDescription, other_attributes)
+
+    def add_generation_description(self, identifier, activityDescription, role, description=None, type=None,
+                              multiplicity=None, entityDescription=None, other_attributes=None):
+        """add a description to a generation"""
+        idbundle = '#description#' + activityDescription.replace(":", "#")
+        if self.valid_qualified_name(idbundle) not in self._bundles:
+            bundle_description = self.bundle(idbundle)
+        else:
+            bundle_description = self._bundles[self.valid_qualified_name(idbundle)]
+        return bundle_description.generationDescription(identifier, activityDescription, role, description, type, multiplicity,
+                                               entityDescription, other_attributes)
+
+    def add_parameter_description(self, identifier, activityDescription, name, valueType, description=None, unit=None,
+                             ucd=None, utype=None, min=None, max=None, options=None, default=None,
+                             other_attributes=None):
+        """add a description to a parameter"""
+        idbundle = '#description#' + activityDescription.replace(":", "#")
+        if self.valid_qualified_name(idbundle) not in self._bundles:
+            bundle_description = self.bundle(idbundle)
+        else:
+            bundle_description = self._bundles[self.valid_qualified_name(idbundle)]
+        return bundle_description.parameterDescription(identifier, activityDescription, name, valueType, description, unit,
+                                               ucd, utype, min, max, options, default, other_attributes)
+
+    def add_one_step(self, onestep):
+        if 'activityDescription' in onestep:
+            self.add_activity_description(onestep['activityDescription'], onestep['activityDescriptionName'])
+            act = self.activity(onestep['activity'], activityDescription=onestep['activityDescription'])
+        else:
+            act = self.activity(onestep['activity'])
+        used = act.add_used_entity(onestep['used'])
+        generated = act.add_generated_entity(onestep['generated'])
+        if 'agentUsedEntity' in onestep:
+            used.add_agent(onestep['agentUsedEntity'])
+        if 'agentGeneratedEntity' in onestep:
+            generated.add_agent(onestep['agentGeneratedEntity'])
+        if 'agentActivity' in onestep:
+            act.add_agent(onestep['agentActivity'])
+        if 'usedEntityDescription' in onestep:
+            self.add_entity_description(used, onestep['usedEntityDescription'], onestep['usedEntityDescriptionName'])
+            if 'usageDescription' in onestep and 'usageRole' in onestep and 'activityDescription' in onestep:
+                self.add_usage_description(onestep['usageDescription'], onestep['activityDescription'], onestep['usageRole'],
+                                           entityDescription=onestep['usedEntityDescription'])
+        if 'generatedEntityDescription' in onestep:
+            self.add_entity_description(generated, onestep['generatedEntityDescription'], onestep['generatedEntityDescriptionName'])
+            if 'generationDescription' in onestep and 'generationRole' in onestep and 'activityDescription' in onestep:
+                self.add_generation_description(onestep['generationDescription'], onestep['activityDescription'], onestep['generationRole'],
+                                                entityDescription=onestep['generatedEntityDescription'])
+        if 'idParameter' in onestep and 'nameParameter' in onestep and 'valueParameter' in onestep:
+            act.add_parameter(onestep['idParameter'], onestep['nameParameter'], onestep['valueParameter'])
+
+    def get_from_provsap(self, url):
+        r = requests.get(url)
+        return r.json()
+
     # update alias of prov function
     wasGeneratedBy = generation
     used = usage
@@ -2080,6 +2208,8 @@ class VOProvBundle(ProvBundle):
     isRelatedTo = relate
     wasConfiguredBy = configuration
     hadReference = reference
+
+
 
 
 class VOProvDocument(ProvDocument, VOProvBundle):
@@ -2357,6 +2487,11 @@ class VOProvDocument(ProvDocument, VOProvBundle):
             else:
                 with open(source) as f:
                     return serializer.deserialize(f, **args)
+
+    def add_entity_description(self, identity, iddescription, name, description=None, docurl=None, type=None, other_attributes=None):
+        """add a description to an entity"""
+        description = self.entityDescription(iddescription, name, description, docurl, type, other_attributes)
+        self.description(identity, iddescription)
 
 
 #  adding voprov class to the prov class mappings
