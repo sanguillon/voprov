@@ -25,9 +25,6 @@ __email__ = 'jeanfrancois.sornay@gmail.com'
 
 logger = logging.getLogger(__name__)
 
-DEFAULT_NAMESPACES.update({'voprov': VOPROV})
-
-
 def _ensure_datetime(value):
     if isinstance(value, str):
         return dateutil.parser.parse(value)
@@ -2223,6 +2220,8 @@ class VOProvDocument(ProvDocument, VOProvBundle):
         :param namespaces: Optional iterable of :py:class:`~prov.identifier.Namespace`s
             to set the document up with (default: None).
         """
+        DEFAULT_NAMESPACES.update({'voprov': VOPROV})
+
         VOProvBundle.__init__(
             self, records=records, identifier=None, namespaces=namespaces
         )
