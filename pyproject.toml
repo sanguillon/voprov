@@ -63,4 +63,4 @@ include = ["voprov*"]
 default-groups = ["dev"]
 
 [tool.pytest.ini_options]
-testpaths = ["test"]
+testpaths = ["tests"]
