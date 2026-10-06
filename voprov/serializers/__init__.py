@@ -1,7 +1,4 @@
 # -*- coding: utf-8 -*-
-from voprov.serializers.provn import VOProvNSerializer
-from voprov.serializers.xml import VOProvXMLSerializer
-from voprov.serializers.provjson import VOProvJSONSerializer
 from prov import Error
 
 __author__ = 'Jean-Francois Sornay'
@@ -28,12 +25,12 @@ class Registry:
         from voprov.serializers.provjson import VOProvJSONSerializer
         from voprov.serializers.provn import VOProvNSerializer
         from voprov.serializers.xml import VOProvXMLSerializer
-        from prov.serializers.provrdf import ProvRDFSerializer
+        from voprov.serializers.provrdf import VOProvRDFSerializer
         from voprov.serializers.voyaml import VOProvYAMLSerializer
 
         Registry.serializers = {
             'json': VOProvJSONSerializer,
-            'rdf': ProvRDFSerializer,
+            'rdf': VOProvRDFSerializer,
             'provn': VOProvNSerializer,
             'xml': VOProvXMLSerializer,
             'yaml': VOProvYAMLSerializer

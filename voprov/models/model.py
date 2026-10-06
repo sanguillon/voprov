@@ -188,14 +188,16 @@ class VOProvEntity(ProvEntity):
 
         return bundle.add_record(entity)
 
-    def add_agent(self, identifier, name=None, type=None, comment=None, email=None, affiliation=None, phone=None,
-              address=None, url=None, other_attributes=None):
-        """add an agent to an entity"""
-        agent = self._bundle.agent(identifier, name, type, comment, email, affiliation, phone,
-              address, url, other_attributes)
+    def add_agent(self, identifier, name=None, type=None, comment=None, email=None, affiliation=None, phone=None, address=None, url=None, other_attributes=None):
+        """add an agent to an entity with the relation wasAttributedTo"""
+        agent = self._bundle.agent(identifier, name, type, comment, email, affiliation, phone, address, url, other_attributes)
         self._bundle.wasAttributedTo(self, agent)
         self._bundle.unified()
         return agent
+
+    def add_entity_description(self, description_id, name, description = None, docurl = None, type = None, other_attributes = None):
+        ed = self._bundle.add_entity_description(self, description_id, name, description, docurl, type, other_attributes)
+        return ed
 
 
 class VOProvValueEntity(VOProvEntity):
@@ -213,6 +215,10 @@ class VOProvValueEntity(VOProvEntity):
 class VOProvDataSetEntity(VOProvEntity):
     """Class for VOProv DataSet Entity"""
     _prov_type = VOPROV_DATASET_ENTITY
+
+    def add_dataset_description(self, description_id, name, contentType = None, description = None, docurl = None, type = None, other_attributes = None):
+        ed = self._bundle.add_dataset_description(self, description_id, name, contentType, description, docurl, type, other_attributes)
+        return ed
 
 
 class VOProvActivity(ProvActivity):
@@ -379,7 +385,7 @@ class VOProvActivity(ProvActivity):
         return bundle.add_record(activity)
 
     def add_parameter(self, idparam, nameparam, valueparam, parameterDescription=None, other_attributes=None):
-        """add a parameter to an activity"""
+        """Add a parameter to an activity with the relation wasConfiguredBy in a dedicated bundle"""
         idbundle = "#configuration#" + self.identifier._str.replace(":", "#")
         if self._bundle.valid_qualified_name(idbundle) not in self._bundle._bundles:
             bundle_config = self._bundle.bundle(idbundle)
@@ -392,7 +398,7 @@ class VOProvActivity(ProvActivity):
 
     def add_configFile(self, idfile, namefile, locationfile, comment=None, configFileDescription=None,
                        other_attributes=None):
-        """add a configuration file to an activity"""
+        """add a configuration file to an activity with the relation wasConfiguredBy in a dedicated bundle"""
         idbundle = "#configuration#" + self.identifier._str.replace(":", "#")
         if self._bundle.valid_qualified_name(idbundle) not in self._bundle._bundles:
             bundle_config = self._bundle.bundle(idbundle)
@@ -402,18 +408,15 @@ class VOProvActivity(ProvActivity):
         self._bundle.wasConfiguredBy(self, file, 'ConfigFile')
         return file
 
-    def add_agent(self, identifier, name=None, type=None, comment=None, email=None, affiliation=None, phone=None,
-                  address=None, url=None, other_attributes=None):
-        """add an agent to an activity"""
-        agent = self._bundle.agent(identifier, name, type, comment, email, affiliation, phone,
-                                   address, url, other_attributes)
+    def add_agent(self, identifier, name=None, type=None, comment=None, email=None, affiliation=None, phone=None, address=None, url=None, other_attributes=None):
+        """add an agent to an activity with the relation wasAssociatedWith"""
+        agent = self._bundle.agent(identifier, name, type, comment, email, affiliation, phone, address, url, other_attributes)
         self._bundle.wasAssociatedWith(self, agent)
         self._bundle.unified()
         return agent
 
-    def add_used_entity(self, identifier, name=None, location=None, generatedAtTime=None, invalidatedAtTime=None,
-               comment=None, entityDescription=None, other_attributes=None, time=None, attributes=None):
-        """add a used entity to an activity"""
+    def add_used_entity(self, identifier, name=None, location=None, generatedAtTime=None, invalidatedAtTime=None, comment=None, entityDescription=None, other_attributes=None, time=None, attributes=None):
+        """add a entity to an activity with the relation used"""
         entity = self._bundle.entity(identifier, name, location, generatedAtTime, invalidatedAtTime,
                comment, entityDescription, other_attributes)
         self.used(entity, time, attributes)
@@ -421,11 +424,16 @@ class VOProvActivity(ProvActivity):
 
     def add_generated_entity(self, identifier, name=None, location=None, generatedAtTime=None, invalidatedAtTime=None,
                comment=None, entityDescription=None, other_attributes=None, time=None, attributes=None):
-        """add a generated entity to an activity"""
+        """add a entity to an activity with the relation wasGeneratedBy"""
         entity = self._bundle.entity(identifier, name, location, generatedAtTime, invalidatedAtTime,
                comment, entityDescription, other_attributes)
         entity.wasGeneratedBy(self, time, attributes)
         return entity
+
+    def add_activity_description(self, ad_id, name, version = None, description = None, docurl = None, type = None, subtype = None, other_attributes = None):
+        ad = self._bundle.add_activity_description(ad_id, name, version, self.identifier, description, docurl, type, subtype, other_attributes)
+        return ad
+
 
 class VOProvAgent(ProvAgent):
     """Adaptation of Prov Agent class"""
@@ -560,7 +568,7 @@ class VOProvGeneration(ProvGeneration):
     def set_role(self, role):
         """Set the role of this generation.
 
-        :param role:              Function of the entity with respect to the activity.
+        :param role: Function of the entity with respect to the activity.
         """
         self._attributes[VOPROV_ATTR_ROLE] = {role}
 
@@ -983,7 +991,10 @@ class VOProvBundle(ProvBundle):
         """
         #  Initializing bundle-specific attributes
         super(VOProvBundle, self).__init__(records, identifier, namespaces, document)
-        self.label = label
+        if label:
+            self.label = label
+        else:
+            self.label = identifier
         self._namespaces = VOProvNamespaceManager(
             namespaces,
             parent=(document._namespaces if document is not None else None)
@@ -1082,8 +1093,7 @@ class VOProvBundle(ProvBundle):
             other_attributes
         )
 
-    def entity(self, identifier, name=None, location=None, generatedAtTime=None, invalidatedAtTime=None,
-               comment=None, entityDescription=None, other_attributes=None):
+    def entity(self, identifier, name=None, location=None, generatedAtTime=None, invalidatedAtTime=None, comment=None, entityDescription=None, other_attributes=None):
         """
         Creates a new entity.
 
@@ -1119,8 +1129,7 @@ class VOProvBundle(ProvBundle):
             VOPROV_ENTITY, identifier, None, other_attributes
         )
 
-    def valueEntity(self, identifier, value, name=None, location=None, generatedAtTime=None, invalidatedAtTime=None,
-                    comment=None, valueDescription=None, other_attributes=None):
+    def valueEntity(self, identifier, value, name=None, location=None, generatedAtTime=None, invalidatedAtTime=None, comment=None, valueDescription=None, other_attributes=None):
         """
         Creates a new value entity.
 
@@ -1158,8 +1167,7 @@ class VOProvBundle(ProvBundle):
             other_attributes = None
         return self.new_record(VOPROV_VALUE_ENTITY, identifier, None, other_attributes)
 
-    def datasetEntity(self, identifier, name=None, location=None, generatedAtTime=None, invalidatedAtTime=None,
-                      comment=None, datasetDescription=None, other_attributes=None):
+    def datasetEntity(self, identifier, name=None, location=None, generatedAtTime=None, invalidatedAtTime=None, comment=None, datasetDescription=None, other_attributes=None):
         """
         Creates a new data set entity.
 
@@ -1230,12 +1238,13 @@ class VOProvBundle(ProvBundle):
         :param other_attributes:        Optional other attributes as a dictionary or list
                                         of tuples to be added to the record optionally (default: None).
         """
+        # TODO: idparam should be generated: act_id:param_name
         if parameterDescription is not None:
             self.description(identifier, parameterDescription)
         return self.new_record(VOPROV_CONFIGURATION_PARAMETER   , identifier, {
             VOPROV_ATTR_NAME: name,
             VOPROV_ATTR_VALUE: value,
-            PROV_LABEL: name + " = " + value
+            PROV_LABEL: name + " = " + str(value)
         }, other_attributes)
 
     def agent(self, identifier, name=None, type=None, comment=None, email=None, affiliation=None, phone=None,
@@ -1728,6 +1737,9 @@ class VOProvBundle(ProvBundle):
             }
         )
 
+
+    # DESCRIPTIONS functions
+
     def activityDescription(self, identifier, name, version=None, description=None, docurl=None, type=None,
                             subtype=None, other_attributes=None):
         """
@@ -1839,8 +1851,7 @@ class VOProvBundle(ProvBundle):
             other_attributes
         )
 
-    def datasetDescription(self, identifier, name, contentType, description=None, docurl=None,
-                           type=None, other_attributes=None):
+    def datasetDescription(self, identifier, name, contentType, description=None, docurl=None, type=None, other_attributes=None):
         """
         Creates a new dataset description.
 
@@ -1950,8 +1961,7 @@ class VOProvBundle(ProvBundle):
             other_attributes
         )
 
-    def configFileDescription(self, identifier, activityDescription, name, contentType, description=None,
-                              other_attributes=None):
+    def configFileDescription(self, identifier, activityDescription, name, contentType, description=None, other_attributes=None):
         """
         Creates a new config file description.
 
@@ -2036,6 +2046,9 @@ class VOProvBundle(ProvBundle):
             other_attributes
         )
 
+
+    # RELATION functions
+
     def description(self, described, descriptor, identifier=None):
         """
         Creates a new description relation record.
@@ -2107,77 +2120,200 @@ class VOProvBundle(ProvBundle):
             None
         )
 
-    def add_activity_description(self, iddescription, namedescription, version = None, description = None,
-                                 docurl = None, type = None, subtype = None, other_attributes = None):
-        """add a description to an activity"""
-        idbundle = '#description#' + iddescription.replace(":", "#")
+
+    # ADD_ functions
+
+    def add_activity_description(self, description_id, name, version = None, activity_id= None, description = None, docurl = None, type = None, subtype = None, other_attributes = None):
+        """add a description to an activity in the dedicated bundle"""
+        idbundle = '#description#' + description_id.replace(":", "#")
         if self.valid_qualified_name(idbundle) not in self._bundles:
             bundle_description = self.bundle(idbundle)
         else:
             bundle_description = self._bundles[self.valid_qualified_name(idbundle)]
-        return bundle_description.activityDescription(iddescription, namedescription, version, description, docurl, type,
-                                               subtype, other_attributes)
+        ad = bundle_description.activityDescription(description_id, name, version, description, docurl, type, subtype, other_attributes)
+        if activity_id:
+            self.description(activity_id, description_id)
+        return ad
 
-    def add_usage_description(self, identifier, activityDescription, role, description=None, type=None,
-                         multiplicity=None, entityDescription=None, other_attributes=None):
-        """add a description to a usage"""
+    def add_entity_description(self, description_id, name, entity_id = None, description=None, docurl=None, type=None, other_attributes=None):
+        """add a description to an entity"""
+        ed = self.entityDescription(description_id, name, description, docurl, type, other_attributes)
+        if entity_id:
+            self.description(entity_id, description_id)
+        return ed
+
+    def add_dataset_description(self, description_id, name, contentType, entity_id = None, description=None, docurl=None, type=None, other_attributes=None):
+        """add a description to a dataset entity"""
+        ed = self.datasetDescription(description_id, name, contentType, description=None, docurl=None, type=None, other_attributes=None)
+        if entity_id:
+            self.description(entity_id, ed_id)
+        return ed
+
+    def add_usage_description(self, identifier, activityDescription, role, description=None, type=None, multiplicity=None, entityDescription=None, other_attributes=None):
+        """add a description to a usage in the dedicated bundle"""
         idbundle = '#description#' + activityDescription.replace(":", "#")
         if self.valid_qualified_name(idbundle) not in self._bundles:
             bundle_description = self.bundle(idbundle)
         else:
             bundle_description = self._bundles[self.valid_qualified_name(idbundle)]
-        return bundle_description.usageDescription(identifier, activityDescription, role, description, type, multiplicity,
-                                               entityDescription, other_attributes)
+        return bundle_description.usageDescription(identifier, activityDescription, role, description, type, multiplicity, entityDescription, other_attributes)
 
-    def add_generation_description(self, identifier, activityDescription, role, description=None, type=None,
-                              multiplicity=None, entityDescription=None, other_attributes=None):
-        """add a description to a generation"""
+    def add_generation_description(self, identifier, activityDescription, role, description=None, type=None, multiplicity=None, entityDescription=None, other_attributes=None):
+        """add a description to a generation in the dedicated bundle"""
         idbundle = '#description#' + activityDescription.replace(":", "#")
         if self.valid_qualified_name(idbundle) not in self._bundles:
             bundle_description = self.bundle(idbundle)
         else:
             bundle_description = self._bundles[self.valid_qualified_name(idbundle)]
-        return bundle_description.generationDescription(identifier, activityDescription, role, description, type, multiplicity,
-                                               entityDescription, other_attributes)
+        return bundle_description.generationDescription(identifier, activityDescription, role, description, type, multiplicity, entityDescription, other_attributes)
 
-    def add_parameter_description(self, identifier, activityDescription, name, valueType, description=None, unit=None,
-                             ucd=None, utype=None, min=None, max=None, options=None, default=None,
-                             other_attributes=None):
-        """add a description to a parameter"""
+    def add_parameter_description(self, identifier, activityDescription, name, valueType, description=None, unit=None, ucd=None, utype=None, min=None, max=None, options=None, default=None, other_attributes=None):
+        """add a description to a parameter in the dedicated bundle"""
         idbundle = '#description#' + activityDescription.replace(":", "#")
         if self.valid_qualified_name(idbundle) not in self._bundles:
             bundle_description = self.bundle(idbundle)
         else:
             bundle_description = self._bundles[self.valid_qualified_name(idbundle)]
-        return bundle_description.parameterDescription(identifier, activityDescription, name, valueType, description, unit,
-                                               ucd, utype, min, max, options, default, other_attributes)
+        return bundle_description.parameterDescription(identifier, activityDescription, name, valueType, description, unit, ucd, utype, min, max, options, default, other_attributes)
+
 
     def add_one_step(self, onestep):
-        if 'activityDescription' in onestep:
-            self.add_activity_description(onestep['activityDescription'], onestep['activityDescriptionName'])
-            act = self.activity(onestep['activity'], activityDescription=onestep['activityDescription'])
-        else:
-            act = self.activity(onestep['activity'])
-        used = act.add_used_entity(onestep['used'])
-        generated = act.add_generated_entity(onestep['generated'])
-        if 'agentUsedEntity' in onestep:
-            used.add_agent(onestep['agentUsedEntity'])
-        if 'agentGeneratedEntity' in onestep:
-            generated.add_agent(onestep['agentGeneratedEntity'])
-        if 'agentActivity' in onestep:
-            act.add_agent(onestep['agentActivity'])
-        if 'usedEntityDescription' in onestep:
-            self.add_entity_description(used, onestep['usedEntityDescription'], onestep['usedEntityDescriptionName'])
-            if 'usageDescription' in onestep and 'usageRole' in onestep and 'activityDescription' in onestep:
-                self.add_usage_description(onestep['usageDescription'], onestep['activityDescription'], onestep['usageRole'],
-                                           entityDescription=onestep['usedEntityDescription'])
-        if 'generatedEntityDescription' in onestep:
-            self.add_entity_description(generated, onestep['generatedEntityDescription'], onestep['generatedEntityDescriptionName'])
-            if 'generationDescription' in onestep and 'generationRole' in onestep and 'activityDescription' in onestep:
-                self.add_generation_description(onestep['generationDescription'], onestep['activityDescription'], onestep['generationRole'],
-                                                entityDescription=onestep['generatedEntityDescription'])
-        if 'idParameter' in onestep and 'nameParameter' in onestep and 'valueParameter' in onestep:
-            act.add_parameter(onestep['idParameter'], onestep['nameParameter'], onestep['valueParameter'])
+        """builds provenance records from onestep dictionary"""
+
+# onestep_1 = {
+#     "product_id": "obs:image1b",
+#     "product_name": None,
+#     "product_location": None,
+#     "product_generatedAtTime": None,
+#     "product_comment": None,
+#     "product_description": None,
+#     "product_type": None,
+#     "product_content_type": None,
+#     "product_docurl": None,
+#     "product_role": "bias-subtracted-image",
+#     "contact_id": "staff:Emma",
+#     "contact_name": None,
+#     "contact_type": None,
+#     "contact_email": None,
+#     "step_id": "ps:2459",
+#     "step_name": "ps:bias_subtraction",
+#     "step_startTime": None,
+#     "step_endTime": None,
+#     "step_comment": None,
+#     "step_parameters": {},
+#     "step_description": "remove the readout noise of the detector from the input image by subtracting a bias image",
+#     "step_type": None,
+#     "step_docurl": None,
+#     "step_software": {},
+#     "used_ids": ["obs:image1", "obs:bias"],
+#     "generated_ids": [],
+#     "process_id": 7531,
+#     "process_comment": None,
+#     "workflow_name": "ImageCalibration",
+#     "workflow_version": None,
+#     "workflow_description": None,
+#     "workflow_type": None,
+#     "workflow_docurl": None,
+#     "instrument_id": None,
+#     "instrument_location": None,
+#     "instrument_name": None,
+#     "instrument_description": None,
+#     "instrument_type": None,
+#     "instrument_docurl": None,
+#     "instrument_comment": None,
+# }
+
+        onestep_mandatory_keys = ["product_id", "step_id", "used_ids", "generated_ids"]
+        for k in onestep_mandatory_keys:
+            if not k in onestep:
+                raise ProvException('the input dictionary must contain the key: ' + k)
+        # Add product entity
+        ent = self.datasetEntity(
+            onestep["product_id"],
+            name=onestep.get("product_name", None),
+            location=onestep.get("product_location", None),
+            generatedAtTime=onestep.get("product_generatedAtTime", None),
+            invalidatedAtTime=onestep.get("product_invalidatedAtTime", None),
+            comment=onestep.get("product_comment", None),
+        )
+        if onestep.get("product_content_type", None):
+            ent.add_dataset_description(
+                onestep["product_content_type"].replace("/", "_"),
+                onestep["product_content_type"],
+                onestep["product_content_type"],
+            )
+        # Add step activity and generation relation
+        act = self.activity(
+            onestep['step_id'],
+            name=onestep.get("step_name", None),
+            startTime=onestep.get("step_startTime", None),
+            endTime=onestep.get("step_endTime", None),
+            comment=onestep.get("step_comment", None),
+        )
+        gen_attributes = {}
+        if onestep.get("product_role", None):
+            gen_attributes = {'prov:role': onestep['product_role']}
+        ent.wasGeneratedBy(onestep["step_id"], attributes=gen_attributes)
+        # ActivityDescription
+        if onestep.get("step_name", None):
+            act.add_activity_description(
+                onestep['step_name'],
+                onestep['step_name'],
+                version=onestep.get("step_version", None),
+                description=onestep.get("step_description", None),
+                docurl=onestep.get("step_docurl", None),
+                type=onestep.get("step_type", None),
+                subtype=onestep.get("step_subtype", None),
+            )
+        # Add used/generated entity ids
+        if "used_ids" in onestep:
+            for used_id in onestep["used_ids"]:
+                act.add_used_entity(used_id)
+        if "generated_ids" in onestep:
+            for generated in onestep["generated_ids"]:
+                act.add_generated_entity(generated)
+        # Add contact
+        if onestep.get("contact_name", None):
+            ent.add_agent(
+                onsestep.get("contact_id", onestep["contact_name"]),  # TODO: remove blanks?
+                name=onestep.get("contact_name", None),
+                type=onestep.get("contact_type", "Person"),
+                email=onestep.get("contact_email", None),
+                comment=onestep.get("contact_comment", None),
+            )
+        # Add step parameters
+        if onestep.get("step_parameters", None):
+            for p,v in onestep['step_parameters'].items():
+                act.add_parameter(onestep["step_id"]+":"+p, p, v)
+        # add process
+        if onestep.get("process_id", None):
+            ps = self.activity(
+                onestep['process_id'],
+                name=onestep.get("workflow_name", None),
+                comment=onestep.get("process_comment", None),
+            )
+            if onestep.get("workflow_name", None):
+                ps.add_activity_description(
+                    onestep['workflow_name'],
+                    onestep['workflow_name'],
+                    version=onestep.get("workflow_version", None),
+                    description=onestep.get("workflow_description", None),
+                    docurl=onestep.get("workflow_docurl", None),
+                    type=onestep.get("workflow_type", None),
+                    subtype=onestep.get("workflow_subtype", None),
+                )
+            if onestep.get("instrument_id", None):
+                inst = self.entity(
+                    onestep["instrument_id"],
+                    name=onestep.get("instrument_name", None),
+                    location=onestep.get("instrument_location", None),
+                    comment=onestep.get("instrument_comment", None),
+                )
+                ps.used(onestep["instrument_id"], attributes={'prov:role': "instrument"})
+            act.wasInformedBy(onestep['process_id'])
+        self.unified_relations()
+        return ent
+        # END of onestep function
 
     def get_from_provsap(self, url):
         r = requests.get(url)
@@ -2487,11 +2623,6 @@ class VOProvDocument(ProvDocument, VOProvBundle):
             else:
                 with open(source) as f:
                     return serializer.deserialize(f, **args)
-
-    def add_entity_description(self, identity, iddescription, name, description=None, docurl=None, type=None, other_attributes=None):
-        """add a description to an entity"""
-        description = self.entityDescription(iddescription, name, description, docurl, type, other_attributes)
-        self.description(identity, iddescription)
 
 
 #  adding voprov class to the prov class mappings

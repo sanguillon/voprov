@@ -1,0 +1,7 @@
+prov
+python-dateutil
+requests
+pyyaml
+plotly
+setuptools
+sphinx-rtd-theme
