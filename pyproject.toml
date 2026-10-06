@@ -38,12 +38,15 @@ dependencies = [
 
 [project.optional-dependencies]
 rdf = ["rdflib"]
-dot = ["pydot>=1.2.0"]
+# prov.graph needs networkx, which is only an optional dependency of prov 3
+dot = ["pydot>=1.2.0", "networkx"]
 docs = [
     "sphinx",
     "furo",
     "myst-nb",
     "sphinx-copybutton",
+    "pydot>=1.2.0",  # voprov.dot and voprov.graph are imported by autodoc
+    "networkx",
 ]
 
 [project.urls]
@@ -54,6 +57,7 @@ Repository = "https://gitlab.obspm.fr/mservillat/voprov"
 dev = [
     "pytest",
     "pydot>=1.2.0",
+    "networkx",
     "rdflib",
     "jupyter",
 ]

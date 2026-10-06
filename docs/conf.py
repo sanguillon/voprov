@@ -34,6 +34,8 @@ suppress_warnings = ["myst.header"]
 # API pages
 autodoc_member_order = "bysource"
 autodoc_typehints = "none"
+# methods without docstring of their own are not documented again with the (version dependent) text of prov
+autodoc_inherit_docstrings = False
 intersphinx_mapping = {
     "python": ("https://docs.python.org/3", None),
     "prov": ("https://prov.readthedocs.io/en/latest/", None),

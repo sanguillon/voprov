@@ -4628,6 +4628,8 @@ docs = [
     { name = "furo" },
     { name = "myst-nb", version = "1.3.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.10'" },
     { name = "myst-nb", version = "1.4.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.10'" },
+    { name = "networkx" },
+    { name = "pydot" },
     { name = "sphinx", version = "7.4.7", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.10'" },
     { name = "sphinx", version = "8.1.3", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version == '3.10.*'" },
     { name = "sphinx", version = "9.0.4", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version == '3.11.*'" },
@@ -4635,6 +4637,7 @@ docs = [
     { name = "sphinx-copybutton" },
 ]
 dot = [
+    { name = "networkx" },
     { name = "pydot" },
 ]
 rdf = [
@@ -4644,6 +4647,7 @@ rdf = [
 [package.dev-dependencies]
 dev = [
     { name = "jupyter" },
+    { name = "networkx" },
     { name = "pydot" },
     { name = "pytest", version = "8.4.2", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.10'" },
     { name = "pytest", version = "9.1.1", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.10'" },
@@ -4655,8 +4659,11 @@ requires-dist = [
     { name = "furo", marker = "extra == 'docs'" },
     { name = "lxml" },
     { name = "myst-nb", marker = "extra == 'docs'" },
+    { name = "networkx", marker = "extra == 'docs'" },
+    { name = "networkx", marker = "extra == 'dot'" },
     { name = "plotly" },
     { name = "prov", specifier = ">=2.0,<4" },
+    { name = "pydot", marker = "extra == 'docs'", specifier = ">=1.2.0" },
     { name = "pydot", marker = "extra == 'dot'", specifier = ">=1.2.0" },
     { name = "python-dateutil" },
     { name = "pyyaml" },
@@ -4670,6 +4677,7 @@ provides-extras = ["rdf", "dot", "docs"]
 [package.metadata.requires-dev]
 dev = [
     { name = "jupyter" },
+    { name = "networkx" },
     { name = "pydot", specifier = ">=1.2.0" },
     { name = "pytest" },
     { name = "rdflib" },
