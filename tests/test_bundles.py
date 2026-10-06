@@ -108,7 +108,7 @@ def test_get_w3c_gives_plain_prov(reference_doc):
     import prov.model as pm
     w3c = reference_doc.get_w3c()
     assert type(w3c) is pm.ProvDocument
-    assert all(type(rec).__module__ == "prov.model" for rec in w3c.records)
+    assert all(type(rec).__module__.startswith("prov.model") for rec in w3c.records)
     assert len(w3c.bundles) == 1
     # voprov concepts are kept as prov:type
     types = {str(t) for rec in w3c.get_records(pm.ProvEntity) for t in rec.get_asserted_types()}

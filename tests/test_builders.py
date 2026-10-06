@@ -1,6 +1,7 @@
 import datetime
 
 import pytest
+from prov.model import ProvException
 
 from voprov import constants as c
 from voprov.model import records as r
@@ -136,12 +137,32 @@ def test_set_methods(doc):
     assert attribute(a, c.VOPROV_ATTR_STARTTIME) == datetime.datetime(2023, 5, 1)
 
 
-@pytest.mark.xfail(strict=True, reason="set_time keeps strings as is, although its docstring says they are parsed "
-                                       "(the activity() builder does parse them)")
 def test_set_time_parses_strings(doc):
     a = doc.activity("ex:a")
-    a.set_time(startTime="2023-05-01T00:00:00")
+    a.set_time(startTime="2023-05-01T00:00:00", endTime="2023-05-01T01:30:00")
     assert attribute(a, c.VOPROV_ATTR_STARTTIME) == datetime.datetime(2023, 5, 1)
+    assert attribute(a, c.VOPROV_ATTR_ENDTIME) == datetime.datetime(2023, 5, 1, 1, 30)
+    assert a.get_startTime() == datetime.datetime(2023, 5, 1)
+
+
+def test_set_time_replaces_previous_value(doc):
+    a = doc.activity("ex:a", startTime="2023-01-01T00:00:00")
+    a.set_time(startTime="2023-02-01T00:00:00")
+    assert a.get_startTime() == datetime.datetime(2023, 2, 1)
+    assert len(a.get_attribute(c.VOPROV_ATTR_STARTTIME)) == 1
+
+
+def test_set_time_rejects_garbage(doc):
+    a = doc.activity("ex:a")
+    with pytest.raises((ValueError, ProvException)):  # which one depends on the prov version
+        a.set_time(startTime="not a date")
+
+
+def test_set_time_keeps_existing_values(doc):
+    a = doc.activity("ex:a", startTime="2023-01-01T00:00:00")
+    a.set_time(endTime="2023-01-02T00:00:00")
+    assert attribute(a, c.VOPROV_ATTR_STARTTIME) == datetime.datetime(2023, 1, 1)
+    assert attribute(a, c.VOPROV_ATTR_ENDTIME) == datetime.datetime(2023, 1, 2)
 
 
 def test_is_described_by(doc):

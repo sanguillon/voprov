@@ -32,9 +32,11 @@ def read(source, format=None):
 
     for format in serializers:
         try:
-            return VOProvDocument.deserialize(source=source, format=format)
+            document = VOProvDocument.deserialize(source=source, format=format)
         except:
-            pass
+            continue
+        if document is not None:  # some deserializers return None instead of failing
+            return document
     else:
         raise TypeError("Could not read from the source. To get a proper "
                         "error message, specify the format with the 'format' "

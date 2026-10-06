@@ -234,10 +234,13 @@ class VOProvActivity(ProvActivity):
             Either a :py:class:`datetime.datetime` object or a string that can be
             parsed by :py:func:`dateutil.parser`.
         """
+        # let add_attributes parse and validate the values, like for any formal attribute
         if startTime is not None:
-            self._attributes[VOPROV_ATTR_STARTTIME] = {startTime}
+            self._attributes[VOPROV_ATTR_STARTTIME] = set()
+            self.add_attributes({VOPROV_ATTR_STARTTIME: startTime})
         if endTime is not None:
-            self._attributes[VOPROV_ATTR_ENDTIME] = {endTime}
+            self._attributes[VOPROV_ATTR_ENDTIME] = set()
+            self.add_attributes({VOPROV_ATTR_ENDTIME: endTime})
 
     def get_startTime(self):
         """
