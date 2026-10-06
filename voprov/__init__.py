@@ -4,7 +4,7 @@ from prov import Error
 __author__ = 'Jean-Francois Sornay'
 __email__ = 'jeanfrancois.sornay@gmail.com'
 
-__all__ = ["Error", "models", "read"]
+__all__ = ["Error", "model", "read"]
 
 
 def read(source, format=None):
@@ -21,7 +21,7 @@ def read(source, format=None):
     format parameter to get the actual traceback.
     """
     # Lazy imports to not globber the namespace.
-    from voprov.models.model import VOProvDocument
+    from voprov.model import VOProvDocument
 
     from voprov.serializers import Registry
     Registry.load_serializers()

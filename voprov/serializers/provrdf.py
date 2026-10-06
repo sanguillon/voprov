@@ -1,6 +1,6 @@
 from prov.serializers.provrdf import *
 
-from voprov.models.constants import (
+from voprov.constants import (
     PROV_ID_ATTRIBUTES_MAP,
     PROV_N_MAP,
     PROV_BASE_CLS,

@@ -4,11 +4,11 @@ Visualization
 Dot
 ---
 
-.. automodule:: voprov.visualization.dot
+.. automodule:: voprov.dot
    :members:
 
 Graph
 -----
 
-.. automodule:: voprov.visualization.graph
+.. automodule:: voprov.graph
    :members:

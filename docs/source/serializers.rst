@@ -10,6 +10,6 @@ Provn
 xml
 ---
 
-.. automodule:: voprov.serializers.xml
+.. automodule:: voprov.serializers.provxml
    :members:
 

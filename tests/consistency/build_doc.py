@@ -7,7 +7,7 @@ import os
 import sys
 import traceback
 
-from voprov.models.model import VOProvDocument
+from voprov.model import VOProvDocument
 
 
 def build():
@@ -100,7 +100,7 @@ def main(outdir):
         open(os.path.join(outdir, 'w3c.json'), 'w').write(w)
     attempt('unified', lambda: d.unified().serialize(format='json'))
     def dot():
-        from voprov.visualization.dot import prov_to_dot
+        from voprov.dot import prov_to_dot
         return prov_to_dot(d).to_string()
     s = attempt('dot', dot)
     if s:

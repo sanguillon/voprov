@@ -27,4 +27,4 @@ clean:
 
 # Dump a reference document in all formats to DIR, to compare outputs between versions/branches
 dump dir:
-    uv run python test/consistency/build_doc.py {{dir}}
+    uv run python tests/consistency/build_doc.py {{dir}}

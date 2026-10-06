@@ -1,28 +1,7 @@
 # -*- coding: utf-8 -*-
-from prov.graph import *
-from voprov.models.model import *
+"""Deprecated import path, kept for backward compatibility: use :mod:`voprov.graph` instead of ``voprov.visualization.graph``."""
+import warnings
 
-__author__ = 'Jean-Francois Sornay'
-__email__ = 'jeanfrancois.sornay@gmail.com'
+warnings.warn("voprov.visualization.graph is deprecated, use voprov.graph", DeprecationWarning, stacklevel=2)
 
-INFERRED_ELEMENT_CLASS.update({
-    VOPROV_ATTR_ENTITY:             VOProvEntity,
-    VOPROV_ATTR_ACTIVITY:           VOProvActivity,
-    VOPROV_ATTR_AGENT:              VOProvAgent,
-    VOPROV_ATTR_TRIGGER:            VOProvEntity,
-    VOPROV_ATTR_GENERATED_ENTITY:   VOProvEntity,
-    VOPROV_ATTR_USED_ENTITY:        VOProvEntity,
-    VOPROV_ATTR_DELEGATE:           VOProvAgent,
-    VOPROV_ATTR_RESPONSIBLE:        VOProvAgent,
-    VOPROV_ATTR_SPECIFIC_ENTITY:    VOProvEntity,
-    VOPROV_ATTR_GENERAL_ENTITY:     VOProvEntity,
-    VOPROV_ATTR_ALTERNATE1:         VOProvEntity,
-    VOPROV_ATTR_ALTERNATE2:         VOProvEntity,
-    VOPROV_ATTR_COLLECTION:         VOProvEntity,
-    VOPROV_ATTR_INFORMED:           VOProvActivity,
-    VOPROV_ATTR_INFORMANT:          VOProvActivity,
-    VOPROV_ATTR_BUNDLE:             VOProvBundle,
-    VOPROV_ATTR_PLAN:               VOProvEntity,
-    VOPROV_ATTR_ENDER:              VOProvEntity,
-    VOPROV_ATTR_STARTER:            VOProvEntity,
-})
+from voprov.graph import *  # noqa: F401,F403

@@ -1,6 +1,6 @@
 
 from prov.serializers.provjson import *
-from voprov.models.constants import *
+from voprov.constants import *
 
 # Reverse map for prov.model.XSD_DATATYPE_PARSERS (defined locally: its location in prov changes between versions)
 LITERAL_XSDTYPE_MAP = {
@@ -13,12 +13,12 @@ LITERAL_XSDTYPE_MAP = {
 
 class VOProvJSONSerializer(Serializer):
     """
-    PROV-JSON serializer for :class:`~voprov.models.model.VOProvDocument`
+    PROV-JSON serializer for :class:`~voprov.model.VOProvDocument`
     """
 
     def serialize(self, stream, **kwargs):
         """
-        Serializes a :class:`~voprov.models.model.VOProvDocument` instance to
+        Serializes a :class:`~voprov.model.VOProvDocument` instance to
         `PROV-JSON <https://openprovenance.org/prov-json/>`_.
 
         :param stream: Where to save the output.
@@ -53,7 +53,7 @@ class VOProvJSONSerializer(Serializer):
 
 class ProvJSONEncoder(json.JSONEncoder):
     def default(self, o):
-        from voprov.models.model import VOProvDocument
+        from voprov.model import VOProvDocument
         if isinstance(o, VOProvDocument):
             return encode_json_document(o)
         else:
@@ -62,7 +62,7 @@ class ProvJSONEncoder(json.JSONEncoder):
 
 class ProvJSONDecoder(json.JSONDecoder):
     def decode(self, s, *args, **kwargs):
-        from voprov.models.model import VOProvDocument
+        from voprov.model import VOProvDocument
         container = super(ProvJSONDecoder, self).decode(s, *args, **kwargs)
         document = VOProvDocument()
         decode_json_document(container, document)
@@ -153,7 +153,7 @@ def decode_json_document(content, document):
 
     decode_json_container(content, document)
 
-    from voprov.models.model import VOProvBundle
+    from voprov.model import VOProvBundle
     for bundle_id, bundle_content in bundles.items():
         bundle = VOProvBundle(document=document)
         decode_json_container(bundle_content, bundle)

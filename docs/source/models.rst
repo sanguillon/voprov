@@ -4,29 +4,29 @@ Models
 Constants
 ---------
 
-.. automodule:: voprov.models.constants
+.. automodule:: voprov.constants
    :members:
 
-Model
------
+Records
+-------
 
-.. automodule:: voprov.models.model
+.. automodule:: voprov.model.records
    :members:
 
-VOProvConfiguration
+Namespaces
+----------
+
+.. automodule:: voprov.model.namespaces
+   :members:
+
+Bundle and document
 -------------------
 
-.. automodule:: voprov.models.voprovConfigurations
+.. automodule:: voprov.model.bundle
    :members:
 
-VOProvDescriptions
-------------------
+Registration in prov
+--------------------
 
-.. automodule:: voprov.models.voprovDescriptions
-   :members:
-
-VOProvRelations
-----------------
-
-.. automodule:: voprov.models.voprovRelations
+.. automodule:: voprov.registry
    :members:

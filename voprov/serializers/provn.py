@@ -10,7 +10,7 @@ class VOProvNSerializer(ProvNSerializer):
     """
     def serialize(self, stream, **kwargs):
         """
-        Serializes a :class:`voprov.models.model.VOProvDocument` instance to a
+        Serializes a :class:`voprov.model.VOProvDocument` instance to a
         `PROV-N <http://www.w3.org/TR/prov-n/>`_.
 
         :param stream: Where to save the output.

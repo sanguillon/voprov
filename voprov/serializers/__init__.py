@@ -24,9 +24,9 @@ class Registry:
         """Loads all available serializers into the registry."""
         from voprov.serializers.provjson import VOProvJSONSerializer
         from voprov.serializers.provn import VOProvNSerializer
-        from voprov.serializers.xml import VOProvXMLSerializer
+        from voprov.serializers.provxml import VOProvXMLSerializer
         from voprov.serializers.provrdf import VOProvRDFSerializer
-        from voprov.serializers.voyaml import VOProvYAMLSerializer
+        from voprov.serializers.provyaml import VOProvYAMLSerializer
 
         Registry.serializers = {
             'json': VOProvJSONSerializer,

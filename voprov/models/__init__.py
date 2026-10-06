@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
-__author__ = 'Jean-Francois Sornay'
-__email__ = 'jeanfrancois.sornay@gmail.com'
+"""Deprecated import path, kept for backward compatibility: use :mod:`voprov.model` instead of ``voprov.models``."""
+import warnings
 
-__all__ = ["model"]
+warnings.warn("voprov.models is deprecated, use voprov.model", DeprecationWarning, stacklevel=2)
+
+from voprov.model import *  # noqa: F401,F403
