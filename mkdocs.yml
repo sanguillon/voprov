@@ -1,0 +1,5 @@
+site_name: VOprov
+repo_url: https://github.com/mservillat/voprov
+theme: readthedocs
+pages:
+- Overview: 'index.md'
