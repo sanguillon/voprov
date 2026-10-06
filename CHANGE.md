@@ -1,7 +1,8 @@
 # Change log
 
-## Unreleased
+## v0.1.0, 06/10/2026
 
+- Requires Python 3.9 or later (tested with 3.9 and 3.12)
 - Support for prov 3.x (prov>=2.0,<4 is tested with 2.0, 2.2 and 3.2)
 - Package layout mirrors prov: `voprov.constants`, `voprov.model` (`records`, `namespaces`, `bundle`),
   `voprov.registry`, `voprov.dot`, `voprov.graph`, `voprov.plotly`, `voprov.serializers.provxml` and
@@ -10,7 +11,8 @@
 - voprov no longer modifies prov's namespaces on import, and registers its types in prov's tables in one place
   (`voprov.registry.register`)
 - `VOProvNamespaceManager` now calls the parent constructor
-- `lxml` is now a declared dependency
+- `lxml` is now a declared dependency, and `networkx` is part of the `dot` extra (needed by `prov` 3 for the graphs)
+- `rdflib` stays optional (`pip install voprov[rdf]`): without it, all formats but RDF work
 - `add_one_step` works without a default namespace and accepts a numeric `process_id`
 - Fixes: `add_dataset_description` (undefined name, ignored arguments), `Activity.set_time` now parses strings,
   `voprov.read` no longer returns None for unreadable sources

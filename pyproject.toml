@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "voprov"
-version = "0.0.4"
+version = "0.1.0"
 description = "A library for IVOA Provenance Data Model supporting PROV-JSON, PROV-XML and PROV-N"
 readme = "README.md"
 license = "MIT"

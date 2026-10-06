@@ -11,7 +11,7 @@ voprov follows the layout of the `prov` package:
 | [`voprov.registry`](registry.md) | | registration of the VOProv types in `prov` |
 
 Classes derived from `prov` link to the [prov documentation](https://prov.readthedocs.io).
-The paths used before version 0.0.5 still work, see [deprecated paths](deprecated.md).
+The paths used before version 0.1.0 still work, see [deprecated paths](deprecated.md).
 
 ```{toctree}
 :hidden:
