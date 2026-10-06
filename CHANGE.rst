@@ -16,6 +16,12 @@ Unreleased
 - ``add_one_step`` works without a default namespace and accepts a numeric ``process_id``
 - Fixes: ``add_dataset_description`` (undefined name, ignored arguments), ``Activity.set_time`` now parses strings,
   ``voprov.read`` no longer returns None for unreadable sources
+- PROV-XML: documents written by voprov can now be read back (``VOProvXMLSerializer.deserialize``);
+  ``ConfigFileDescription`` and ``ParameterDescription`` were missing from the base class table
+- YAML: the serializer works with prov>=2.1 (it could not be instantiated), no longer crashes on relations
+  referring to elements without attributes, writes to text streams, and keeps several ``used``/``generated``
+  entities. It is an export only: reading it raises NotImplementedError
+- Known limitation: RDF serialization of voprov documents is not supported yet
 - Packaging with ``pyproject.toml`` (setup.py and requirements*.txt removed), uv and just, pytest suite, GitLab CI
 
 

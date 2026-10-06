@@ -1,5 +1,8 @@
 # -*- coding: utf-8 -*-
+import warnings
+
 from prov.serializers.provxml import *
+from prov.serializers.provxml import xml_qname_to_QualifiedName
 from voprov.constants import *
 
 # Create a dictionary containing all top-level PROV XML elements for an easy
@@ -182,6 +185,80 @@ class VOProvXMLSerializer(ProvXMLSerializer):
                     subelem.text = v
         return xml_bundle_root
 
+    def deserialize(self, stream, **kwargs):
+        """
+        Deserialize from `PROV-XML <http://www.w3.org/TR/prov-xml/>`_ representation to a
+        :class:`~voprov.model.VOProvDocument` instance.
+
+        The structural elements and attributes (document, bundleContent, records, id, ref) are in the voprov
+        namespace, as written by :meth:`serialize`.
+
+        :param stream: Input data.
+        """
+        from voprov.model import VOProvDocument
+
+        if isinstance(stream, io.TextIOBase):
+            with io.BytesIO() as buf:
+                buf.write(stream.read().encode("utf-8"))
+                buf.seek(0, 0)
+                xml_doc = etree.parse(buf).getroot()
+        else:
+            xml_doc = etree.parse(stream).getroot()
+
+        # Remove all comments.
+        for c in xml_doc.xpath("//comment()"):
+            c.getparent().remove(c)
+
+        document = VOProvDocument()
+        self.deserialize_subtree(xml_doc, document)
+        return document
+
+    def deserialize_subtree(self, xml_doc, bundle):
+        """
+        Deserialize an etree element containing a VOProv document or a bundle and write it to the provided
+        internal object.
+
+        :param xml_doc: An etree element containing the information to read.
+        :param bundle: The bundle object to write to.
+        """
+        for element in xml_doc:
+            qname = etree.QName(element)
+            if qname.namespace != DEFAULT_NAMESPACES["voprov"].uri:
+                raise ProvXMLException("Non VOPROV element discovered in document or bundle.")
+            # Ignore the <voprov:other> element storing non-PROV information.
+            if qname.localname == "other":
+                warnings.warn("Document contains non-PROV information in <voprov:other>. "
+                              "It will be ignored in this package.", UserWarning)
+                continue
+
+            id_tag = _ns_prov("id")
+            rec_id = element.attrib[id_tag] if id_tag in element.attrib else None
+            # Try to make a qualified name out of it!
+            prov_rec_id = xml_qname_to_QualifiedName(element, rec_id) if rec_id is not None else None
+
+            # Recursively read bundles.
+            if qname.localname == "bundleContent":
+                b = bundle.bundle(identifier=prov_rec_id)
+                self.deserialize_subtree(element, b)
+                continue
+
+            attributes = _extract_attributes(element)
+
+            # Map the record type to its base type.
+            q_prov_name = FULL_PROV_RECORD_IDS_MAP[qname.localname]
+            rec_type = PROV_BASE_CLS[q_prov_name]
+
+            if _ns_xsi("type") in element.attrib:
+                value = xml_qname_to_QualifiedName(element, element.attrib[_ns_xsi("type")])
+                attributes.append((PROV["type"], value))
+
+            rec = bundle.new_record(rec_type, prov_rec_id, attributes)
+
+            # Add the actual type in case a base type has been used.
+            if rec_type != q_prov_name:
+                rec.add_asserted_type(q_prov_name)
+        return bundle
+
     def _derive_record_label(self, rec_type, attributes):
         """
         Helper function trying to derive the record label taking care of
@@ -220,3 +297,40 @@ def _ns_xsi(tag):
 def _ns_xml(tag):
     NS_XML = "http://www.w3.org/XML/1998/namespace"
     return _ns(NS_XML, tag)
+
+
+def _extract_attributes(element):
+    """
+    Extract the attributes of a record from an etree element.
+
+    :param element: The lxml.etree.Element instance.
+    """
+    attributes = []
+    for subel in element:
+        sqname = etree.QName(subel)
+        qname_str = "%s:%s" % (subel.prefix, sqname.localname) if subel.prefix else sqname.localname
+        _t = xml_qname_to_QualifiedName(subel, qname_str)
+
+        for key, value in subel.attrib.items():
+            value_str = value.decode("utf-8") if isinstance(value, bytes) else value
+            if key == _ns_prov("ref"):
+                _v = xml_qname_to_QualifiedName(subel, value_str)
+            elif key == _ns_xsi("type"):
+                datatype = xml_qname_to_QualifiedName(subel, value_str)
+                if datatype == XSD_QNAME:
+                    _v = xml_qname_to_QualifiedName(subel, subel.text)
+                else:
+                    _v = prov.model.Literal(subel.text, datatype)
+            elif key == _ns_xml("lang"):
+                _v = prov.model.Literal(subel.text, langtag=value_str)
+            else:
+                warnings.warn("The element '%s' contains an attribute %s='%s' which is not representable in the "
+                              "voprov module's internal data model and will thus be ignored."
+                              % (_t, str(key), str(value)), UserWarning)
+
+        if not subel.attrib:
+            _v = subel.text
+
+        attributes.append((_t, _v))
+
+    return attributes

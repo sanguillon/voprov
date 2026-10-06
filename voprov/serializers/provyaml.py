@@ -6,7 +6,32 @@ import yaml
 import io
 
 
+def _entry(sections, kind, identifier):
+    """Dictionary describing an element, created if needed (elements without attributes are stored as None)."""
+    section = sections.setdefault(kind, {})
+    if section.get(identifier) is None:
+        section[identifier] = {}
+    return section[identifier]
+
+
+def _append(entry, key, value):
+    """Set entry[key] to value, or to a list of values if several are added."""
+    if key not in entry:
+        entry[key] = value
+    elif isinstance(entry[key], list):
+        entry[key].append(value)
+    else:
+        entry[key] = [entry[key], value]
+
+
 class VOProvYAMLSerializer(Serializer):
+    """Human readable YAML summary of a VOProvDocument (export only).
+
+    Only the main records are kept (entities, agents, activities, their descriptions, usage, generation,
+    attribution and parameters) in a compact layout, so the document cannot be rebuilt from it:
+    use the JSON or XML format for a complete representation.
+    """
+
     def serialize(self, stream, **kwargs):
         """
         Serialize a VOProvDocument into a YAML file.
@@ -22,7 +47,8 @@ class VOProvYAMLSerializer(Serializer):
         dict_all_entity_description = {}
         dict_all_activity_description = {}
 
-        for record in list_records:
+        # elements first, then the relations that complete them
+        for record in sorted(list_records, key=lambda r: r.is_relation()):
             if isinstance(record, VOProvEntity):
                 dict_all_entity[record.identifier._str] = None
                 if record.attributes:
@@ -77,21 +103,22 @@ class VOProvYAMLSerializer(Serializer):
                 entity = record.attributes[0][1]._str
                 if len(record.attributes) > 2:
                     dict_attribute[record.attributes[1][1]._str] = {'role': record.attributes[2][1]}
-                dict_record['entity'][entity]['attributed'] = dict_attribute
+                _entry(dict_record, 'entity', entity).setdefault('attributed', {}).update(dict_attribute)
 
             elif isinstance(record, VOProvWasConfiguredBy):
                 activity = record.attributes[0][1]._str
                 for param in list_records:
                     if isinstance(param, VOProvParameter) and param.identifier._str == record.attributes[1][1]._str:
-                        dict_record['activity'][activity]['parameters'][param.attributes[0][1]] = param.attributes[1][1]
+                        _entry(dict_record, 'activity', activity).setdefault('parameters', {})[
+                            param.attributes[0][1]] = param.attributes[1][1]
 
             elif isinstance(record, VOProvUsage):
                 activity = record.attributes[0][1]._str
-                dict_record['activity'][activity]['used'] = record.attributes[1][1]._str
+                _append(_entry(dict_record, 'activity', activity), 'used', record.attributes[1][1]._str)
 
             elif isinstance(record, VOProvGeneration):
                 activity = record.attributes[1][1]._str
-                dict_record['activity'][activity]['generated'] = record.attributes[0][1]._str
+                _append(_entry(dict_record, 'activity', activity), 'generated', record.attributes[0][1]._str)
 
             elif isinstance(record, VOProvEntityDescription):
                 dict_all_entity_description[record.identifier._str] = None
@@ -122,8 +149,13 @@ class VOProvYAMLSerializer(Serializer):
                 dict_record['activity_description'] = dict_all_activity_description
 
         if isinstance(stream, io.TextIOBase):
-            yaml.dump(dict_record)
+            stream.write(yaml.dump(dict_record))
         else:
             stream.write(yaml.dump(dict_record, encoding="utf-8"))
+
+    def deserialize(self, stream, **kwargs):
+        """Not supported: the YAML export is a summary and does not contain the whole document."""
+        raise NotImplementedError("The YAML format is an export only, it cannot be read back. "
+                                  "Use the JSON or XML format to save a document.")
 
 

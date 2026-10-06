@@ -90,11 +90,11 @@ def main(outdir):
         s = attempt('serialize_' + fmt, lambda: d.serialize(format=fmt))
         if s is not None:
             open(os.path.join(outdir, 'doc.' + fmt), 'w').write(s)
-            if fmt in ('json', 'xml', 'yaml'):
+            if fmt in ('json', 'xml'):
                 def rt():
                     d2 = VOProvDocument.deserialize(content=s, format=fmt)
-                    return d2.serialize(format='json') == d.serialize(format='json')
-                results['roundtrip_' + fmt] = attempt('roundtrip_' + fmt, rt)
+                    assert d2 == d, 'documents differ'
+                attempt('roundtrip_' + fmt, rt)
     w = attempt('get_w3c', lambda: d.get_w3c().serialize(format='json'))
     if w:
         open(os.path.join(outdir, 'w3c.json'), 'w').write(w)

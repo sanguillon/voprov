@@ -11,6 +11,7 @@ Features
 
 * An implementation of the `IVOA Provenance Data Model <http://www.ivoa.net/documents/ProvenanceDM/>`_ in Python.
 * Serialization support: `PROV-N <http://www.w3.org/TR/prov-n/>`_, `PROV-XML <http://www.w3.org/TR/prov-xml/>`_ and `PROV-JSON <http://www.w3.org/Submission/prov-json/>`_.
+* Documents can be saved and read back as PROV-JSON and PROV-XML. PROV-N and YAML (a readable summary) are export only, and RDF is not supported yet for VOProv documents.
 * Exporting VOPROV documents into various graphical formats (e.g. PDF, PNG, SVG).
 * Convert a VOPROV document to a `Prov Document <https://github.com/trungdong/prov>`_.
 
