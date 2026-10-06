@@ -1198,9 +1198,9 @@ class VOProvBundle(ProvBundle):
 
     def add_dataset_description(self, description_id, name, contentType, entity_id = None, description=None, docurl=None, type=None, other_attributes=None):
         """add a description to a dataset entity"""
-        ed = self.datasetDescription(description_id, name, contentType, description=None, docurl=None, type=None, other_attributes=None)
+        ed = self.datasetDescription(description_id, name, contentType, description=description, docurl=docurl, type=type, other_attributes=other_attributes)
         if entity_id:
-            self.description(entity_id, ed_id)
+            self.description(entity_id, description_id)
         return ed
 
     def add_usage_description(self, identifier, activityDescription, role, description=None, type=None, multiplicity=None, entityDescription=None, other_attributes=None):
@@ -1329,7 +1329,7 @@ class VOProvBundle(ProvBundle):
         # Add contact
         if onestep.get("contact_name", None):
             ent.add_agent(
-                onsestep.get("contact_id", onestep["contact_name"]),  # TODO: remove blanks?
+                onestep.get("contact_id", onestep["contact_name"]),  # TODO: remove blanks?
                 name=onestep.get("contact_name", None),
                 type=onestep.get("contact_type", "Person"),
                 email=onestep.get("contact_email", None),
