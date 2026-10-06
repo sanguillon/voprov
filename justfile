@@ -24,3 +24,7 @@ build:
 # Remove build artefacts
 clean:
     rm -rf build dist *.egg-info docs/build .pytest_cache
+
+# Dump a reference document in all formats to DIR, to compare outputs between versions/branches
+dump dir:
+    uv run python test/consistency/build_doc.py {{dir}}

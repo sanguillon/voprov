@@ -4069,7 +4069,7 @@ docs = [
 requires-dist = [
     { name = "lxml" },
     { name = "plotly" },
-    { name = "prov", specifier = ">=2.0,<3.2" },
+    { name = "prov", specifier = ">=2.0,<4" },
     { name = "pydot", marker = "extra == 'dot'", specifier = ">=1.2.0" },
     { name = "python-dateutil" },
     { name = "pyyaml" },

@@ -28,7 +28,7 @@ classifiers = [
     "Topic :: Scientific/Engineering :: Information Analysis",
 ]
 dependencies = [
-    "prov>=2.0,<3.2",
+    "prov>=2.0,<4",
     "lxml",
     "python-dateutil",
     "requests",

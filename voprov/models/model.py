@@ -12,21 +12,19 @@ from prov.model import (ProvException, ProvDocument, ProvBundle, ProvActivity,
                         ProvCommunication, ProvStart, ProvEnd, ProvInvalidation, ProvDerivation,
                         ProvAttribution, ProvDelegation, ProvInfluence, ProvSpecialization,
                         ProvAlternate, ProvMention, ProvMembership,
-                        PROV_REC_CLS, DEFAULT_NAMESPACES, NamespaceManager, first)
+                        PROV_REC_CLS, NamespaceManager, first)
 from urllib.parse import urlparse
 
 from voprov import serializers
 from voprov.models.voprovDescriptions import *
 from voprov.models.voprovConfigurations import *
 from voprov.models.voprovRelations import *
+from voprov.models.constants import DEFAULT_NAMESPACES
 
 __author__ = 'Jean-Francois Sornay'
 __email__ = 'jeanfrancois.sornay@gmail.com'
 
 logger = logging.getLogger(__name__)
-
-DEFAULT_NAMESPACES.update({'voprov': VOPROV})
-
 
 def _ensure_datetime(value):
     if isinstance(value, str):
@@ -955,22 +953,13 @@ class VOProvNamespaceManager(NamespaceManager):
         :param parent: Optional parent :py:class:`NamespaceManager` to make this
             namespace manager a child of (default: None).
         """
-        dict.__init__(self)
+        super(VOProvNamespaceManager, self).__init__(default=default, parent=parent)
+        # register all default namespaces (including voprov) as declared namespaces
         self._default_namespaces = DEFAULT_NAMESPACES
-        self._namespaces = {}
-
-        if default is not None:
-            self.set_default_namespace(default)
-        else:
-            self._default = None
-        self.parent = parent
-        #  TODO check if default is in the default namespaces
-        self._anon_id_count = 0
-        self._uri_map = dict()
-        self._rename_map = dict()
-        self._prefix_renamed_map = dict()
         for namespace in self._default_namespaces.values():
-            self.add_namespace(namespace)
+            self._namespaces[namespace.prefix] = namespace
+            self[namespace.prefix] = namespace
+            self._uri_map[namespace.uri] = namespace
         self.add_namespaces(namespaces)
 
 
