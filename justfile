@@ -15,7 +15,7 @@ with-prov version *cmd:
 
 # Build the documentation
 docs:
-    uv run --group docs sphinx-build docs/source docs/build
+    uv run --extra docs sphinx-build -b html docs/source docs/build
 
 # Build sdist and wheel
 build:

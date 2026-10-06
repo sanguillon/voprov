@@ -1,0 +1,40 @@
+# Run the test suite against the oldest and newest supported Python and prov versions.
+# The prov version is forced with `uv run --with`, over the one locked in uv.lock.
+
+stages:
+  - test
+  - build
+
+.test:
+  stage: test
+  image: ghcr.io/astral-sh/uv:python$PYTHON-bookworm
+  variables:
+    UV_CACHE_DIR: .uv-cache
+  cache:
+    key: uv-$PYTHON
+    paths:
+      - .uv-cache
+  script:
+    - uv run --python $PYTHON --with "prov==$PROV" pytest -q -p no:cacheprovider
+
+test:py3.9-prov2.0:
+  extends: .test
+  variables: {PYTHON: "3.9", PROV: "2.0.0"}
+
+test:py3.12-prov2.2:
+  extends: .test
+  variables: {PYTHON: "3.12", PROV: "2.2.0"}
+
+test:py3.12-prov3.2:
+  extends: .test
+  variables: {PYTHON: "3.12", PROV: "3.2.2"}
+
+build:
+  stage: build
+  image: ghcr.io/astral-sh/uv:python3.12-bookworm
+  script:
+    - uv build
+  artifacts:
+    paths:
+      - dist/
+    expire_in: 1 week

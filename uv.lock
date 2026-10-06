@@ -4042,6 +4042,13 @@ dependencies = [
 ]
 
 [package.optional-dependencies]
+docs = [
+    { name = "sphinx", version = "7.4.7", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.10'" },
+    { name = "sphinx", version = "8.1.3", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version == '3.10.*'" },
+    { name = "sphinx", version = "9.0.4", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version == '3.11.*'" },
+    { name = "sphinx", version = "9.1.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.12'" },
+    { name = "sphinx-rtd-theme" },
+]
 dot = [
     { name = "pydot" },
 ]
@@ -4057,13 +4064,6 @@ dev = [
     { name = "pytest", version = "9.1.1", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.10'" },
     { name = "rdflib" },
 ]
-docs = [
-    { name = "sphinx", version = "7.4.7", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.10'" },
-    { name = "sphinx", version = "8.1.3", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version == '3.10.*'" },
-    { name = "sphinx", version = "9.0.4", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version == '3.11.*'" },
-    { name = "sphinx", version = "9.1.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.12'" },
-    { name = "sphinx-rtd-theme" },
-]
 
 [package.metadata]
 requires-dist = [
@@ -4075,8 +4075,10 @@ requires-dist = [
     { name = "pyyaml" },
     { name = "rdflib", marker = "extra == 'rdf'" },
     { name = "requests" },
+    { name = "sphinx", marker = "extra == 'docs'" },
+    { name = "sphinx-rtd-theme", marker = "extra == 'docs'" },
 ]
-provides-extras = ["rdf", "dot"]
+provides-extras = ["rdf", "dot", "docs"]
 
 [package.metadata.requires-dev]
 dev = [
@@ -4084,10 +4086,6 @@ dev = [
     { name = "pydot", specifier = ">=1.2.0" },
     { name = "pytest" },
     { name = "rdflib" },
-]
-docs = [
-    { name = "sphinx" },
-    { name = "sphinx-rtd-theme" },
 ]
 
 [[package]]

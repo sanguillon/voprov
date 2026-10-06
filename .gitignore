@@ -12,3 +12,6 @@ tutorials/modif2.py
 tutorials/modif3.py
 .DS_Store
 .venv
+docs/build/
+dist/
+.uv-cache/

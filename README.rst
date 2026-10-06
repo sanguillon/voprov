@@ -21,3 +21,17 @@ Uses
 A short tutorial for using this package is available here:
 
 https://github.com/mservillat/voprov/blob/master/tutorials/voprov_tutorial.ipynb
+
+
+Development
+-----------
+
+The project uses `uv <https://docs.astral.sh/uv/>`_ and `just <https://just.systems/>`_::
+
+    just sync       # create the virtual environment with all extras
+    just test       # run the test suite
+    just docs       # build the Sphinx documentation in docs/build
+    just with-prov 2.0.0 pytest   # run a command with a given version of prov
+
+``tests/consistency/build_doc.py`` (``just dump DIR``) writes a reference document in every format, to compare
+the serialized output between two versions of the code.
