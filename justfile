@@ -13,9 +13,9 @@ test *args:
 with-prov version *cmd:
     uv run --with "prov=={{version}}" {{cmd}}
 
-# Build the documentation
+# Build the documentation (warnings are errors) in docs/_build/html
 docs:
-    uv run --extra docs sphinx-build -b html docs/source docs/build
+    uv run --extra docs sphinx-build -b html -W --keep-going docs docs/_build/html
 
 # Build sdist and wheel
 build:
@@ -23,7 +23,7 @@ build:
 
 # Remove build artefacts
 clean:
-    rm -rf build dist *.egg-info docs/build .pytest_cache
+    rm -rf build dist *.egg-info docs/_build .pytest_cache
 
 # Dump a reference document in all formats to DIR, to compare outputs between versions/branches
 dump dir:

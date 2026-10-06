@@ -20,6 +20,8 @@
   referring to elements without attributes, writes to text streams, and keeps several `used`/`generated`
   entities. It is an export only: reading it raises NotImplementedError
 - Known limitation: RDF serialization of voprov documents is not supported yet
+- Documentation rebuilt with Sphinx, Furo and MyST (Markdown pages, notebooks rendered with myst-nb, links to the prov
+  documentation); the API pages were empty before. The code examples of the documentation are tested.
 - Packaging with `pyproject.toml` (setup.py and requirements*.txt removed), uv and just, pytest suite, GitLab CI
 
 

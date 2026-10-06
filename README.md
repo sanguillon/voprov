@@ -3,7 +3,7 @@
 A library for IVOA Provenance Data Model supporting PROV-N, PROV-XML, PROV-JSON export
 
 * Free software: MIT license (https://opensource.org/licenses/MIT)
-* Documentation: (incoming).
+* Documentation: https://voprov.readthedocs.io
 
 ## Features
 
@@ -28,7 +28,7 @@ The project uses [uv](https://docs.astral.sh/uv/) and [just](https://just.system
 ```bash
 just sync       # create the virtual environment with all extras
 just test       # run the test suite
-just docs       # build the Sphinx documentation in docs/build
+just docs       # build the documentation in docs/_build/html
 just with-prov 2.0.0 pytest   # run a command with a given version of prov
 ```
 

@@ -29,6 +29,18 @@ test:py3.12-prov3.2:
   extends: .test
   variables: {PYTHON: "3.12", PROV: "3.2.2"}
 
+docs:
+  stage: test
+  image: ghcr.io/astral-sh/uv:python3.12-bookworm
+  variables:
+    UV_CACHE_DIR: .uv-cache
+  script:
+    - uv run --extra docs sphinx-build -b html -W --keep-going docs docs/_build/html
+  artifacts:
+    paths:
+      - docs/_build/html
+    expire_in: 1 week
+
 build:
   stage: build
   image: ghcr.io/astral-sh/uv:python3.12-bookworm

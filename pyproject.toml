@@ -39,7 +39,12 @@ dependencies = [
 [project.optional-dependencies]
 rdf = ["rdflib"]
 dot = ["pydot>=1.2.0"]
-docs = ["sphinx", "sphinx-rtd-theme"]
+docs = [
+    "sphinx",
+    "furo",
+    "myst-nb",
+    "sphinx-copybutton",
+]
 
 [project.urls]
 Homepage = "https://gitlab.obspm.fr/mservillat/voprov"

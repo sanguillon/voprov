@@ -15,3 +15,5 @@ tutorials/modif3.py
 docs/build/
 dist/
 .uv-cache/
+docs/_build/
+docs/tutorials/*.ipynb
