@@ -1,0 +1,66 @@
+[build-system]
+requires = ["setuptools>=64"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "voprov"
+version = "0.0.4"
+description = "A library for IVOA Provenance Data Model supporting PROV-JSON, PROV-XML and PROV-N"
+readme = "README.rst"
+license = "MIT"
+license-files = ["LICENSE"]
+authors = [
+    { name = "Benjamin Parciany", email = "benjamin.parciany@obspm.fr" },
+    { name = "Mathieu Servillat", email = "mathieu@servillat.com" },
+]
+requires-python = ">=3.9"
+keywords = [
+    "provenance", "graph", "model", "VOPROV", "provenance-dm", "PROVENANCE-DM",
+    "PROV-JSON", "JSON", "PROV-XML", "PROV-N",
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Information Technology",
+    "Intended Audience :: Science/Research",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Topic :: Scientific/Engineering :: Information Analysis",
+]
+dependencies = [
+    "prov>=2.0,<3.2",
+    "lxml",
+    "python-dateutil",
+    "requests",
+    "pyyaml",
+    "plotly",
+]
+
+[project.optional-dependencies]
+rdf = ["rdflib"]
+dot = ["pydot>=1.2.0"]
+
+[project.urls]
+Homepage = "https://gitlab.obspm.fr/mservillat/voprov"
+Repository = "https://gitlab.obspm.fr/mservillat/voprov"
+
+[dependency-groups]
+dev = [
+    "pytest",
+    "pydot>=1.2.0",
+    "rdflib",
+    "jupyter",
+]
+docs = [
+    "sphinx",
+    "sphinx-rtd-theme",
+]
+
+[tool.setuptools.packages.find]
+include = ["voprov*"]
+
+[tool.uv]
+default-groups = ["dev"]
+
+[tool.pytest.ini_options]
+testpaths = ["test"]
