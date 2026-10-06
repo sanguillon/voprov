@@ -16,9 +16,9 @@ A library for IVOA Provenance Data Model supporting PROV-N, PROV-XML, PROV-JSON 
 
 ## Uses
 
-A short tutorial for using this package is available here:
+Tutorials are available as notebooks in the `tutorials` folder. A short one for using this package is here:
 
-https://github.com/mservillat/voprov/blob/master/tutorials/voprov_tutorial.ipynb
+https://gitlab.obspm.fr/mservillat/voprov/-/blob/main/tutorials/voprov_tutorial.ipynb
 
 
 ## Development
