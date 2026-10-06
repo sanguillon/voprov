@@ -178,3 +178,27 @@ def test_yaml_cannot_be_read_back(reference_doc):
 def test_rdf_roundtrip(reference_doc):
     again = VOProvDocument.deserialize(content=reference_doc.serialize(format="rdf"), format="rdf")
     assert again == reference_doc
+
+
+def test_without_rdflib_the_other_formats_work():
+    """rdflib is an optional dependency: a plain install must still read and write JSON, XML, ..."""
+    import subprocess
+    import sys
+    code = (
+        "import sys; sys.modules['rdflib'] = None  # makes 'import rdflib' fail\n"
+        "import voprov\n"
+        "from voprov import serializers\n"
+        "from voprov.model import VOProvDocument\n"
+        "d = VOProvDocument(); d.add_namespace('ex', 'http://example.org/'); d.activity('ex:a')\n"
+        "for fmt in ('json', 'xml', 'provn', 'yaml'):\n"
+        "    d.serialize(format=fmt)\n"
+        "assert VOProvDocument.deserialize(content=d.serialize(format='json'), format='json') == d\n"
+        "assert 'rdf' not in serializers.Registry.serializers\n"
+        "try:\n"
+        "    d.serialize(format='rdf')\n"
+        "except serializers.DoNotExist as e:\n"
+        "    print(e)\n"
+    )
+    result = subprocess.run([sys.executable, "-W", "ignore", "-c", code], capture_output=True, text=True)
+    assert result.returncode == 0, result.stderr
+    assert "voprov[rdf]" in result.stdout

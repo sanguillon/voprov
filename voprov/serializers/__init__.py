@@ -25,16 +25,20 @@ class Registry:
         from voprov.serializers.provjson import VOProvJSONSerializer
         from voprov.serializers.provn import VOProvNSerializer
         from voprov.serializers.provxml import VOProvXMLSerializer
-        from voprov.serializers.provrdf import VOProvRDFSerializer
         from voprov.serializers.provyaml import VOProvYAMLSerializer
 
         Registry.serializers = {
             'json': VOProvJSONSerializer,
-            'rdf': VOProvRDFSerializer,
             'provn': VOProvNSerializer,
             'xml': VOProvXMLSerializer,
             'yaml': VOProvYAMLSerializer
         }
+        try:
+            from voprov.serializers.provrdf import VOProvRDFSerializer
+            Registry.serializers['rdf'] = VOProvRDFSerializer
+        except ImportError:
+            # rdflib is an optional dependency (pip install voprov[rdf])
+            pass
 
 
 def get(format_name):
@@ -47,6 +51,7 @@ def get(format_name):
     try:
         return Registry.serializers[format_name]
     except KeyError:
+        hint = ' (install the rdflib package: pip install voprov[rdf])' if format_name == 'rdf' else ''
         raise DoNotExist(
-            'No serializer available for the format "%s"' % format_name
+            'No serializer available for the format "%s"%s' % (format_name, hint)
         )
