@@ -1,15 +1,11 @@
-=======
-Credits
-=======
+# Credits
 
-Development Lead
-----------------
+## Development Lead
 
 * Benjamin Parciany
 * Mathieu Servillat
 
-Contributors
-------------
+## Contributors
 
 * Jean-François Sornay
 * Michèle Sanguillon
