@@ -361,11 +361,7 @@ class VOProvActivity(ProvActivity):
 
     def add_parameter(self, idparam, nameparam, valueparam, parameterDescription=None, other_attributes=None):
         """Add a parameter to an activity with the relation wasConfiguredBy in a dedicated bundle"""
-        idbundle = "#configuration#" + self.identifier._str.replace(":", "#")
-        if self._bundle.valid_qualified_name(idbundle) not in self._bundle._bundles:
-            bundle_config = self._bundle.bundle(idbundle)
-        else:
-            bundle_config = self._bundle._bundles[self._bundle.valid_qualified_name(idbundle)]
+        bundle_config = self._bundle._dedicated_bundle('configuration', self.identifier._str)
         param = bundle_config.parameter(idparam, nameparam, valueparam, parameterDescription, other_attributes)
         self._bundle.wasConfiguredBy(self, param)
         self._bundle.unified_relations()
@@ -374,11 +370,7 @@ class VOProvActivity(ProvActivity):
     def add_configFile(self, idfile, namefile, locationfile, comment=None, configFileDescription=None,
                        other_attributes=None):
         """add a configuration file to an activity with the relation wasConfiguredBy in a dedicated bundle"""
-        idbundle = "#configuration#" + self.identifier._str.replace(":", "#")
-        if self._bundle.valid_qualified_name(idbundle) not in self._bundle._bundles:
-            bundle_config = self._bundle.bundle(idbundle)
-        else:
-            bundle_config = self._bundle._bundles[self._bundle.valid_qualified_name(idbundle)]
+        bundle_config = self._bundle._dedicated_bundle('configuration', self.identifier._str)
         file = bundle_config.configFile(idfile, namefile, locationfile, comment, configFileDescription, other_attributes)
         self._bundle.wasConfiguredBy(self, file, 'ConfigFile')
         return file

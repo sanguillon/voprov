@@ -1175,15 +1175,28 @@ class VOProvBundle(ProvBundle):
         )
 
 
+    def _dedicated_bundle(self, kind, identifier):
+        """Get (or create) the bundle dedicated to the descriptions or configuration of an element.
+
+        :param kind:                    'description' or 'configuration'.
+        :param identifier:              Identifier of the described/configured element.
+
+        The bundle is named ``#<kind>#<identifier>``, a local name in the default namespace. If no default
+        namespace is set (such a name is not valid), the ``voprov`` namespace is used explicitly.
+        """
+        idbundle = '#%s#%s' % (kind, str(identifier).replace(":", "#"))
+        if self.valid_qualified_name(idbundle) is None:
+            idbundle = 'voprov:' + idbundle
+        valid_id = self.valid_qualified_name(idbundle)
+        if valid_id in self._bundles:
+            return self._bundles[valid_id]
+        return self.bundle(idbundle)
+
     # ADD_ functions
 
     def add_activity_description(self, description_id, name, version = None, activity_id= None, description = None, docurl = None, type = None, subtype = None, other_attributes = None):
         """add a description to an activity in the dedicated bundle"""
-        idbundle = '#description#' + description_id.replace(":", "#")
-        if self.valid_qualified_name(idbundle) not in self._bundles:
-            bundle_description = self.bundle(idbundle)
-        else:
-            bundle_description = self._bundles[self.valid_qualified_name(idbundle)]
+        bundle_description = self._dedicated_bundle('description', description_id)
         ad = bundle_description.activityDescription(description_id, name, version, description, docurl, type, subtype, other_attributes)
         if activity_id:
             self.description(activity_id, description_id)
@@ -1205,29 +1218,17 @@ class VOProvBundle(ProvBundle):
 
     def add_usage_description(self, identifier, activityDescription, role, description=None, type=None, multiplicity=None, entityDescription=None, other_attributes=None):
         """add a description to a usage in the dedicated bundle"""
-        idbundle = '#description#' + activityDescription.replace(":", "#")
-        if self.valid_qualified_name(idbundle) not in self._bundles:
-            bundle_description = self.bundle(idbundle)
-        else:
-            bundle_description = self._bundles[self.valid_qualified_name(idbundle)]
+        bundle_description = self._dedicated_bundle('description', activityDescription)
         return bundle_description.usageDescription(identifier, activityDescription, role, description, type, multiplicity, entityDescription, other_attributes)
 
     def add_generation_description(self, identifier, activityDescription, role, description=None, type=None, multiplicity=None, entityDescription=None, other_attributes=None):
         """add a description to a generation in the dedicated bundle"""
-        idbundle = '#description#' + activityDescription.replace(":", "#")
-        if self.valid_qualified_name(idbundle) not in self._bundles:
-            bundle_description = self.bundle(idbundle)
-        else:
-            bundle_description = self._bundles[self.valid_qualified_name(idbundle)]
+        bundle_description = self._dedicated_bundle('description', activityDescription)
         return bundle_description.generationDescription(identifier, activityDescription, role, description, type, multiplicity, entityDescription, other_attributes)
 
     def add_parameter_description(self, identifier, activityDescription, name, valueType, description=None, unit=None, ucd=None, utype=None, min=None, max=None, options=None, default=None, other_attributes=None):
         """add a description to a parameter in the dedicated bundle"""
-        idbundle = '#description#' + activityDescription.replace(":", "#")
-        if self.valid_qualified_name(idbundle) not in self._bundles:
-            bundle_description = self.bundle(idbundle)
-        else:
-            bundle_description = self._bundles[self.valid_qualified_name(idbundle)]
+        bundle_description = self._dedicated_bundle('description', activityDescription)
         return bundle_description.parameterDescription(identifier, activityDescription, name, valueType, description, unit, ucd, utype, min, max, options, default, other_attributes)
 
 
@@ -1342,7 +1343,7 @@ class VOProvBundle(ProvBundle):
         # add process
         if onestep.get("process_id", None):
             ps = self.activity(
-                onestep['process_id'],
+                str(onestep['process_id']),
                 name=onestep.get("workflow_name", None),
                 comment=onestep.get("process_comment", None),
             )
@@ -1364,7 +1365,7 @@ class VOProvBundle(ProvBundle):
                     comment=onestep.get("instrument_comment", None),
                 )
                 ps.used(onestep["instrument_id"], attributes={'prov:role': "instrument"})
-            act.wasInformedBy(onestep['process_id'])
+            act.wasInformedBy(str(onestep['process_id']))
         self.unified_relations()
         return ent
         # END of onestep function
