@@ -5,7 +5,7 @@ tutorials/*.json
 tutorials/*.png
 tutorials/*.xml
 tutorials/.ipynb_checkpoints
-test/
+local_test/
 tutorials/one_step.py
 tutorials/modif1.py
 tutorials/modif2.py

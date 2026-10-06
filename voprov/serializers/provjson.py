@@ -2,6 +2,14 @@
 from prov.serializers.provjson import *
 from voprov.models.constants import *
 
+# Reverse map for prov.model.XSD_DATATYPE_PARSERS (defined locally: its location in prov changes between versions)
+LITERAL_XSDTYPE_MAP = {
+    float: "xsd:double",
+    int: "xsd:int",
+    # boolean, string values are supported natively by PROV-JSON
+    # datetime values are converted separately
+}
+
 
 class VOProvJSONSerializer(Serializer):
     """

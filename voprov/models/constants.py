@@ -1,12 +1,15 @@
 # -*- coding: utf-8 -*-
 from prov.constants import *
-from prov.model import Literal
+from prov.model import Literal, DEFAULT_NAMESPACES as PROV_DEFAULT_NAMESPACES
 
 __author__ = 'Jean-Francois Sornay'
 __email__ = 'jeanfrancois.sornay@gmail.com'
 
 
 VOPROV = Namespace('voprov', 'http://www.ivoa.net/documents/ProvenanceDM/index.html#')
+
+# Namespaces known by default to voprov (prov's own table is left untouched)
+DEFAULT_NAMESPACES = dict(PROV_DEFAULT_NAMESPACES, voprov=VOPROV)
 
 # Part 1 : namespace for voprov classes
 # extend prov model

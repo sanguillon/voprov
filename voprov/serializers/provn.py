@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+import io
+
 from prov.serializers.provn import *
 
 
