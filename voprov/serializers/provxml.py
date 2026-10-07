@@ -1,9 +1,25 @@
 # -*- coding: utf-8 -*-
+"""PROV-XML serializer for VOProv documents.
+
+The file is standard PROV-XML (https://www.w3.org/TR/prov-xml/), that any tool of PROV can read. The VOProv records
+that PROV-XML does not have are written as the PROV record that they specialize, marked with a ``prov:type`` of the
+``voprov`` namespace (see :mod:`voprov.serializers.marked`)::
+
+    <prov:entity prov:id="ex:offset">
+      <prov:name>offset</prov:name>
+      <prov:type xsi:type="xsd:QName">voprov:ValueEntity</prov:type>
+    </prov:entity>
+
+The marker gives its class back when the file is read by voprov. The files written by the former versions of voprov,
+in which the elements and the ``id`` and ``ref`` attributes were in the ``voprov`` namespace, can still be read.
+"""
 import warnings
 
 from prov.serializers.provxml import *
+from prov.identifier import QualifiedName
 from prov.serializers.provxml import xml_qname_to_QualifiedName
 from voprov.constants import *
+from voprov.serializers.marked import MARKED_TYPES, find_marker, relation_ends, written_as
 
 # Create a dictionary containing all top-level PROV XML elements for an easy
 # mapping.
@@ -15,7 +31,11 @@ FULL_PROV_RECORD_IDS_MAP = dict((FULL_NAMES_MAP[rec_type_id], rec_type_id) for
 
 
 class VOProvXMLSerializer(ProvXMLSerializer):
-    """PROV-XML serializer for :class:`~voprov.model.VOProvDocument`
+    """PROV-XML serializer for :class:`~voprov.model.VOProvDocument`.
+
+    The file is standard PROV-XML: the VOProv records that PROV-XML does not have are written as PROV entities and
+    influences, marked with a ``prov:type`` in the ``voprov`` namespace, that gives them their class back when the
+    file is read. The files of the former format, with the elements in the ``voprov`` namespace, are still read.
     """
     def serialize(self, stream, force_types=False, **kwargs):
         """
@@ -101,15 +121,26 @@ class VOProvXMLSerializer(ProvXMLSerializer):
             else:
                 attrs = None
 
+            # The attributes of the record. A record of VOProv that PROV does not have is written as the PROV
+            # record that it specializes, marked with its type.
+            attributes = list(record.attributes)
+            written_type, marker = written_as(rec_type)
+            order_type = rec_type
+            if marker is not None:
+                if written_type == VOPROV_INFLUENCE:
+                    # a relation of VOProv is an influence, between the first two ends of the relation
+                    renamed = dict(relation_ends(marker))
+                    attributes = [(renamed.get(attr, attr), value) for attr, value in attributes]
+                    order_type = VOPROV_INFLUENCE
+                attributes.append((PROV_TYPE, marker))
             # Derive the record label from its attributes which is sometimes
             # needed.
-            attributes = list(record.attributes)
-            rec_label = self._derive_record_label(rec_type, attributes)
+            rec_label = self._derive_record_label(written_type, attributes)
 
             elem = etree.SubElement(xml_bundle_root,
                                     _ns_prov(rec_label), attrs)
 
-            for attr, value in sorted_attributes(rec_type, attributes):
+            for attr, value in sorted_attributes(order_type, attributes):
                 subelem = etree.SubElement(
                     elem, _ns(attr.namespace.uri, attr.localpart))
                 if isinstance(value, prov.model.Literal):
@@ -223,16 +254,15 @@ class VOProvXMLSerializer(ProvXMLSerializer):
         """
         for element in xml_doc:
             qname = etree.QName(element)
-            if qname.namespace != DEFAULT_NAMESPACES["voprov"].uri:
-                raise ProvXMLException("Non VOPROV element discovered in document or bundle.")
-            # Ignore the <voprov:other> element storing non-PROV information.
+            if qname.namespace not in STRUCTURAL_NAMESPACES:
+                raise ProvXMLException("Non PROV element discovered in document or bundle.")
+            # Ignore the <prov:other> element storing non-PROV information.
             if qname.localname == "other":
-                warnings.warn("Document contains non-PROV information in <voprov:other>. "
+                warnings.warn("Document contains non-PROV information in <prov:other>. "
                               "It will be ignored in this package.", UserWarning)
                 continue
 
-            id_tag = _ns_prov("id")
-            rec_id = element.attrib[id_tag] if id_tag in element.attrib else None
+            rec_id = _structural_attribute(element, "id")
             # Try to make a qualified name out of it!
             prov_rec_id = xml_qname_to_QualifiedName(element, rec_id) if rec_id is not None else None
 
@@ -252,7 +282,8 @@ class VOProvXMLSerializer(ProvXMLSerializer):
                 value = xml_qname_to_QualifiedName(element, element.attrib[_ns_xsi("type")])
                 attributes.append((PROV["type"], value))
 
-            rec = bundle.new_record(rec_type, prov_rec_id, attributes)
+            record_type, attributes = _read_marker(rec_type, attributes)
+            rec = bundle.new_record(record_type, prov_rec_id, attributes)
 
             # Add the actual type in case a base type has been used.
             if rec_type != q_prov_name:
@@ -271,7 +302,7 @@ class VOProvXMLSerializer(ProvXMLSerializer):
         rec_label = FULL_NAMES_MAP[rec_type]
 
         for key, value in list(attributes):
-            if key != VOPROV_TYPE:
+            if key != PROV_TYPE:
                 continue
             if isinstance(value, prov.model.Literal):
                 value = value.value
@@ -287,6 +318,11 @@ def _ns(ns, tag):
 
 
 def _ns_prov(tag):
+    return _ns(DEFAULT_NAMESPACES['prov'].uri, tag)
+
+
+def _ns_voprov(tag):
+    """Namespace of the elements in the files that were written by the former versions of voprov."""
     return _ns(DEFAULT_NAMESPACES['voprov'].uri, tag)
 
 
@@ -313,7 +349,7 @@ def _extract_attributes(element):
 
         for key, value in subel.attrib.items():
             value_str = value.decode("utf-8") if isinstance(value, bytes) else value
-            if key == _ns_prov("ref"):
+            if key in (_ns_prov("ref"), _ns_voprov("ref")):
                 _v = xml_qname_to_QualifiedName(subel, value_str)
             elif key == _ns_xsi("type"):
                 datatype = xml_qname_to_QualifiedName(subel, value_str)
@@ -334,3 +370,34 @@ def _extract_attributes(element):
         attributes.append((_t, _v))
 
     return attributes
+
+
+#: the namespaces of the elements of a file: PROV, and VOProv for the files of the former versions
+STRUCTURAL_NAMESPACES = (DEFAULT_NAMESPACES['prov'].uri, DEFAULT_NAMESPACES['voprov'].uri)
+
+
+def _structural_attribute(element, name):
+    """Attribute of PROV-XML (id, ref) of an element, in the namespace of PROV or in the one of the former files."""
+    for tag in (_ns_prov(name), _ns_voprov(name)):
+        if tag in element.attrib:
+            return element.attrib[tag]
+    return None
+
+
+def _read_marker(rec_type, attributes):
+    """Gives its VOProv type to a record that is marked (see the documentation of the module).
+
+    Returns the type of the record and its attributes, without the marker. A record that is not marked, as the
+    ones written by other tools, is not changed. The type that a record has by definition (``voprov:Entity`` on an
+    entity, which is written by some tools that export to PROV) is not an attribute of it.
+    """
+    types = [value for attr, value in attributes if attr == PROV_TYPE and isinstance(value, QualifiedName)]
+    marker = find_marker(rec_type, types)
+    new_type = marker if marker is not None else rec_type
+    if marker is not None and MARKED_TYPES[marker] == VOPROV_INFLUENCE:
+        # a relation of VOProv: its ends are the first formal attributes of the relation
+        renamed = dict((plain, formal) for formal, plain in relation_ends(marker))
+        attributes = [(renamed.get(attr, attr), value) for attr, value in attributes]
+    redundant = (rec_type, new_type)
+    attributes = [(attr, value) for attr, value in attributes if not (attr == PROV_TYPE and value in redundant)]
+    return new_type, attributes

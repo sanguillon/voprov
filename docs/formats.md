@@ -6,7 +6,7 @@ A document is saved with `doc.serialize(destination, format=...)` and read with
 | Format | `format=` | Write | Read | Notes |
 |---|---|---|---|---|
 | PROV-JSON | `"json"` | yes | yes | complete; standard PROV-JSON, readable by any PROV tool |
-| PROV-XML | `"xml"` | yes | yes | complete; structural elements are in the `voprov` namespace |
+| PROV-XML | `"xml"` | yes | yes | complete; standard PROV-XML, readable by any PROV tool |
 | PROV-N | `"provn"` | yes | no | human readable text |
 | YAML | `"yaml"` | yes | no | compact summary, see below |
 | RDF | `"rdf"` | yes | yes | complete; PROV-O compatible (TriG, Turtle, JSON-LD, ...), needs `rdflib` |
@@ -41,7 +41,36 @@ and are marked with a `prov:type` of the `voprov` namespace. voprov uses the mar
 - `doc.get_w3c()` followed by a serialization with `prov` gives a file that voprov reads back as the same document.
 - The files written by voprov before 0.1.0, which had a section for each VOProv record (`valueEntity`,
   `isDescribedBy`, ...), are still read. The files of other tools are read as VOProv records: PROV records have no
-  marker, so they cannot be told from the ones of VOProv.
+  marker, so they cannot be told from the ones of VOProv. This is the same for the XML.
+
+## PROV-XML
+
+Like the JSON, the file is standard [PROV-XML](https://www.w3.org/TR/prov-xml/): the document and the records are
+elements of the PROV namespace, with `prov:id` and `prov:ref`, so that the tools that read PROV-XML can read it. The
+VOProv records that PROV-XML does not have are the PROV records that they specialize (entities and influences), with
+a `prov:type` marker of the `voprov` namespace that gives them their class back when voprov reads the file.
+
+```xml
+<prov:document xmlns:prov="http://www.w3.org/ns/prov#"
+               xmlns:voprov="http://www.ivoa.net/documents/ProvenanceDM/index.html#"
+               xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+               xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+               xmlns:ex="http://example.org/">
+  <prov:entity prov:id="ex:offset">
+    <prov:name>offset</prov:name>
+    <prov:type xsi:type="xsd:QName">voprov:ValueEntity</prov:type>
+    <voprov:value xsi:type="xsd:double">3.5</voprov:value>
+  </prov:entity>
+  <prov:wasInfluencedBy>
+    <prov:influencee prov:ref="ex:run1"/>
+    <prov:influencer prov:ref="ex:calibrate"/>
+    <prov:type xsi:type="xsd:QName">voprov:DescriptionRelation</prov:type>
+  </prov:wasInfluencedBy>
+</prov:document>
+```
+
+The markers, and how the files of other tools and of former versions are read, are the same as for the JSON. The files
+of voprov before 0.1.0, in which the elements were in the `voprov` namespace, are still read.
 
 ## RDF
 

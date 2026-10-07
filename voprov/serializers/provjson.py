@@ -15,6 +15,7 @@ that had a section for each VOProv record (``valueEntity``, ``isDescribedBy``, .
 from prov.constants import XSD_QNAME
 from prov.serializers.provjson import *
 from voprov.constants import *
+from voprov.serializers.marked import MARKED_TYPES, find_marker, relation_ends, written_as
 
 # Reverse map for prov.model.XSD_DATATYPE_PARSERS (defined locally: its location in prov changes between versions)
 LITERAL_XSDTYPE_MAP = {
@@ -23,36 +24,6 @@ LITERAL_XSDTYPE_MAP = {
     # boolean, string values are supported natively by PROV-JSON
     # datetime values are converted separately
 }
-
-
-# -- Sections and markers ----------------------------------------------------------------------------------------------
-
-#: VOProv elements that are written as a PROV entity, marked with their type
-MARKED_ENTITIES = [
-    VOPROV_VALUE_ENTITY, VOPROV_DATASET_ENTITY, VOPROV_CONFIGURATION_FILE, VOPROV_CONFIGURATION_PARAMETER,
-    VOPROV_ACTIVITY_DESCRIPTION, VOPROV_ENTITY_DESCRIPTION, VOPROV_VALUE_DESCRIPTION, VOPROV_DATASET_DESCRIPTION,
-    VOPROV_USAGE_DESCRIPTION, VOPROV_GENERATION_DESCRIPTION, VOPROV_CONFIG_FILE_DESCRIPTION,
-    VOPROV_PARAMETER_DESCRIPTION,
-]
-#: VOProv relations that are written as a PROV influence, marked with their type
-MARKED_RELATIONS = [
-    VOPROV_DESCRIPTION_RELATION, VOPROV_RELATED_TO_RELATION, VOPROV_CONFIGURATION_RELATION,
-    VOPROV_REFERENCE_RELATION,
-]
-#: the marked types, and the PROV type of the section where they are written
-MARKED_TYPES = dict([(t, VOPROV_ENTITY) for t in MARKED_ENTITIES] + [(t, VOPROV_INFLUENCE) for t in MARKED_RELATIONS])
-
-
-def _section(rec_type):
-    """Section of PROV-JSON where a record is written, and the marker that tells its VOProv type (or None)."""
-    if rec_type in MARKED_TYPES:
-        return PROV_N_MAP[MARKED_TYPES[rec_type]], rec_type
-    return PROV_N_MAP[rec_type], None
-
-
-def _formal_attributes(rec_type):
-    import prov.model
-    return prov.model.PROV_REC_CLS[rec_type].FORMAL_ATTRIBUTES
 
 
 class VOProvJSONSerializer(Serializer):
@@ -151,13 +122,13 @@ def encode_json_container(bundle):
 
     for record in bundle._records:
         rec_type = record.get_type()
-        rec_label, marker = _section(rec_type)
+        written_type, marker = written_as(rec_type)
+        rec_label = PROV_N_MAP[written_type]
         identifier = str(real_or_anon_id(record))
         renamed = {}
-        if marker in MARKED_RELATIONS:
+        if marker is not None and written_type == VOPROV_INFLUENCE:
             # a relation of VOProv is an influence, between the first two elements of the relation
-            formal = _formal_attributes(rec_type)
-            renamed = {formal[0]: PROV_ATTR_INFLUENCEE, formal[1]: PROV_ATTR_INFLUENCER}
+            renamed = dict(relation_ends(marker))
 
         record_json = {}
         if record._attributes:
@@ -221,13 +192,12 @@ def _read_marker(rec_type, attributes, other_attributes):
     entity, which is written by some tools that export to PROV) is not an attribute of it.
     """
     types = [value for attr, value in other_attributes if attr == PROV_TYPE and isinstance(value, QualifiedName)]
-    marker = next((t for t in types if MARKED_TYPES.get(t) == rec_type), None)
+    marker = find_marker(rec_type, types)
     new_type = marker if marker is not None else rec_type
     if marker is not None and MARKED_TYPES[marker] == VOPROV_INFLUENCE:
         # a relation of VOProv: its ends are the first formal attributes of the relation
-        formal = _formal_attributes(marker)
         attributes = dict(attributes)
-        for plain, formal_attribute in ((PROV_ATTR_INFLUENCEE, formal[0]), (PROV_ATTR_INFLUENCER, formal[1])):
+        for formal_attribute, plain in relation_ends(marker):
             if plain in attributes:
                 attributes[formal_attribute] = attributes.pop(plain)
     redundant = (rec_type, new_type)
