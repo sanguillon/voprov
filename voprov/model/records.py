@@ -1273,7 +1273,10 @@ class VOProvRelation(ProvRelation):
         """get this relation in the prov version which is an implementation of the W3C PROV-DM standard"""
         if bundle is None:
             bundle = ProvBundle()
-        attribute = self.extra_attributes
+        # the first two formal attributes are the ends of the influence, the others (such as the type of artefact of
+        # a configuration) are kept as attributes
+        attribute = list(self.extra_attributes) + [(attr, value) for attr, value in self.formal_attributes[2:]
+                                                   if value is not None]
         relation_formal_attribute = self.formal_attributes[0:2]
 
         w3c_record = ProvInfluence(bundle, self.identifier, attribute)

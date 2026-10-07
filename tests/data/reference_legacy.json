@@ -1,0 +1,380 @@
+{
+ "actedOnBehalfOf": {
+  "_:id20": {
+   "prov:activity": "ex:a1",
+   "prov:delegate": "ex:ag2",
+   "prov:responsible": "ex:ag1"
+  }
+ },
+ "activity": {
+  "ex:a0": {
+   "prov:name": "prev"
+  },
+  "ex:a1": {
+   "prov:endTime": "2023-01-01T11:00:00",
+   "prov:name": "cal run",
+   "prov:startTime": "2023-01-01T10:00:00",
+   "voprov:comment": "run"
+  }
+ },
+ "activityDescription": {
+  "ex:ad1": {
+   "prov:name": "Calibrate",
+   "voprov:description": "cal",
+   "voprov:docurl": "http://doc",
+   "voprov:type": "calib",
+   "voprov:version": "1.0"
+  }
+ },
+ "agent": {
+  "ex:ag1": {
+   "prov:name": "Alice",
+   "voprov:address": "Paris",
+   "voprov:affiliation": "Obs",
+   "voprov:email": "a@x.org",
+   "voprov:phone": "123",
+   "voprov:type": "Person",
+   "voprov:url": "http://alice"
+  },
+  "ex:ag2": {
+   "prov:name": "Software",
+   "voprov:type": "SoftwareAgent"
+  }
+ },
+ "alternateOf": {
+  "_:id27": {
+   "prov:alternate1": "ex:e2",
+   "prov:alternate2": "ex:e1"
+  }
+ },
+ "bundle": {
+  "ex:b1": {
+   "activity": {
+    "ex:ba1": {}
+   },
+   "entity": {
+    "ex:be1": {
+     "prov:name": "in bundle"
+    }
+   },
+   "prefix": {
+    "prov": "http://www.w3.org/ns/prov#",
+    "voprov": "http://www.ivoa.net/documents/ProvenanceDM/index.html#",
+    "xsd": "http://www.w3.org/2001/XMLSchema#",
+    "xsi": "http://www.w3.org/2001/XMLSchema-instance"
+   },
+   "used": {
+    "_:id1": {
+     "prov:activity": "ex:ba1",
+     "prov:entity": "ex:be1"
+    }
+   }
+  }
+ },
+ "configFile": {
+  "ex:cf1": {
+   "prov:location": "/conf.txt",
+   "prov:name": "conf"
+  }
+ },
+ "configFileDescription": {
+  "ex:cfd1": {
+   "prov:name": "conf",
+   "voprov:contentType": "text"
+  }
+ },
+ "datasetDescription": {
+  "ex:dd1": {
+   "prov:name": "Image",
+   "voprov:contentType": "fits"
+  }
+ },
+ "datasetEntity": {
+  "ex:ds1": {
+   "prov:name": "img",
+   "voprov:location": "/img.fits"
+  }
+ },
+ "entity": {
+  "ex:coll1": {
+   "prov:type": {
+    "$": "voprov:Collection",
+    "type": "prov:QUALIFIED_NAME"
+   }
+  },
+  "ex:e1": {
+   "prov:name": "raw1",
+   "voprov:comment": "c",
+   "voprov:generatedAtTime": "2023-01-01T00:00:00",
+   "voprov:location": "/data/raw1"
+  },
+  "ex:e2": {
+   "prov:name": "cal1"
+  }
+ },
+ "entityDescription": {
+  "ex:ed1": {
+   "prov:name": "RawData",
+   "voprov:description": "raw"
+  },
+  "ex:ed2": {
+   "prov:name": "CalData"
+  }
+ },
+ "generationDescription": {
+  "ex:gd1": {
+   "prov:role": "output",
+   "voprov:multiplicity": {
+    "$": 1,
+    "type": "xsd:int"
+   }
+  }
+ },
+ "hadMember": {
+  "_:id28": {
+   "prov:collection": "ex:coll1",
+   "prov:entity": "ex:e1"
+  }
+ },
+ "hadReference": {
+  "_:id32": {
+   "voprov:referenced": "ex:e1",
+   "voprov:referrer": "ex:e2"
+  }
+ },
+ "isDescribedBy": {
+  "_:id10": {
+   "voprov:described": "ex:ds1",
+   "voprov:descriptor": "ex:dd1"
+  },
+  "_:id11": {
+   "voprov:described": "ex:cf1",
+   "voprov:descriptor": "ex:cfd1"
+  },
+  "_:id12": {
+   "voprov:described": "ex:p1",
+   "voprov:descriptor": "ex:pd1"
+  },
+  "_:id13": [
+   {
+    "voprov:described": "ex:a1",
+    "voprov:descriptor": "ex:ad1"
+   },
+   {
+    "voprov:described": "ex:a1",
+    "voprov:descriptor": "ex:ad1"
+   }
+  ],
+  "_:id7": {
+   "voprov:described": "ex:e1",
+   "voprov:descriptor": "ex:ed1"
+  },
+  "_:id8": {
+   "voprov:described": "ex:e2",
+   "voprov:descriptor": "ex:ed2"
+  },
+  "_:id9": {
+   "voprov:described": "ex:v1",
+   "voprov:descriptor": "ex:vd1"
+  }
+ },
+ "isRelatedTo": {
+  "_:id1": {
+   "voprov:related": "ex:ud1",
+   "voprov:relator": "ex:ad1"
+  },
+  "_:id2": {
+   "voprov:related": "ex:ed1",
+   "voprov:relator": "ex:ud1"
+  },
+  "_:id3": {
+   "voprov:related": "ex:gd1",
+   "voprov:relator": "ex:ad1"
+  },
+  "_:id31": {
+   "voprov:related": "ex:e1",
+   "voprov:relator": "ex:e2"
+  },
+  "_:id4": {
+   "voprov:related": "ex:ed2",
+   "voprov:relator": "ex:gd1"
+  },
+  "_:id5": {
+   "voprov:related": "ex:cfd1",
+   "voprov:relator": "ex:ad1"
+  },
+  "_:id6": {
+   "voprov:related": "ex:pd1",
+   "voprov:relator": "ex:ad1"
+  }
+ },
+ "parameter": {
+  "ex:p1": {
+   "prov:label": "threshold = 5",
+   "prov:name": "threshold",
+   "prov:value": {
+    "$": 5,
+    "type": "xsd:int"
+   }
+  }
+ },
+ "parameterDescription": {
+  "ex:pd1": {
+   "prov:name": "threshold",
+   "voprov:unit": "sigma",
+   "voprov:valueType": "float"
+  }
+ },
+ "prefix": {
+  "ex": "http://example.org/",
+  "prov": "http://www.w3.org/ns/prov#",
+  "voprov": "http://www.ivoa.net/documents/ProvenanceDM/index.html#",
+  "xsd": "http://www.w3.org/2001/XMLSchema#",
+  "xsi": "http://www.w3.org/2001/XMLSchema-instance"
+ },
+ "specializationOf": {
+  "_:id26": {
+   "prov:generalEntity": "ex:e1",
+   "prov:specificEntity": "ex:e2"
+  }
+ },
+ "usageDescription": {
+  "ex:ud1": {
+   "prov:role": "input",
+   "voprov:description": "in",
+   "voprov:multiplicity": {
+    "$": 1,
+    "type": "xsd:int"
+   }
+  }
+ },
+ "used": {
+  "ex:u1": {
+   "prov:activity": "ex:a1",
+   "prov:entity": "ex:e1",
+   "prov:role": "input",
+   "prov:time": "2023-01-01T10:01:00",
+   "voprov:descriptor": "ex:ud1"
+  }
+ },
+ "valueDescription": {
+  "ex:vd1": {
+   "prov:name": "Offset",
+   "voprov:ucd": "phot.mag",
+   "voprov:unit": "mV",
+   "voprov:utype": "ex:ut",
+   "voprov:valueType": "float"
+  }
+ },
+ "valueEntity": {
+  "ex:v1": {
+   "prov:name": "offset",
+   "voprov:value": {
+    "$": 3.5,
+    "type": "xsd:double"
+   }
+  }
+ },
+ "wasAssociatedWith": {
+  "_:id19": {
+   "prov:activity": "ex:a1",
+   "prov:agent": "ex:ag2",
+   "prov:plan": "ex:e1",
+   "prov:role": "soft"
+  }
+ },
+ "wasAttributedTo": {
+  "_:id18": {
+   "prov:agent": "ex:ag1",
+   "prov:entity": "ex:e2",
+   "prov:role": "author"
+  }
+ },
+ "wasConfiguredBy": {
+  "_:id29": {
+   "voprov:artefactType": "Parameter",
+   "voprov:configurator": "ex:p1",
+   "voprov:configured": "ex:a1"
+  },
+  "_:id30": {
+   "voprov:artefactType": "ConfigFile",
+   "voprov:configurator": "ex:cf1",
+   "voprov:configured": "ex:a1"
+  }
+ },
+ "wasDerivedFrom": {
+  "_:id22": {
+   "prov:activity": "ex:a1",
+   "prov:generatedEntity": "ex:e2",
+   "prov:usedEntity": "ex:e1"
+  },
+  "_:id23": {
+   "prov:generatedEntity": "ex:e2",
+   "prov:type": {
+    "$": "voprov:Revision",
+    "type": "prov:QUALIFIED_NAME"
+   },
+   "prov:usedEntity": "ex:e1"
+  },
+  "_:id24": {
+   "prov:generatedEntity": "ex:e2",
+   "prov:type": {
+    "$": "voprov:Quotation",
+    "type": "prov:QUALIFIED_NAME"
+   },
+   "prov:usedEntity": "ex:e1"
+  },
+  "_:id25": {
+   "prov:generatedEntity": "ex:e2",
+   "prov:type": {
+    "$": "voprov:PrimarySource",
+    "type": "prov:QUALIFIED_NAME"
+   },
+   "prov:usedEntity": "ex:e1"
+  }
+ },
+ "wasEndedBy": {
+  "_:id15": {
+   "prov:activity": "ex:a1",
+   "prov:ender": "ex:a0",
+   "prov:time": "2023-01-01T11:00:00",
+   "prov:trigger": "ex:e2"
+  }
+ },
+ "wasGeneratedBy": {
+  "ex:g1": {
+   "prov:activity": "ex:a1",
+   "prov:entity": "ex:e2",
+   "prov:role": "output",
+   "prov:time": "2023-01-01T10:59:00",
+   "voprov:descriptor": "ex:gd1"
+  }
+ },
+ "wasInfluencedBy": {
+  "_:id21": {
+   "prov:influencee": "ex:e2",
+   "prov:influencer": "ex:e1"
+  }
+ },
+ "wasInformedBy": {
+  "_:id17": {
+   "prov:informant": "ex:a0",
+   "prov:informed": "ex:a1"
+  }
+ },
+ "wasInvalidatedBy": {
+  "_:id16": {
+   "prov:activity": "ex:a1",
+   "prov:entity": "ex:e1",
+   "prov:time": "2023-01-02T00:00:00"
+  }
+ },
+ "wasStartedBy": {
+  "_:id14": {
+   "prov:activity": "ex:a1",
+   "prov:starter": "ex:a0",
+   "prov:time": "2023-01-01T10:00:00",
+   "prov:trigger": "ex:e1"
+  }
+ }
+}

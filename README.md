@@ -9,7 +9,7 @@ A library for IVOA Provenance Data Model supporting PROV-N, PROV-XML, PROV-JSON 
 
 * An implementation of the [IVOA Provenance Data Model](http://www.ivoa.net/documents/ProvenanceDM/) in Python.
 * Serialization support: [PROV-N](http://www.w3.org/TR/prov-n/), [PROV-XML](http://www.w3.org/TR/prov-xml/) and [PROV-JSON](http://www.w3.org/Submission/prov-json/).
-* Documents can be saved and read back as PROV-JSON, PROV-XML and RDF (PROV-O, needs `rdflib`). PROV-N and YAML (a readable summary) are export only.
+* Documents can be saved and read back as PROV-JSON (standard, so other PROV tools read it), PROV-XML and RDF (PROV-O, needs `rdflib`). PROV-N and YAML (a readable summary) are export only.
 * Exporting VOPROV documents into various graphical formats (e.g. PDF, PNG, SVG).
 * Convert a VOPROV document to a [Prov Document](https://github.com/trungdong/prov).
 

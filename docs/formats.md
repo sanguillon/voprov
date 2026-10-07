@@ -5,13 +5,43 @@ A document is saved with `doc.serialize(destination, format=...)` and read with
 
 | Format | `format=` | Write | Read | Notes |
 |---|---|---|---|---|
-| PROV-JSON | `"json"` | yes | yes | complete; the reference format |
+| PROV-JSON | `"json"` | yes | yes | complete; standard PROV-JSON, readable by any PROV tool |
 | PROV-XML | `"xml"` | yes | yes | complete; structural elements are in the `voprov` namespace |
 | PROV-N | `"provn"` | yes | no | human readable text |
 | YAML | `"yaml"` | yes | no | compact summary, see below |
 | RDF | `"rdf"` | yes | yes | complete; PROV-O compatible (TriG, Turtle, JSON-LD, ...), needs `rdflib` |
 
 "Complete" means that reading the file back gives a document equal to the one that was written.
+
+## PROV-JSON
+
+The file is standard [PROV-JSON](https://www.w3.org/Submission/prov-json/): it only has the sections of PROV-JSON
+(`entity`, `activity`, `used`, `wasInfluencedBy`, ...), so the tools that read PROV-JSON, such as `prov`, can read it.
+The VOProv records that PROV-JSON does not have are written in the section of the PROV record that they specialize,
+and are marked with a `prov:type` of the `voprov` namespace. voprov uses the marker to give the record its class back.
+
+```json
+{
+  "entity": {
+    "ex:raw": {"prov:name": "raw image"},
+    "ex:offset": {"prov:name": "offset", "voprov:value": {"$": 3.5, "type": "xsd:double"},
+                  "prov:type": {"$": "voprov:ValueEntity", "type": "prov:QUALIFIED_NAME"}}
+  },
+  "wasInfluencedBy": {
+    "_:id1": {"prov:influencee": "ex:run1", "prov:influencer": "ex:calibrate",
+              "prov:type": {"$": "voprov:DescriptionRelation", "type": "prov:QUALIFIED_NAME"}}
+  }
+}
+```
+
+- The records that PROV has (entity, activity, agent, usage, ...) have no marker: that part of the file is the
+  PROV-JSON that any tool writes. The specialized elements (value and dataset entities, parameters, configuration
+  files, descriptions) are entities with a marker, and the relations of VOProv (`isDescribedBy`, `wasConfiguredBy`,
+  `isRelatedTo`, `hadReference`) are influences with a marker.
+- `doc.get_w3c()` followed by a serialization with `prov` gives a file that voprov reads back as the same document.
+- The files written by voprov before 0.1.0, which had a section for each VOProv record (`valueEntity`,
+  `isDescribedBy`, ...), are still read. The files of other tools are read as VOProv records: PROV records have no
+  marker, so they cannot be told from the ones of VOProv.
 
 ## RDF
 
