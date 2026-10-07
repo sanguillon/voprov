@@ -1,7 +1,7 @@
 # Serializers
 
 The serializers are used through `VOProvDocument.serialize` and `VOProvDocument.deserialize`; see the
-[formats](../formats.md) page.
+[formats](../formats.md) page (the RDF mapping is described there).
 
 ```{eval-rst}
 .. autoclass:: voprov.serializers.provjson.VOProvJSONSerializer
@@ -25,4 +25,9 @@ The serializers are used through `VOProvDocument.serialize` and `VOProvDocument.
 .. autoclass:: voprov.serializers.provyaml.VOProvYAMLSerializer
    :members:
    :show-inheritance:
+```
+
+```{autoclass} voprov.serializers.provrdf.VOProvRDFSerializer
+:members:
+:show-inheritance:
 ```

@@ -8,8 +8,8 @@ every VOProv record specializes a PROV record and adds the attributes defined by
 
 - Build provenance documents with the VOProv concepts: activities, entities, agents, their *descriptions*,
   parameters and configuration files, and the relations between them.
-- Save and read documents as PROV-JSON and PROV-XML; export to PROV-N and to a readable YAML summary
-  (see [formats](formats.md)).
+- Save and read documents as PROV-JSON, PROV-XML and RDF (PROV-O); export to PROV-N and to a readable YAML
+  summary (see [formats](formats.md)).
 - Convert a document to a plain W3C `prov` document.
 - Draw the provenance graph with Graphviz, or as an interactive Sankey diagram with Plotly.
 - Build the records of a processing step from a single dictionary (`add_one_step`).
@@ -21,7 +21,7 @@ pip install voprov
 ```
 
 Optional extras: `voprov[dot]` for Graphviz graphs (needs the [Graphviz](https://graphviz.org) program), and
-`voprov[rdf]` for the RDF dependencies of `prov`.
+`voprov[rdf]` to read and write RDF.
 
 voprov works with `prov` 2.0 up to 3.x and Python 3.9 or later.
 

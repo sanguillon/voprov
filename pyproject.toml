@@ -34,6 +34,7 @@ dependencies = [
     "requests",
     "pyyaml",
     "plotly",
+    
 ]
 
 [project.optional-dependencies]

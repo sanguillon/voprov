@@ -21,7 +21,8 @@
 - YAML: the serializer works with prov>=2.1 (it could not be instantiated), no longer crashes on relations
   referring to elements without attributes, writes to text streams, and keeps several `used`/`generated`
   entities. It is an export only: reading it raises NotImplementedError
-- Known limitation: RDF serialization of voprov documents is not supported yet
+- RDF: new serializer, PROV-O compatible (TriG by default, any format of rdflib), that writes and reads a complete
+  document. `shortcuts=False` writes only the qualified nodes. Needs `rdflib>=6` (`pip install voprov[rdf]`)
 - Documentation rebuilt with Sphinx, Furo and MyST (Markdown pages, notebooks rendered with myst-nb, links to the prov
   documentation); the API pages were empty before. The code examples of the documentation are tested.
 - Packaging with `pyproject.toml` (setup.py and requirements*.txt removed), uv and just, pytest suite, GitLab CI
