@@ -38,7 +38,7 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-rdf = ["rdflib"]
+rdf = ["rdflib>=6.0"]
 # prov.graph needs networkx, which is only an optional dependency of prov 3
 dot = ["pydot>=1.2.0", "networkx"]
 docs = [
@@ -71,3 +71,8 @@ default-groups = ["dev"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+filterwarnings = [
+    # deprecations inside rdflib 7 and prov, which voprov does not control
+    "ignore::DeprecationWarning:rdflib.*",
+    "ignore::DeprecationWarning:prov.*",
+]

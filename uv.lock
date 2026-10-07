@@ -4775,7 +4775,7 @@ requires-dist = [
     { name = "pydot", marker = "extra == 'dot'", specifier = ">=1.2.0" },
     { name = "python-dateutil" },
     { name = "pyyaml" },
-    { name = "rdflib", marker = "extra == 'rdf'" },
+    { name = "rdflib", marker = "extra == 'rdf'", specifier = ">=6.0" },
     { name = "requests" },
     { name = "sphinx", marker = "extra == 'docs'" },
     { name = "sphinx-copybutton", marker = "extra == 'docs'" },
