@@ -90,7 +90,7 @@ def main(outdir):
         s = attempt('serialize_' + fmt, lambda: d.serialize(format=fmt))
         if s is not None:
             open(os.path.join(outdir, 'doc.' + fmt), 'w').write(s)
-            if fmt in ('json', 'xml'):
+            if fmt in ('json', 'xml', 'rdf'):
                 def rt():
                     d2 = VOProvDocument.deserialize(content=s, format=fmt)
                     assert d2 == d, 'documents differ'

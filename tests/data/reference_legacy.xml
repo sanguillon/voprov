@@ -1,0 +1,263 @@
+<?xml version='1.0' encoding='ASCII'?>
+<voprov:document xmlns:prov="http://www.w3.org/ns/prov#" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:voprov="http://www.ivoa.net/documents/ProvenanceDM/index.html#" xmlns:ex="http://example.org/">
+  <voprov:activityDescription voprov:id="ex:ad1">
+    <prov:name>Calibrate</prov:name>
+    <voprov:description>cal</voprov:description>
+    <voprov:docurl>http://doc</voprov:docurl>
+    <voprov:type>calib</voprov:type>
+    <voprov:version>1.0</voprov:version>
+  </voprov:activityDescription>
+  <voprov:entityDescription voprov:id="ex:ed1">
+    <prov:name>RawData</prov:name>
+    <voprov:description>raw</voprov:description>
+  </voprov:entityDescription>
+  <voprov:entityDescription voprov:id="ex:ed2">
+    <prov:name>CalData</prov:name>
+  </voprov:entityDescription>
+  <voprov:valueDescription voprov:id="ex:vd1">
+    <prov:name>Offset</prov:name>
+    <voprov:valueType>float</voprov:valueType>
+    <voprov:ucd>phot.mag</voprov:ucd>
+    <voprov:unit>mV</voprov:unit>
+    <voprov:utype>ex:ut</voprov:utype>
+  </voprov:valueDescription>
+  <voprov:datasetDescription voprov:id="ex:dd1">
+    <prov:name>Image</prov:name>
+    <voprov:contentType>fits</voprov:contentType>
+  </voprov:datasetDescription>
+  <voprov:isRelatedTo>
+    <voprov:related voprov:ref="ex:ud1"/>
+    <voprov:relator voprov:ref="ex:ad1"/>
+  </voprov:isRelatedTo>
+  <voprov:isRelatedTo>
+    <voprov:related voprov:ref="ex:ed1"/>
+    <voprov:relator voprov:ref="ex:ud1"/>
+  </voprov:isRelatedTo>
+  <voprov:usageDescription voprov:id="ex:ud1">
+    <prov:role>input</prov:role>
+    <voprov:description>in</voprov:description>
+    <voprov:multiplicity xsi:type="xsd:int">1</voprov:multiplicity>
+  </voprov:usageDescription>
+  <voprov:isRelatedTo>
+    <voprov:related voprov:ref="ex:gd1"/>
+    <voprov:relator voprov:ref="ex:ad1"/>
+  </voprov:isRelatedTo>
+  <voprov:isRelatedTo>
+    <voprov:related voprov:ref="ex:ed2"/>
+    <voprov:relator voprov:ref="ex:gd1"/>
+  </voprov:isRelatedTo>
+  <voprov:generationDescription voprov:id="ex:gd1">
+    <prov:role>output</prov:role>
+    <voprov:multiplicity xsi:type="xsd:int">1</voprov:multiplicity>
+  </voprov:generationDescription>
+  <voprov:isRelatedTo>
+    <voprov:related voprov:ref="ex:cfd1"/>
+    <voprov:relator voprov:ref="ex:ad1"/>
+  </voprov:isRelatedTo>
+  <voprov:configFileDescription voprov:id="ex:cfd1">
+    <prov:name>conf</prov:name>
+    <voprov:contentType>text</voprov:contentType>
+  </voprov:configFileDescription>
+  <voprov:isRelatedTo>
+    <voprov:related voprov:ref="ex:pd1"/>
+    <voprov:relator voprov:ref="ex:ad1"/>
+  </voprov:isRelatedTo>
+  <voprov:parameterDescription voprov:id="ex:pd1">
+    <prov:name>threshold</prov:name>
+    <voprov:valueType>float</voprov:valueType>
+    <voprov:unit>sigma</voprov:unit>
+  </voprov:parameterDescription>
+  <voprov:agent voprov:id="ex:ag1">
+    <prov:name>Alice</prov:name>
+    <voprov:address>Paris</voprov:address>
+    <voprov:affiliation>Obs</voprov:affiliation>
+    <voprov:email>a@x.org</voprov:email>
+    <voprov:phone>123</voprov:phone>
+    <voprov:type>Person</voprov:type>
+    <voprov:url>http://alice</voprov:url>
+  </voprov:agent>
+  <voprov:agent voprov:id="ex:ag2">
+    <prov:name>Software</prov:name>
+    <voprov:type>SoftwareAgent</voprov:type>
+  </voprov:agent>
+  <voprov:isDescribedBy>
+    <voprov:described voprov:ref="ex:e1"/>
+    <voprov:descriptor voprov:ref="ex:ed1"/>
+  </voprov:isDescribedBy>
+  <voprov:entity voprov:id="ex:e1">
+    <prov:name>raw1</prov:name>
+    <voprov:comment>c</voprov:comment>
+    <voprov:generatedAtTime>2023-01-01T00:00:00</voprov:generatedAtTime>
+    <voprov:location>/data/raw1</voprov:location>
+  </voprov:entity>
+  <voprov:isDescribedBy>
+    <voprov:described voprov:ref="ex:e2"/>
+    <voprov:descriptor voprov:ref="ex:ed2"/>
+  </voprov:isDescribedBy>
+  <voprov:entity voprov:id="ex:e2">
+    <prov:name>cal1</prov:name>
+  </voprov:entity>
+  <voprov:isDescribedBy>
+    <voprov:described voprov:ref="ex:v1"/>
+    <voprov:descriptor voprov:ref="ex:vd1"/>
+  </voprov:isDescribedBy>
+  <voprov:valueEntity voprov:id="ex:v1">
+    <prov:name>offset</prov:name>
+    <voprov:value xsi:type="xsd:double">3.5</voprov:value>
+  </voprov:valueEntity>
+  <voprov:isDescribedBy>
+    <voprov:described voprov:ref="ex:ds1"/>
+    <voprov:descriptor voprov:ref="ex:dd1"/>
+  </voprov:isDescribedBy>
+  <voprov:datasetEntity voprov:id="ex:ds1">
+    <prov:name>img</prov:name>
+    <voprov:location>/img.fits</voprov:location>
+  </voprov:datasetEntity>
+  <voprov:isDescribedBy>
+    <voprov:described voprov:ref="ex:cf1"/>
+    <voprov:descriptor voprov:ref="ex:cfd1"/>
+  </voprov:isDescribedBy>
+  <voprov:configFile voprov:id="ex:cf1">
+    <prov:name>conf</prov:name>
+    <prov:location xsi:type="xsd:string">/conf.txt</prov:location>
+  </voprov:configFile>
+  <voprov:isDescribedBy>
+    <voprov:described voprov:ref="ex:p1"/>
+    <voprov:descriptor voprov:ref="ex:pd1"/>
+  </voprov:isDescribedBy>
+  <voprov:parameter voprov:id="ex:p1">
+    <prov:name>threshold</prov:name>
+    <prov:value xsi:type="xsd:int">5</prov:value>
+    <prov:label>threshold = 5</prov:label>
+  </voprov:parameter>
+  <voprov:collection voprov:id="ex:coll1"/>
+  <voprov:isDescribedBy>
+    <voprov:described voprov:ref="ex:a1"/>
+    <voprov:descriptor voprov:ref="ex:ad1"/>
+  </voprov:isDescribedBy>
+  <voprov:activity voprov:id="ex:a1">
+    <prov:startTime>2023-01-01T10:00:00</prov:startTime>
+    <prov:endTime>2023-01-01T11:00:00</prov:endTime>
+    <prov:name>cal run</prov:name>
+    <voprov:comment>run</voprov:comment>
+  </voprov:activity>
+  <voprov:activity voprov:id="ex:a0">
+    <prov:name>prev</prov:name>
+  </voprov:activity>
+  <voprov:used voprov:id="ex:u1">
+    <prov:activity voprov:ref="ex:a1"/>
+    <prov:entity voprov:ref="ex:e1"/>
+    <prov:time>2023-01-01T10:01:00</prov:time>
+    <prov:role>input</prov:role>
+    <voprov:descriptor voprov:ref="ex:ud1"/>
+  </voprov:used>
+  <voprov:wasGeneratedBy voprov:id="ex:g1">
+    <prov:entity voprov:ref="ex:e2"/>
+    <prov:activity voprov:ref="ex:a1"/>
+    <prov:time>2023-01-01T10:59:00</prov:time>
+    <prov:role>output</prov:role>
+    <voprov:descriptor voprov:ref="ex:gd1"/>
+  </voprov:wasGeneratedBy>
+  <voprov:wasStartedBy>
+    <prov:activity voprov:ref="ex:a1"/>
+    <prov:trigger voprov:ref="ex:e1"/>
+    <prov:starter voprov:ref="ex:a0"/>
+    <prov:time>2023-01-01T10:00:00</prov:time>
+  </voprov:wasStartedBy>
+  <voprov:wasEndedBy>
+    <prov:activity voprov:ref="ex:a1"/>
+    <prov:trigger voprov:ref="ex:e2"/>
+    <prov:ender voprov:ref="ex:a0"/>
+    <prov:time>2023-01-01T11:00:00</prov:time>
+  </voprov:wasEndedBy>
+  <voprov:wasInvalidatedBy>
+    <prov:entity voprov:ref="ex:e1"/>
+    <prov:activity voprov:ref="ex:a1"/>
+    <prov:time>2023-01-02T00:00:00</prov:time>
+  </voprov:wasInvalidatedBy>
+  <voprov:wasInformedBy>
+    <prov:informed voprov:ref="ex:a1"/>
+    <prov:informant voprov:ref="ex:a0"/>
+  </voprov:wasInformedBy>
+  <voprov:wasAttributedTo>
+    <prov:entity voprov:ref="ex:e2"/>
+    <prov:agent voprov:ref="ex:ag1"/>
+    <prov:role>author</prov:role>
+  </voprov:wasAttributedTo>
+  <voprov:wasAssociatedWith>
+    <prov:activity voprov:ref="ex:a1"/>
+    <prov:agent voprov:ref="ex:ag2"/>
+    <prov:plan voprov:ref="ex:e1"/>
+    <prov:role>soft</prov:role>
+  </voprov:wasAssociatedWith>
+  <voprov:actedOnBehalfOf>
+    <prov:delegate voprov:ref="ex:ag2"/>
+    <prov:responsible voprov:ref="ex:ag1"/>
+    <prov:activity voprov:ref="ex:a1"/>
+  </voprov:actedOnBehalfOf>
+  <voprov:wasInfluencedBy>
+    <prov:influencee voprov:ref="ex:e2"/>
+    <prov:influencer voprov:ref="ex:e1"/>
+  </voprov:wasInfluencedBy>
+  <voprov:wasDerivedFrom>
+    <prov:generatedEntity voprov:ref="ex:e2"/>
+    <prov:usedEntity voprov:ref="ex:e1"/>
+    <prov:activity voprov:ref="ex:a1"/>
+  </voprov:wasDerivedFrom>
+  <voprov:wasRevisionOf>
+    <prov:generatedEntity voprov:ref="ex:e2"/>
+    <prov:usedEntity voprov:ref="ex:e1"/>
+  </voprov:wasRevisionOf>
+  <voprov:wasQuotedFrom>
+    <prov:generatedEntity voprov:ref="ex:e2"/>
+    <prov:usedEntity voprov:ref="ex:e1"/>
+  </voprov:wasQuotedFrom>
+  <voprov:hadPrimarySource>
+    <prov:generatedEntity voprov:ref="ex:e2"/>
+    <prov:usedEntity voprov:ref="ex:e1"/>
+  </voprov:hadPrimarySource>
+  <voprov:specializationOf>
+    <prov:specificEntity voprov:ref="ex:e2"/>
+    <prov:generalEntity voprov:ref="ex:e1"/>
+  </voprov:specializationOf>
+  <voprov:alternateOf>
+    <prov:alternate1 voprov:ref="ex:e2"/>
+    <prov:alternate2 voprov:ref="ex:e1"/>
+  </voprov:alternateOf>
+  <voprov:hadMember>
+    <prov:collection voprov:ref="ex:coll1"/>
+    <prov:entity voprov:ref="ex:e1"/>
+  </voprov:hadMember>
+  <voprov:isDescribedBy>
+    <voprov:described voprov:ref="ex:a1"/>
+    <voprov:descriptor voprov:ref="ex:ad1"/>
+  </voprov:isDescribedBy>
+  <voprov:wasConfiguredBy>
+    <voprov:configured voprov:ref="ex:a1"/>
+    <voprov:configurator voprov:ref="ex:p1"/>
+    <voprov:artefactType>Parameter</voprov:artefactType>
+  </voprov:wasConfiguredBy>
+  <voprov:wasConfiguredBy>
+    <voprov:configured voprov:ref="ex:a1"/>
+    <voprov:configurator voprov:ref="ex:cf1"/>
+    <voprov:artefactType>ConfigFile</voprov:artefactType>
+  </voprov:wasConfiguredBy>
+  <voprov:isRelatedTo>
+    <voprov:related voprov:ref="ex:e1"/>
+    <voprov:relator voprov:ref="ex:e2"/>
+  </voprov:isRelatedTo>
+  <voprov:hadReference>
+    <voprov:referenced voprov:ref="ex:e1"/>
+    <voprov:referrer voprov:ref="ex:e2"/>
+  </voprov:hadReference>
+  <voprov:bundleContent voprov:id="ex:b1">
+    <voprov:entity voprov:id="ex:be1">
+      <prov:name>in bundle</prov:name>
+    </voprov:entity>
+    <voprov:activity voprov:id="ex:ba1"/>
+    <voprov:used>
+      <prov:activity voprov:ref="ex:ba1"/>
+      <prov:entity voprov:ref="ex:be1"/>
+    </voprov:used>
+  </voprov:bundleContent>
+</voprov:document>

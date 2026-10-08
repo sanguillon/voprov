@@ -1,6 +1,21 @@
 
+"""PROV-JSON serializer for VOProv documents.
+
+The file is standard PROV-JSON (https://www.w3.org/Submission/prov-json/), that any tool of PROV can read. The VOProv
+records that PROV-JSON does not have are written in the section of the PROV record that they specialize, and are
+marked with a ``prov:type`` of the ``voprov`` namespace::
+
+    "entity": {"ex:v1": {"prov:name": "offset", "voprov:value": 3.5, "prov:type": {"$": "voprov:ValueEntity", ...}}}
+    "wasInfluencedBy": {"_:id1": {"prov:influencee": "ex:a1", "prov:influencer": "ex:ad1",
+                                  "prov:type": {"$": "voprov:DescriptionRelation", ...}}}
+
+The marker gives its class back when the file is read by voprov. The files written by the former versions of voprov,
+that had a section for each VOProv record (``valueEntity``, ``isDescribedBy``, ...), can still be read.
+"""
+from prov.constants import XSD_QNAME
 from prov.serializers.provjson import *
 from voprov.constants import *
+from voprov.serializers.marked import MARKED_TYPES, find_marker, relation_ends, written_as
 
 # Reverse map for prov.model.XSD_DATATYPE_PARSERS (defined locally: its location in prov changes between versions)
 LITERAL_XSDTYPE_MAP = {
@@ -13,7 +28,11 @@ LITERAL_XSDTYPE_MAP = {
 
 class VOProvJSONSerializer(Serializer):
     """
-    PROV-JSON serializer for :class:`~voprov.model.VOProvDocument`
+    PROV-JSON serializer for :class:`~voprov.model.VOProvDocument`.
+
+    The file is standard PROV-JSON: the VOProv records that PROV-JSON does not have are written as PROV entities and
+    influences, marked with a ``prov:type`` in the ``voprov`` namespace, that gives them their class back when the
+    file is read. The files of the former format, with a section for each VOProv record, are still read.
     """
 
     def serialize(self, stream, **kwargs):
@@ -103,14 +122,20 @@ def encode_json_container(bundle):
 
     for record in bundle._records:
         rec_type = record.get_type()
-        rec_label = PROV_N_MAP[rec_type]
+        written_type, marker = written_as(rec_type)
+        rec_label = PROV_N_MAP[written_type]
         identifier = str(real_or_anon_id(record))
+        renamed = {}
+        if marker is not None and written_type == VOPROV_INFLUENCE:
+            # a relation of VOProv is an influence, between the first two elements of the relation
+            renamed = dict(relation_ends(marker))
 
         record_json = {}
         if record._attributes:
             for (attr, values) in record._attributes.items():
                 if not values:
                     continue
+                attr = renamed.get(attr, attr)
                 attr_name = str(attr)
                 if attr in PROV_ATTRIBUTE_QNAMES:
                     # TODO: QName export
@@ -128,6 +153,8 @@ def encode_json_container(bundle):
                         record_json[attr_name] = list(
                             encode_json_representation(value) for value in values
                         )
+        if marker is not None:
+            _add_marker(record_json, marker)
         # Check if the container already has the id of the record
         if identifier not in container[rec_label]:
             # this is the first instance, just put in the new record
@@ -143,6 +170,40 @@ def encode_json_container(bundle):
             container[rec_label][identifier].append(record_json)
 
     return container
+
+
+def _add_marker(record_json, marker):
+    """Add the type of VOProv to the prov:type of a record."""
+    marker_json = encode_json_representation(marker)
+    current = record_json.get('prov:type')
+    if current is None:
+        record_json['prov:type'] = marker_json
+    elif isinstance(current, list):
+        current.append(marker_json)
+    else:
+        record_json['prov:type'] = [current, marker_json]
+
+
+def _read_marker(rec_type, attributes, other_attributes):
+    """Gives its VOProv type to a record that is marked (see the documentation of the module).
+
+    Returns the type of the record and its attributes, without the marker. A record that is not marked, as the
+    ones written by other tools, is not changed. The type that a record has by definition (``voprov:Entity`` on an
+    entity, which is written by some tools that export to PROV) is not an attribute of it.
+    """
+    types = [value for attr, value in other_attributes if attr == PROV_TYPE and isinstance(value, QualifiedName)]
+    marker = find_marker(rec_type, types)
+    new_type = marker if marker is not None else rec_type
+    if marker is not None and MARKED_TYPES[marker] == VOPROV_INFLUENCE:
+        # a relation of VOProv: its ends are the first formal attributes of the relation
+        attributes = dict(attributes)
+        for formal_attribute, plain in relation_ends(marker):
+            if plain in attributes:
+                attributes[formal_attribute] = attributes.pop(plain)
+    redundant = (rec_type, new_type)
+    other_attributes = [(attr, value) for attr, value in other_attributes
+                        if not (attr == PROV_TYPE and value in redundant)]
+    return new_type, attributes, other_attributes
 
 
 def decode_json_document(content, document):
@@ -238,7 +299,8 @@ def decode_json_container(jc, bundle):
                             other_attributes.append(
                                 (attr, decode_json_representation(values, bundle))
                             )
-                bundle.new_record(rec_type, rec_id, attributes, other_attributes)
+                element_type, attributes, other_attributes = _read_marker(rec_type, attributes, other_attributes)
+                bundle.new_record(element_type, rec_id, attributes, other_attributes)
                 # HACK: creating extra (unidentified) membership relations
                 if membership_extra_members:
                     collection = attributes[PROV_ATTR_COLLECTION]
@@ -274,7 +336,8 @@ def decode_json_representation(literal, bundle):
         langtag = literal["lang"] if "lang" in literal else None
         if datatype == XSD_ANYURI:
             return Identifier(value)
-        elif datatype == PROV_QUALIFIEDNAME:
+        elif datatype in (PROV_QUALIFIEDNAME, XSD_QNAME):
+            # prov:QUALIFIED_NAME is the type that prov 2 writes, xsd:QName the one of the PROV-JSON specification
             return valid_qualified_name(bundle, value)
         else:
             # The literal of standard Python types is not converted here

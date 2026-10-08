@@ -170,16 +170,6 @@ def test_yaml_cannot_be_read_back(reference_doc):
         VOProvDocument.deserialize(content=reference_doc.serialize(format="yaml"), format="yaml")
 
 
-# Known problem, tracked as a strict expected failure: it starts failing the suite once fixed,
-# so the marker has to be removed.
-
-@pytest.mark.xfail(strict=True, reason="RDF: voprov attributes are not mapped (artefactType), voprov relations are "
-                                       "written in the prov namespace and are lost when reading back")
-def test_rdf_roundtrip(reference_doc):
-    again = VOProvDocument.deserialize(content=reference_doc.serialize(format="rdf"), format="rdf")
-    assert again == reference_doc
-
-
 def test_without_rdflib_the_other_formats_work():
     """rdflib is an optional dependency: a plain install must still read and write JSON, XML, ..."""
     import subprocess
